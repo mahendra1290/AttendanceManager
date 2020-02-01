@@ -22,10 +22,10 @@ public abstract class MainDatabase extends RoomDatabase {
 
     private static volatile MainDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
-    static final ExecutorService databaseWriteExecutor =
+    public static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
-    static MainDatabase getDatabase(final Context context) {
+    public static MainDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (MainDatabase.class) {
                 if (INSTANCE == null) {

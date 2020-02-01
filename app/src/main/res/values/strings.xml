@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">AttendanceManager</string>
+    <string name="subject_name">Subject</string>
+    <string name="class_attended">Attended</string>
+    <string name="class_missed">Missed</string>
+    <string name="class_cancelled">Cancelled</string>
+    <string name="attendance_status">4 / 6</string>
+    <string name="attendance_percentage">76.00%</string>
+    <string name="timetable">Time-Table</string>
+    <string name="select_subject">Select Subject</string>
+    <string name="add_subject">Add Subject</string>
+    <string name="add_period">Add Period</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="subject_label">Subject Title</string>
 </resources>

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
+import androidx.room.Insert;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "subject_table")
@@ -25,7 +26,19 @@ public class Subject {
 
     @Ignore
     public Subject() {
+    }
 
+    @Ignore
+    private static Callback sListner;
+
+    public interface Callback {
+        void onAttended(Subject subject);
+        void onMissed(Subject subject);
+        void onCancelled(Subject subject);
+    }
+
+    public static void setListner(Callback listner) {
+        sListner = listner;
     }
 
     public Subject(String title) {
@@ -71,16 +84,25 @@ public class Subject {
 
     public void incrementClassesAttended() {
         mAttendedClasses += 1;
+        if (sListner != null) {
+            sListner.onAttended(this);
+        }
 
     }
 
     public void incrementClassesMissed() {
         mMissedClasses += 1;
+        if (sListner != null) {
+            sListner.onAttended(this);
+        }
 
     }
 
     public void incrementClassesCancelled() {
         mCancelledClasses += 1;
+        if (sListner != null) {
+            sListner.onAttended(this);
+        }
     }
 
     @NonNull
