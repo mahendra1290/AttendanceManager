@@ -12,6 +12,10 @@ public class Period {
     @ColumnInfo(name = "id")
     private long periodId;
 
+    public long getPeriodId() {
+        return periodId;
+    }
+
     @ColumnInfo(name = "period_number")
     private int periodNumber;
 
