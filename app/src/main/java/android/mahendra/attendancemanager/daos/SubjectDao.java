@@ -1,4 +1,4 @@
-package android.mahendra.attendancemanager.Daos;
+package android.mahendra.attendancemanager.daos;
 
 import android.mahendra.attendancemanager.models.Subject;
 

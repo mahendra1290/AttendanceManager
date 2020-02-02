@@ -1,4 +1,4 @@
-package android.mahendra.attendancemanager.Daos;
+package android.mahendra.attendancemanager.daos;
 
 import android.mahendra.attendancemanager.models.Period;
 
@@ -29,7 +29,7 @@ public interface PeriodDao {
     @Query("SELECT * FROM period_table")
     LiveData<List<Period>> getAllPeriods();
 
-    @Query("SELECT * FROM PERIOD_TABLE WHERE week_day=:weekDay")
+    @Query("SELECT * FROM PERIOD_TABLE WHERE week_day=:weekDay ORDER BY period_number")
     LiveData<List<Period>> getAllPeriodsOn(final int weekDay);
 
     @Query("SELECT * FROM PERIOD_TABLE WHERE subject_title=:subjectTitle")
