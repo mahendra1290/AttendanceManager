@@ -104,7 +104,7 @@
                 android:max="100"
                 android:min="0"
                 android:progress="@{subject_view_model.attendanceProgress}"
-                android:progressTint="@android:color/holo_green_light"
+                android:progressTint="#1E40FF"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
