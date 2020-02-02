@@ -28,8 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SubjectListFragment extends Fragment {
+
     private static final String TAG = "SubjectListFragment";
-    public static final int REQUEST_SUBJECT = 0;
+    private static final int REQUEST_SUBJECT = 0;
 
     private SubjectListViewModel subjectListViewModel;
 
@@ -51,7 +52,6 @@ public class SubjectListFragment extends Fragment {
                 inflater, R.layout.fragment_subject_list, container, false
         );
 
-        binding.subjectListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         SubjectAdapter adapter = new SubjectAdapter();
         subjectListViewModel = new ViewModelProvider(requireActivity()).get(SubjectListViewModel.class);
         subjectListViewModel.getAllSubjects().observe(getViewLifecycleOwner(), subjects -> {
@@ -59,6 +59,8 @@ public class SubjectListFragment extends Fragment {
             adapter.setSubjects(subjects);
         });
         Subject.setListner(subjectListViewModel);
+
+        binding.subjectListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.subjectListRecyclerView.setAdapter(adapter);
         binding.addSubjectFloatingButton.setOnClickListener(v -> {
             openAddSubjectDialog();
@@ -79,6 +81,10 @@ public class SubjectListFragment extends Fragment {
                 Intent intent = TimeTableActivity.newIntent(getActivity());
                 startActivity(intent);
                 return true;
+            case R.id.mark_attendance:
+                Intent intent1 = MarkAttendaceActivity.newIntent(getActivity(), 1);
+                startActivity(intent1);
+                return true;
             default:
                 super.onOptionsItemSelected(item);
                 return true;
@@ -96,7 +102,6 @@ public class SubjectListFragment extends Fragment {
             Subject subject = new Subject();
             subject.setTitle(subjectTitle);
             subjectListViewModel.insert(subject);
-//            mSubjectAdapter.notifyDataSetChanged();
         }
     }
 
@@ -110,7 +115,6 @@ public class SubjectListFragment extends Fragment {
         }
 
         public void bind(Subject subject) {
-            Log.i(TAG, "bind: " + subject.getTitle());
             mBinding.getSubjectViewModel().setSubject(subject);
             mBinding.getSubjectViewModel().notifyChange();
             mBinding.executePendingBindings();
@@ -140,9 +144,6 @@ public class SubjectListFragment extends Fragment {
 
         public void setSubjects(List<Subject> subjects) {
             this.subjects = subjects;
-            for (Subject subject : subjects) {
-                Log.i(TAG, "setSubjects: " + subject.getTitle());
-            }
             notifyDataSetChanged();
         }
     }
