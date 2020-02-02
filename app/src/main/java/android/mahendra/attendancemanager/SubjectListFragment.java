@@ -12,8 +12,12 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,6 +44,7 @@ public class SubjectListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -62,6 +67,25 @@ public class SubjectListFragment extends Fragment {
             openAddSubjectDialog();
         });
         return binding.getRoot();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_subject_list, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.show_timetable:
+                Intent intent = TimeTableActivity.newIntent(getActivity());
+                startActivity(intent);
+                return true;
+            default:
+                super.onOptionsItemSelected(item);
+                return true;
+        }
     }
 
     @Override

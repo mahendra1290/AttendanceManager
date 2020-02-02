@@ -26,6 +26,9 @@ public interface PeriodDao {
     @Query("Delete from period_table")
     void deleteAll();
 
+    @Query("SELECT * FROM period_table")
+    LiveData<List<Period>> getAllPeriods();
+
     @Query("SELECT * FROM PERIOD_TABLE WHERE week_day=:weekDay")
     LiveData<List<Period>> getAllPeriodsOn(final int weekDay);
 
