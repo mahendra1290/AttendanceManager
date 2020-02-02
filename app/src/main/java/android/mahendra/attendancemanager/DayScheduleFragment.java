@@ -8,6 +8,7 @@ import android.mahendra.attendancemanager.models.Subject;
 import android.mahendra.attendancemanager.viewmodels.PeriodListViewModel;
 import android.mahendra.attendancemanager.viewmodels.PeriodViewModel;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class DayScheduleFragment extends Fragment {
+    private static final String TAG = "DayScheduleFragment";
 
     public static String[] WEEK_DAYS = {
             "Sunday",
@@ -47,7 +49,7 @@ public class DayScheduleFragment extends Fragment {
     private AddPeriodCallback mCallback;
 
     public interface AddPeriodCallback {
-        void addPeriod(int periodNumber);
+        void addPeriod(int periodNumber, int weekDay);
     }
 
     @Override
@@ -82,7 +84,7 @@ public class DayScheduleFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         FragmentDayScheduleBinding binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_day_schedule, container, false);
-        binding.weekdayTextview.setText(WEEK_DAYS[weekDay].toUpperCase());
+        binding.weekdayTextview.setText(WEEK_DAYS[weekDay - 1].toUpperCase());
         binding.periodListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         PeriodAdapter adapter = new PeriodAdapter();
         mPeriodListViewModel.getAllPeriodsOn(weekDay).observe(getViewLifecycleOwner(), periods -> {
@@ -113,12 +115,19 @@ public class DayScheduleFragment extends Fragment {
         @Override
         public void onClick(View v) {
             Toast.makeText(getActivity(), "period -> " + mPeriod.getPeriodNumber(), Toast.LENGTH_SHORT).show();
-            mCallback.addPeriod(mPeriod.getPeriodNumber());
+            mCallback.addPeriod(mPeriod.getPeriodNumber(), weekDay);
         }
     }
 
     private class PeriodAdapter extends RecyclerView.Adapter<PeriodHolder> {
         List<Period> mPeriodList = new ArrayList<>();
+
+        public PeriodAdapter() {
+            for (int i = 0; i < MAX_PERIODS; i++) {
+                mPeriodList.add(new Period("-", i+1, weekDay));
+            }
+        }
+
         @NonNull
         @Override
         public PeriodHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -138,13 +147,16 @@ public class DayScheduleFragment extends Fragment {
         }
 
         public void setPeriodList(List<Period> periods) {
-            mPeriodList.clear();
+            for (Period period : periods) {
+                Log.i(TAG, "setPeriodList: " + period.getPeriodNumber() + " " + period.getSubjectTitle());
+            }
             for (int i = 0; i < MAX_PERIODS; i++) {
-                mPeriodList.add(new Period("No Period", i + 1, weekDay));
-                for (Period period: periods) {
+//                boolean isPresent = false;
+                for (Period period : periods) {
                     if (period.getPeriodNumber() == i + 1) {
                         mPeriodList.set(i, period);
-                        break;
+//                        isPresent = true;
+//                        break;
                     }
                 }
             }

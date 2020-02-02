@@ -19,6 +19,7 @@ public class Period {
     @ColumnInfo(name = "period_number")
     private int periodNumber;
 
+    //1 - 7 for sunday to monday
     @ColumnInfo(name = "week_day")
     private int weekDay;
 

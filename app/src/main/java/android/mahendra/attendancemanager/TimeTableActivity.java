@@ -36,6 +36,8 @@ public class TimeTableActivity extends AppCompatActivity implements
     private List<Integer> mWeekDays;
     private List<Subject> mSubjects;
 
+    private int weekDay = -1;
+
     public static Intent newIntent(Context context) {
         Intent i = new Intent(context, TimeTableActivity.class);
         return i;
@@ -60,8 +62,8 @@ public class TimeTableActivity extends AppCompatActivity implements
 
         public DayScheduleAdapter(FragmentActivity activity) {
             super(activity);
-            for (int i = 0; i < 8; i++) {
-                weekDays.add(i);
+            for (int i = 0; i < 7; i++) {
+                weekDays.add(i + 1);
             }
         }
 
@@ -84,8 +86,9 @@ public class TimeTableActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void addPeriod(int periodNumber) {
+    public void addPeriod(int periodNumber, int weekDay) {
         openAddPeriodDialog(periodNumber);
+        this.weekDay = weekDay;
     }
 
     @Override
@@ -95,6 +98,6 @@ public class TimeTableActivity extends AppCompatActivity implements
 
     @Override
     public void onNewPeriod(int periodNumber, String periodTitle) {
-        mPeriodListViewModel.insert(new Period(periodTitle, periodNumber, mViewPager.getCurrentItem()));
+        mPeriodListViewModel.insert(new Period(periodTitle, periodNumber, weekDay));
     }
 }

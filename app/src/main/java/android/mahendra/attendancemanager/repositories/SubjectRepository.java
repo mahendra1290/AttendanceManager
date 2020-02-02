@@ -1,6 +1,6 @@
 package android.mahendra.attendancemanager.repositories;
 
-import android.mahendra.attendancemanager.Daos.SubjectDao;
+import android.mahendra.attendancemanager.daos.SubjectDao;
 
 import android.app.Application;
 import android.mahendra.attendancemanager.database.MainDatabase;

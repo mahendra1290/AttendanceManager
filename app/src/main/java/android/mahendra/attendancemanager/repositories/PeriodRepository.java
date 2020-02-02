@@ -1,7 +1,7 @@
 package android.mahendra.attendancemanager.repositories;
 
 import android.app.Application;
-import android.mahendra.attendancemanager.Daos.PeriodDao;
+import android.mahendra.attendancemanager.daos.PeriodDao;
 import android.mahendra.attendancemanager.database.MainDatabase;
 import android.mahendra.attendancemanager.models.Period;
 
