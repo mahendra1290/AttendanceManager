@@ -2,13 +2,11 @@ package android.mahendra.attendancemanager;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.mahendra.attendancemanager.databinding.FragmentSubjectListBinding;
 import android.mahendra.attendancemanager.databinding.ListItemSubjectBinding;
 import android.mahendra.attendancemanager.models.Subject;
 import android.mahendra.attendancemanager.viewmodels.SubjectListViewModel;
 import android.mahendra.attendancemanager.viewmodels.SubjectViewModel;
-import android.os.Binder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,7 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
