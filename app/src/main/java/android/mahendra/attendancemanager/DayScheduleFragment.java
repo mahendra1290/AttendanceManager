@@ -31,17 +31,7 @@ import java.util.List;
 public class DayScheduleFragment extends Fragment {
     private static final String TAG = "DayScheduleFragment";
 
-    public static String[] WEEK_DAYS = {
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday"
-    };
-
-    private static int MAX_PERIODS = 10;
+    private static int MAX_PERIODS = 8;
 
     private int weekDay;
     private LiveData<Period> mPeriods;
@@ -84,7 +74,6 @@ public class DayScheduleFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         FragmentDayScheduleBinding binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_day_schedule, container, false);
-        binding.weekdayTextview.setText(WEEK_DAYS[weekDay - 1].toUpperCase());
         binding.periodListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         PeriodAdapter adapter = new PeriodAdapter();
         mPeriodListViewModel.getAllPeriodsOn(weekDay).observe(getViewLifecycleOwner(), periods -> {
@@ -148,17 +137,7 @@ public class DayScheduleFragment extends Fragment {
 
         public void setPeriodList(List<Period> periods) {
             for (Period period : periods) {
-                Log.i(TAG, "setPeriodList: " + period.getPeriodNumber() + " " + period.getSubjectTitle());
-            }
-            for (int i = 0; i < MAX_PERIODS; i++) {
-//                boolean isPresent = false;
-                for (Period period : periods) {
-                    if (period.getPeriodNumber() == i + 1) {
-                        mPeriodList.set(i, period);
-//                        isPresent = true;
-//                        break;
-                    }
-                }
+                mPeriodList.get(period.getPeriodNumber()-1).setSubjectTitle(period.getSubjectTitle());
             }
             notifyDataSetChanged();
         }

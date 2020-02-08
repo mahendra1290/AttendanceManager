@@ -38,7 +38,7 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.viewpager:viewpager:1.0.0'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.2.0-alpha04'
     // Room components
     implementation "androidx.room:room-runtime:2.2.3"
     annotationProcessor "androidx.room:room-compiler:2.2.3"
@@ -49,7 +49,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-common-java8:2.2.0"
 
 // UI
-    implementation "com.google.android.material:material:1.0.0"
+    implementation 'com.google.android.material:material:1.2.0-alpha04'
 
 // Testing
     androidTestImplementation "androidx.arch.core:core-testing:2.1.0"

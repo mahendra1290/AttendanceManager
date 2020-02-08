@@ -8,6 +8,7 @@ import android.mahendra.attendancemanager.viewmodels.PeriodListViewModel;
 import android.mahendra.attendancemanager.viewmodels.SubjectListViewModel;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -22,13 +23,29 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class TimeTableActivity extends AppCompatActivity implements
         DayScheduleFragment.AddPeriodCallback,
         AddPeriodDialogFragment.PeriodCallback,
         AddPeriodDialogFragment.SubjectCallback {
+    private static final String TAG = "TimeTableActivity";
+
+    public static String[] WEEK_DAYS = {
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+    };
+
 
     private ViewPager2 mViewPager;
     private SubjectListViewModel mSubjectListViewModel;
@@ -54,7 +71,12 @@ public class TimeTableActivity extends AppCompatActivity implements
         mPeriodListViewModel = new ViewModelProvider(this).get(PeriodListViewModel.class);
         mViewPager = findViewById(R.id.day_schedule_viewpager);
         mViewPager.setAdapter(new DayScheduleAdapter(this));
-//        mViewPager.setCurrentItem(0);
+        int weekDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        mViewPager.setCurrentItem(weekDay-1, true);
+        TabLayout tabLayout = findViewById(R.id.tab_layout_weekday);
+        new TabLayoutMediator(tabLayout, mViewPager,
+                (tab, position) -> tab.setText(WEEK_DAYS[position+1])
+         ).attach();
     }
 
     private class DayScheduleAdapter extends FragmentStateAdapter {
@@ -62,7 +84,7 @@ public class TimeTableActivity extends AppCompatActivity implements
 
         public DayScheduleAdapter(FragmentActivity activity) {
             super(activity);
-            for (int i = 0; i < 7; i++) {
+            for (int i = 1; i < 7; i++) {
                 weekDays.add(i + 1);
             }
         }
@@ -70,6 +92,7 @@ public class TimeTableActivity extends AppCompatActivity implements
         @NonNull
         @Override
         public Fragment createFragment(int position) {
+            Log.i(TAG, "createFragment: " + position);
             return DayScheduleFragment.newInstance(weekDays.get(position));
         }
 
