@@ -21,11 +21,11 @@ import java.util.List;
 
 public class AddPeriodDialogFragment extends DialogFragment {
     private static final String TAG = "AddPeriodDialogFragment";
+    private static final String ARG_PERIOD_NUMBER = "period number";
+
     private List<Subject> mSubjects = new ArrayList<>();
     private SubjectCallback mCallback;
     private PeriodCallback mPeriodCallback;
-
-    private static final String ARG_PERIOD_NUMBER = "periodnumber";
 
     public interface SubjectCallback {
         List<Subject> getSubjects();
@@ -78,13 +78,6 @@ public class AddPeriodDialogFragment extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View v = inflater.inflate(R.layout.dialog_choose_period, null);
         Spinner spinner = v.findViewById(R.id.spinner_select_period);
-        NumberPicker picker = v.findViewById(R.id.period_number_picker);
-        picker.setMinValue(1);
-        picker.setMaxValue(10);
-        picker.setValue(1);
-        if (periodNumber != -1) {
-            picker.setValue(periodNumber);
-        }
         CharSequence[] subjectTitles = new CharSequence[mSubjects.size()];
         for (int i = 0; i < mSubjects.size(); i++) {
             subjectTitles[i] = mSubjects.get(i).getTitle();
@@ -95,10 +88,10 @@ public class AddPeriodDialogFragment extends DialogFragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        builder.setMessage(R.string.select_subject);
+        builder.setTitle(R.string.select_subject);
         builder.setView(v);
         builder.setPositiveButton(R.string.add, (dialog, which) -> {
-            mPeriodCallback.onNewPeriod(picker.getValue(), spinner.getSelectedItem().toString());
+            mPeriodCallback.onNewPeriod(periodNumber, spinner.getSelectedItem().toString());
         });
         builder.setNegativeButton(R.string.cancel, (dialog, which) -> {
 
