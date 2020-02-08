@@ -2,8 +2,10 @@ package android.mahendra.attendancemanager.repositories;
 
 import android.app.Application;
 import android.mahendra.attendancemanager.daos.PeriodDao;
+import android.mahendra.attendancemanager.daos.SubjectPeriodDao;
 import android.mahendra.attendancemanager.database.MainDatabase;
 import android.mahendra.attendancemanager.models.Period;
+import android.mahendra.attendancemanager.models.Subject;
 
 import androidx.lifecycle.LiveData;
 
@@ -11,11 +13,13 @@ import java.util.List;
 
 public class PeriodRepository {
     private PeriodDao mPeriodDao;
+    private SubjectPeriodDao mSubjectPeriodDao;
     private LiveData<List<Period>> mAllPeriods;
 
     public PeriodRepository(Application application) {
         MainDatabase db = MainDatabase.getDatabase(application);
         mPeriodDao = db.mPeriodDao();
+        mSubjectPeriodDao = db.mSubjectPeriodDao();
         mAllPeriods = mPeriodDao.getAllPeriods();
     }
 
@@ -47,5 +51,9 @@ public class PeriodRepository {
 
     public LiveData<List<Period>> getAllPeriodsOfSubject(String subjectTitle) {
         return mPeriodDao.getAllPeriodsOfSubject(subjectTitle);
+    }
+
+    public LiveData<List<Subject>> getAllSubjectsOn(int weekDay) {
+        return mSubjectPeriodDao.getAllSubjectsOn(weekDay);
     }
 }

@@ -2,6 +2,7 @@ package android.mahendra.attendancemanager.viewmodels;
 
 import android.app.Application;
 import android.mahendra.attendancemanager.models.Period;
+import android.mahendra.attendancemanager.models.Subject;
 import android.mahendra.attendancemanager.repositories.PeriodRepository;
 
 import androidx.annotation.NonNull;
@@ -34,5 +35,9 @@ public class PeriodListViewModel extends AndroidViewModel {
 
     public LiveData<List<Period>> getAllPeriodsOn(int weekDay) {
         return mPeriodRepository.getAllPeriodsOn(weekDay);
+    }
+
+    public LiveData<List<Subject>> getAllSubjectsOn(int weekDay) {
+        return mPeriodRepository.getAllSubjectsOn(weekDay);
     }
 }

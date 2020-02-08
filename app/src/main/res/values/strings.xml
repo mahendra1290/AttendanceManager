@@ -13,4 +13,7 @@
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
     <string name="subject_label">Subject Title</string>
+    <string name="ask_for_attendance">Did you attended class today ?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

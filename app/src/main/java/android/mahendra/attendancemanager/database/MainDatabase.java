@@ -3,6 +3,7 @@ package android.mahendra.attendancemanager.database;
 import android.content.Context;
 import android.mahendra.attendancemanager.daos.PeriodDao;
 import android.mahendra.attendancemanager.daos.SubjectDao;
+import android.mahendra.attendancemanager.daos.SubjectPeriodDao;
 import android.mahendra.attendancemanager.models.Period;
 import android.mahendra.attendancemanager.models.Subject;
 
@@ -17,8 +18,8 @@ import java.util.concurrent.Executors;
 public abstract class MainDatabase extends RoomDatabase {
 
     public abstract SubjectDao subjectDao();
-
     public abstract PeriodDao mPeriodDao();
+    public abstract SubjectPeriodDao mSubjectPeriodDao();
 
     private static volatile MainDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;

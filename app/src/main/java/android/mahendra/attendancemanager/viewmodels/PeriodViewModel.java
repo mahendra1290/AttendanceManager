@@ -12,10 +12,16 @@ public class PeriodViewModel extends BaseObservable {
     }
 
     public String getTitle() {
+        if (mPeriod == null) {
+            return "-";
+        }
         return mPeriod.getSubjectTitle();
     }
 
     public String getPeriodNumber() {
+        if (mPeriod == null) {
+            return "-";
+        }
         return String.valueOf(mPeriod.getPeriodNumber());
     }
 }
