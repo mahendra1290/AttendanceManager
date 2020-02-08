@@ -24,7 +24,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.tabs.TabLayout;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class SubjectListFragment extends Fragment {
@@ -82,7 +85,8 @@ public class SubjectListFragment extends Fragment {
                 startActivity(intent);
                 return true;
             case R.id.mark_attendance:
-                Intent intent1 = MarkAttendaceActivity.newIntent(getActivity(), 1);
+                Intent intent1 = MarkAttendaceActivity.newIntent(getActivity(),
+                        Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
                 startActivity(intent1);
                 return true;
             default:
@@ -96,7 +100,6 @@ public class SubjectListFragment extends Fragment {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-
         if (requestCode == REQUEST_SUBJECT) {
             String subjectTitle = data.getStringExtra(AddSubjectDialogFragment.EXTRA_SUBJECT_TITLE);
             Subject subject = new Subject();
