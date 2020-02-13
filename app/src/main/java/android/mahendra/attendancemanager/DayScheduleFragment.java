@@ -24,13 +24,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 public class DayScheduleFragment extends Fragment {
     private static final String TAG = "DayScheduleFragment";
-
     private static int MAX_PERIODS = 8;
 
     private int weekDay;
