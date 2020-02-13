@@ -9,6 +9,7 @@ import android.mahendra.attendancemanager.viewmodels.SubjectListViewModel;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 public class TimeTableActivity extends AppCompatActivity implements
@@ -36,24 +38,18 @@ public class TimeTableActivity extends AppCompatActivity implements
         AddPeriodDialogFragment.SubjectCallback {
     private static final String TAG = "TimeTableActivity";
 
-    public static String[] WEEK_DAYS = {
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday"
-    };
-
+    public static SparseArray<String> WEEK_DAYS;
 
     private ViewPager2 mViewPager;
+
     private SubjectListViewModel mSubjectListViewModel;
     private PeriodListViewModel mPeriodListViewModel;
+
     private List<Integer> mWeekDays;
     private List<Subject> mSubjects;
 
-    private int weekDay = -1;
+    private int mWeekDay = -1;
+    private int mWeekDayOffSet = -1;
 
     public static Intent newIntent(Context context) {
         Intent i = new Intent(context, TimeTableActivity.class);
@@ -64,18 +60,21 @@ public class TimeTableActivity extends AppCompatActivity implements
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timetable);
+        createWeekDayHash();
+        mWeekDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+
         mSubjectListViewModel = new ViewModelProvider(this).get(SubjectListViewModel.class);
         mSubjectListViewModel.getAllSubjects().observe(this, subjects -> {
             mSubjects = subjects;
         });
+
         mPeriodListViewModel = new ViewModelProvider(this).get(PeriodListViewModel.class);
         mViewPager = findViewById(R.id.day_schedule_viewpager);
         mViewPager.setAdapter(new DayScheduleAdapter(this));
-        int weekDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-        mViewPager.setCurrentItem(weekDay-1, true);
+        mViewPager.setCurrentItem(mWeekDay - mWeekDayOffSet);
         TabLayout tabLayout = findViewById(R.id.tab_layout_weekday);
         new TabLayoutMediator(tabLayout, mViewPager,
-                (tab, position) -> tab.setText(WEEK_DAYS[position+1])
+                (tab, position) -> tab.setText(WEEK_DAYS.get(position + mWeekDayOffSet))
          ).attach();
     }
 
@@ -87,6 +86,7 @@ public class TimeTableActivity extends AppCompatActivity implements
             for (int i = 1; i < 7; i++) {
                 weekDays.add(i + 1);
             }
+            mWeekDayOffSet = weekDays.get(0);
         }
 
         @NonNull
@@ -111,7 +111,7 @@ public class TimeTableActivity extends AppCompatActivity implements
     @Override
     public void addPeriod(int periodNumber, int weekDay) {
         openAddPeriodDialog(periodNumber);
-        this.weekDay = weekDay;
+        this.mWeekDay = weekDay;
     }
 
     @Override
@@ -121,6 +121,17 @@ public class TimeTableActivity extends AppCompatActivity implements
 
     @Override
     public void onNewPeriod(int periodNumber, String periodTitle) {
-        mPeriodListViewModel.insert(new Period(periodTitle, periodNumber, weekDay));
+        mPeriodListViewModel.insert(new Period(periodTitle, periodNumber, mWeekDay));
+    }
+
+    private void createWeekDayHash() {
+        WEEK_DAYS = new SparseArray<>();
+        WEEK_DAYS.put(1, "sunday");
+        WEEK_DAYS.put(2, "monday");
+        WEEK_DAYS.put(3, "tuesday");
+        WEEK_DAYS.put(4, "wednesday");
+        WEEK_DAYS.put(5, "thursday");
+        WEEK_DAYS.put(6, "friday");
+        WEEK_DAYS.put(7, "saturday");
     }
 }
