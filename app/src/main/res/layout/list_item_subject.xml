@@ -67,17 +67,6 @@
                 android:background="@drawable/border_missed_button"
                 android:foreground="@drawable/ic_class_missed"
                 android:onClick="@{(view) -> subject_view_model.onMissed()}"
-                app:layout_constraintBottom_toBottomOf="@+id/onCancelledButton"
-                app:layout_constraintEnd_toStartOf="@+id/onCancelledButton"
-                app:layout_constraintTop_toTopOf="@+id/onCancelledButton" />
-
-            <Button
-                android:id="@+id/onCancelledButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/border_cancelled_button"
-                android:onClick="@{(view) -> subject_view_model.onCancelled()}"
                 app:layout_constraintBottom_toBottomOf="@+id/attendance_stat"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/attendance_stat" />
@@ -98,7 +87,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
                 android:max="100"

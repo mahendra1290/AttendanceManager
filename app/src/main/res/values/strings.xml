@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">AttendanceManager</string>
+    <string name="app_name">Attendance Manager</string>
+    <string name="timetable_activity">Time Table</string>
+    <string name="mark_attendance_activity">Mark Attendance</string>
     <string name="subject_name">Subject</string>
     <string name="class_attended">Attended</string>
     <string name="class_missed">Missed</string>
@@ -16,4 +18,5 @@
     <string name="ask_for_attendance">Did you attended class today ?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+
 </resources>
