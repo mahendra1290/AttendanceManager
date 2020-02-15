@@ -3,13 +3,11 @@ package android.mahendra.attendancemanager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.mahendra.attendancemanager.models.Subject;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.NumberPicker;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
@@ -17,21 +15,17 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class AddPeriodDialogFragment extends DialogFragment {
     private static final String TAG = "AddPeriodDialogFragment";
     private static final String ARG_PERIOD_NUMBER = "period number";
+    private static final String KEY_SUBJECT_TITLES = "subject title";
 
-    private List<Subject> mSubjects = new ArrayList<>();
-    private SubjectCallback mCallback;
-    private PeriodCallback mPeriodCallback;
+    private ArrayList<String> mSubjectTitles = new ArrayList<>();
+    private Callbacks mCallback;
 
-    public interface SubjectCallback {
-        List<Subject> getSubjects();
-    }
-
-    public interface PeriodCallback {
+    public interface Callbacks {
+        ArrayList<String> getSubjectTitles();
         void onNewPeriod(int periodNumber, String periodTitle);
     }
 
@@ -44,15 +38,19 @@ public class AddPeriodDialogFragment extends DialogFragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putStringArrayList(KEY_SUBJECT_TITLES, mSubjectTitles);
+    }
+
+    @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (getTargetFragment() == null) {
-            mCallback = (SubjectCallback) context;
-            mPeriodCallback = (PeriodCallback) context;
+            mCallback = (Callbacks) context;
         }
         else {
-            mCallback = (SubjectCallback) getTargetFragment();
-            mPeriodCallback = (PeriodCallback) getTargetFragment();
+            mCallback = (Callbacks) getTargetFragment();
         }
     }
 
@@ -60,13 +58,17 @@ public class AddPeriodDialogFragment extends DialogFragment {
     public void onDetach() {
         super.onDetach();
         mCallback = null;
-        mPeriodCallback = null;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSubjects = mCallback.getSubjects();
+        if (savedInstanceState != null) {
+            mSubjectTitles = savedInstanceState.getStringArrayList(KEY_SUBJECT_TITLES);
+        }
+        else {
+            mSubjectTitles = mCallback.getSubjectTitles();
+        }
     }
 
     @NonNull
@@ -77,21 +79,17 @@ public class AddPeriodDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View v = inflater.inflate(R.layout.dialog_choose_period, null);
+
         Spinner spinner = v.findViewById(R.id.spinner_select_period);
-        CharSequence[] subjectTitles = new CharSequence[mSubjects.size()];
-        for (int i = 0; i < mSubjects.size(); i++) {
-            subjectTitles[i] = mSubjects.get(i).getTitle();
-            Log.i(TAG, "onCreateDialog: " + subjectTitles[i]);
-        }
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item);
-        adapter.addAll(subjectTitles);
+        ArrayAdapter<String> adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item);
+        adapter.addAll(mSubjectTitles);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
         builder.setTitle(R.string.select_subject);
         builder.setView(v);
         builder.setPositiveButton(R.string.add, (dialog, which) -> {
-            mPeriodCallback.onNewPeriod(periodNumber, spinner.getSelectedItem().toString());
+            mCallback.onNewPeriod(periodNumber, spinner.getSelectedItem().toString());
         });
         builder.setNegativeButton(R.string.cancel, (dialog, which) -> {
 
