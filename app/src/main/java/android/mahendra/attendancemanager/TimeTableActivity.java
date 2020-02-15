@@ -20,6 +20,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
@@ -34,8 +36,7 @@ import java.util.List;
 
 public class TimeTableActivity extends AppCompatActivity implements
         DayScheduleFragment.AddPeriodCallback,
-        AddPeriodDialogFragment.PeriodCallback,
-        AddPeriodDialogFragment.SubjectCallback {
+        AddPeriodDialogFragment.Callbacks {
     private static final String TAG = "TimeTableActivity";
 
     public static SparseArray<String> WEEK_DAYS;
@@ -115,8 +116,12 @@ public class TimeTableActivity extends AppCompatActivity implements
     }
 
     @Override
-    public List<Subject> getSubjects() {
-        return mSubjects;
+    public ArrayList<String> getSubjectTitles() {
+        ArrayList<String> titles = new ArrayList<>();
+        for (Subject subject : mSubjects) {
+            titles.add(subject.getTitle());
+        }
+        return titles;
     }
 
     @Override
