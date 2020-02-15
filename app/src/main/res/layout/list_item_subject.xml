@@ -5,7 +5,7 @@
 
     <data>
         <variable
-            name="subject_view_model"
+            name="subjectViewModel"
             type="android.mahendra.attendancemanager.viewmodels.SubjectViewModel" />
     </data>
 
@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="@{subject_view_model.title}"
+                android:text="@{subjectViewModel.title}"
                 android:textColor="@android:color/black"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -39,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                android:text="@{subject_view_model.attendancePercentage}"
+                android:text="@{subjectViewModel.attendancePercentage}"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="@+id/subject_title_textview"
@@ -53,7 +53,7 @@
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/border_attended_button"
                 android:foreground="@drawable/ic_class_attended"
-                android:onClick="@{(view) -> subject_view_model.onAttended()}"
+                android:onClick="@{() -> subjectViewModel.onAttended()}"
                 android:padding="10dp"
                 app:layout_constraintBottom_toBottomOf="@+id/onMissedButton"
                 app:layout_constraintEnd_toStartOf="@+id/onMissedButton"
@@ -66,7 +66,7 @@
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/border_missed_button"
                 android:foreground="@drawable/ic_class_missed"
-                android:onClick="@{(view) -> subject_view_model.onMissed()}"
+                android:onClick="@{() -> subjectViewModel.onMissed()}"
                 app:layout_constraintBottom_toBottomOf="@+id/attendance_stat"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/attendance_stat" />
@@ -77,7 +77,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="@{subject_view_model.attendanceStat}"
+                android:text="@{subjectViewModel.attendanceStat}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/subject_title_textview" />
 
@@ -92,7 +92,7 @@
                 android:layout_marginBottom="8dp"
                 android:max="100"
                 android:min="0"
-                android:progress="@{subject_view_model.attendanceProgress}"
+                android:progress="@{subjectViewModel.attendanceProgress}"
                 android:progressTint="#1E40FF"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

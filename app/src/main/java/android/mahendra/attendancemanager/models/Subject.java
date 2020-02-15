@@ -37,8 +37,8 @@ public class Subject {
         void onCancelled(Subject subject);
     }
 
-    public static void setListner(Callback listner) {
-        sListner = listner;
+    public static void setListner(Callback listener) {
+        sListner = listener;
     }
 
     public Subject(String title) {
@@ -93,7 +93,7 @@ public class Subject {
     public void incrementClassesMissed() {
         mMissedClasses += 1;
         if (sListner != null) {
-            sListner.onAttended(this);
+            sListner.onMissed(this);
         }
 
     }
@@ -101,7 +101,7 @@ public class Subject {
     public void incrementClassesCancelled() {
         mCancelledClasses += 1;
         if (sListner != null) {
-            sListner.onAttended(this);
+            sListner.onCancelled(this);
         }
     }
 
