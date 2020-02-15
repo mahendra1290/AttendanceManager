@@ -7,7 +7,9 @@ import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SubjectListViewModel extends AndroidViewModel implements Subject.Callback {
@@ -47,5 +49,17 @@ public class SubjectListViewModel extends AndroidViewModel implements Subject.Ca
     @Override
     public void onCancelled(Subject subject) {
         update(subject);
+    }
+
+    private List<String> extractTitles(List<Subject> subjects) {
+        List<String> subjectTitles = new ArrayList<>();
+        for (Subject subject : subjects) {
+            subjectTitles.add(subject.getTitle());
+        }
+        return subjectTitles;
+    }
+
+    public LiveData<List<String>> getSubjectTitles() {
+        return Transformations.map(mAllSubjects, this::extractTitles);
     }
 }
