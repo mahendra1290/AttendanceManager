@@ -1,13 +1,16 @@
-package android.mahendra.attendancemanager;
+package android.mahendra.attendancemanager.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.mahendra.attendancemanager.R;
+import android.mahendra.attendancemanager.models.Period;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
@@ -19,6 +22,7 @@ import java.util.ArrayList;
 public class AddPeriodDialogFragment extends DialogFragment {
     private static final String TAG = "AddPeriodDialogFragment";
     private static final String ARG_PERIOD_NUMBER = "period number";
+    private static final String ARG_PERIOD_TITLE = "period title";
     private static final String KEY_SUBJECT_TITLES = "subject title";
 
     private ArrayList<String> mSubjectTitles = new ArrayList<>();
@@ -26,12 +30,13 @@ public class AddPeriodDialogFragment extends DialogFragment {
 
     public interface Callbacks {
         ArrayList<String> getSubjectTitles();
-        void onNewPeriod(int periodNumber, String periodTitle);
+        void onNewPeriod(String periodTitle);
+        void onPeriodClear(String periodTitle);
     }
 
-    public static AddPeriodDialogFragment newInstance(int periodNumber) {
+    public static AddPeriodDialogFragment newInstance(String periodTitle) {
         Bundle args = new Bundle();
-        args.putInt(ARG_PERIOD_NUMBER, periodNumber);
+        args.putString(ARG_PERIOD_TITLE, periodTitle);
         AddPeriodDialogFragment fragment = new AddPeriodDialogFragment();
         fragment.setArguments(args);
         return fragment;
@@ -75,10 +80,23 @@ public class AddPeriodDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         Log.i(TAG, "onCreateDialog: created dialog");
-        int periodNumber = getArguments().getInt(ARG_PERIOD_NUMBER);
+        String periodTitle = getArguments().getString(ARG_PERIOD_TITLE, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View v = inflater.inflate(R.layout.dialog_choose_period, null);
+
+        ImageView clearPeriod = v.findViewById(R.id.clear_period);
+        clearPeriod.setOnClickListener(v1 -> {
+            mCallback.onPeriodClear(periodTitle);
+            dismiss();
+        });
+
+        if (periodTitle != null) {
+            clearPeriod.setVisibility(View.VISIBLE);
+        }
+        else {
+            clearPeriod.setVisibility(View.GONE);
+        }
 
         Spinner spinner = v.findViewById(R.id.spinner_select_period);
         ArrayAdapter<String> adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item);
@@ -88,8 +106,14 @@ public class AddPeriodDialogFragment extends DialogFragment {
 
         builder.setTitle(R.string.select_subject);
         builder.setView(v);
+
+        if (periodTitle != null) {
+            int position = adapter.getPosition(periodTitle);
+            spinner.setSelection(position);
+        }
+
         builder.setPositiveButton(R.string.add, (dialog, which) -> {
-            mCallback.onNewPeriod(periodNumber, spinner.getSelectedItem().toString());
+            mCallback.onNewPeriod(spinner.getSelectedItem().toString());
         });
         builder.setNegativeButton(R.string.cancel, (dialog, which) -> {
 
