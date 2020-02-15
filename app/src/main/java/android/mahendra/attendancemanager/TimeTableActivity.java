@@ -28,8 +28,7 @@ import java.util.Calendar;
 import java.util.List;
 
 public class TimeTableActivity extends AppCompatActivity implements
-        DayScheduleFragment.AddPeriodCallback,
-        AddPeriodDialogFragment.Callbacks {
+        DayScheduleFragment.Callbacks, AddPeriodDialogFragment.Callbacks {
     private static final String TAG = "TimeTableActivity";
 
     public static SparseArray<String> WEEK_DAYS;
@@ -42,6 +41,7 @@ public class TimeTableActivity extends AppCompatActivity implements
     private List<String> mSubjectsTitles;
 
     private int mWeekDay = -1;
+    private int mPeriodNumber = -1;
     private int mWeekDayOffSet = -1;
 
     public static Intent newIntent(Context context) {
@@ -95,20 +95,15 @@ public class TimeTableActivity extends AppCompatActivity implements
         }
     }
 
-    public void openAddPeriodDialog(String periodTitle) {
-        AddPeriodDialogFragment dialogFragment = AddPeriodDialogFragment.newInstance(periodTitle);
+    public void openAddPeriodDialog(String periodTitle, int periodNumber, int weekDay) {
+        AddPeriodDialogFragment dialogFragment
+                = AddPeriodDialogFragment.newInstance(periodTitle, periodNumber, weekDay);
         FragmentManager fm = getSupportFragmentManager();
         dialogFragment.show(fm, "period");
     }
 
-    @Override
-    public void onModifyPeriod(Period period) {
-        if (period != null) {
-            openAddPeriodDialog(period.getSubjectTitle());
-        }
-        else {
-            openAddPeriodDialog(null);
-        }
+    public void openAddPeriodDialog(int periodNumber, int weekDay) {
+        openAddPeriodDialog(null, periodNumber, weekDay);
     }
 
     @Override
@@ -117,8 +112,23 @@ public class TimeTableActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onNewPeriod(String periodTitle) {
-//        mPeriodListViewModel.insert(new Period(periodTitle, periodNumber, mWeekDay));
+    public void onAddPeriod(int periodNumber, int weekDay) {
+        openAddPeriodDialog(periodNumber, weekDay);
+    }
+
+    @Override
+    public void onModifyPeriod(Period period) {
+        openAddPeriodDialog(period.getSubjectTitle(), period.getPeriodNumber(), period.getWeekDay());
+    }
+
+    @Override
+    public void onDeletePeriod(String title) {
+
+    }
+
+    @Override
+    public void onPeriodSelected(String title) {
+
     }
 
     private void createWeekDayHash() {
@@ -130,10 +140,5 @@ public class TimeTableActivity extends AppCompatActivity implements
         WEEK_DAYS.put(5, "thursday");
         WEEK_DAYS.put(6, "friday");
         WEEK_DAYS.put(7, "saturday");
-    }
-
-    @Override
-    public void onPeriodClear(String periodTitle) {
-
     }
 }

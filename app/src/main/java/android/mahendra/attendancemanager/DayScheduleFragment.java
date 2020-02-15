@@ -3,6 +3,7 @@ package android.mahendra.attendancemanager;
 import android.content.Context;
 import android.mahendra.attendancemanager.databinding.FragmentDayScheduleBinding;
 import android.mahendra.attendancemanager.databinding.ListItemPeriodBinding;
+import android.mahendra.attendancemanager.dialogs.AddPeriodDialogFragment;
 import android.mahendra.attendancemanager.models.Period;
 import android.mahendra.attendancemanager.viewmodels.PeriodListViewModel;
 import android.mahendra.attendancemanager.viewmodels.PeriodViewModel;
@@ -17,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,19 +29,21 @@ import java.util.List;
 public class DayScheduleFragment extends Fragment {
     private static final String TAG = "DayScheduleFragment";
     private static int MAX_PERIODS = 8;
+    private static int REQUEST_PERIOD = 1;
 
     private int weekDay;
     private PeriodListViewModel mPeriodListViewModel;
-    private AddPeriodCallback mCallback;
+    private Callbacks mCallback;
 
-    public interface AddPeriodCallback {
+    public interface Callbacks {
+        void onAddPeriod(int periodNumber, int weekDay);
         void onModifyPeriod(Period period);
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        mCallback = (AddPeriodCallback) context;
+        mCallback = (Callbacks) context;
     }
 
     @Override
@@ -102,11 +106,11 @@ public class DayScheduleFragment extends Fragment {
         @Override
         public void onClick(View v) {
             Toast.makeText(getActivity(), "period -> " + mPeriod.getPeriodNumber(), Toast.LENGTH_SHORT).show();
-            if (!mPeriod.getSubjectTitle().equals("-")) {
-                mCallback.onModifyPeriod(mPeriod);
+            if (mPeriod.getSubjectTitle().equals("-")) {
+                mCallback.onAddPeriod(mPeriod.getPeriodNumber(), weekDay);
             }
             else {
-                mCallback.onModifyPeriod(null);
+                mCallback.onModifyPeriod(mPeriod);
             }
         }
     }
