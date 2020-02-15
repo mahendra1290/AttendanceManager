@@ -34,4 +34,7 @@ public interface PeriodDao {
 
     @Query("SELECT * FROM PERIOD_TABLE WHERE subject_title=:subjectTitle")
     LiveData<List<Period>> getAllPeriodsOfSubject(String subjectTitle);
+
+    @Query("DELETE FROM PERIOD_TABLE WHERE week_day=:weekDay AND period_number=:periodNumber")
+    void deletePeriod(int periodNumber, int weekDay);
 }
