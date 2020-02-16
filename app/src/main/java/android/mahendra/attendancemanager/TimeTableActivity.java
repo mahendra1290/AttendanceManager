@@ -2,7 +2,7 @@ package android.mahendra.attendancemanager;
 
 import android.content.Context;
 import android.content.Intent;
-import android.mahendra.attendancemanager.dialogs.AddPeriodDialogFragment;
+import android.mahendra.attendancemanager.dialogs.PeriodDialogFragment;
 import android.mahendra.attendancemanager.models.Period;
 import android.mahendra.attendancemanager.viewmodels.PeriodListViewModel;
 import android.mahendra.attendancemanager.viewmodels.SubjectListViewModel;
@@ -28,7 +28,7 @@ import java.util.Calendar;
 import java.util.List;
 
 public class TimeTableActivity extends AppCompatActivity implements
-        DayScheduleFragment.Callbacks, AddPeriodDialogFragment.Callbacks {
+        DayScheduleFragment.Callbacks, PeriodDialogFragment.Callbacks {
     private static final String TAG = "TimeTableActivity";
 
     public static SparseArray<String> WEEK_DAYS;
@@ -98,8 +98,8 @@ public class TimeTableActivity extends AppCompatActivity implements
     }
 
     public void openAddPeriodDialog(String periodTitle) {
-        AddPeriodDialogFragment dialogFragment
-                = AddPeriodDialogFragment.newInstance(periodTitle);
+        PeriodDialogFragment dialogFragment
+                = PeriodDialogFragment.newInstance(periodTitle);
         FragmentManager fm = getSupportFragmentManager();
         dialogFragment.show(fm, "period");
     }

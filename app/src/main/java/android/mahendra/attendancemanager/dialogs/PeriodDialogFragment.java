@@ -3,7 +3,6 @@ package android.mahendra.attendancemanager.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.mahendra.attendancemanager.R;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,8 +19,8 @@ import androidx.fragment.app.DialogFragment;
 
 import java.util.ArrayList;
 
-public class AddPeriodDialogFragment extends DialogFragment {
-    private static final String TAG = "AddPeriodDialogFragment";
+public class PeriodDialogFragment extends DialogFragment {
+    private static final String TAG = "PeriodDialogFragment";
     private static final String ARG_PERIOD_TITLE = "period title";
     private static final String KEY_TITLE_OPTIONS = "title options";
 
@@ -34,10 +33,10 @@ public class AddPeriodDialogFragment extends DialogFragment {
         void onDeletePeriod(String title);
     }
 
-    public static AddPeriodDialogFragment newInstance(String periodTitle) {
+    public static PeriodDialogFragment newInstance(String periodTitle) {
         Bundle args = new Bundle();
         args.putString(ARG_PERIOD_TITLE, periodTitle);
-        AddPeriodDialogFragment fragment = new AddPeriodDialogFragment();
+        PeriodDialogFragment fragment = new PeriodDialogFragment();
         fragment.setArguments(args);
         return fragment;
     }
