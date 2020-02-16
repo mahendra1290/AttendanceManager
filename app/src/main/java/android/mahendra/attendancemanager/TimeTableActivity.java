@@ -41,7 +41,6 @@ public class TimeTableActivity extends AppCompatActivity implements
     private List<String> mSubjectsTitles;
 
     private int mWeekDay = -1;
-    private int mPeriodNumber = -1;
     private int mWeekDayOffSet = -1;
 
     private Period mTempPeriod;
@@ -132,10 +131,7 @@ public class TimeTableActivity extends AppCompatActivity implements
 
     @Override
     public void onPeriodSelected(String title) {
-        Log.i(TAG, "onPeriodSelected: " + title);
         mTempPeriod.setSubjectTitle(title);
-        Log.i(TAG, "mTempPeriod " + mTempPeriod.getSubjectTitle());
-        Log.i(TAG, "onPeriodSelected: " + addNewPeriod);
         if (addNewPeriod) {
             mPeriodListViewModel.insert(mTempPeriod);
         }

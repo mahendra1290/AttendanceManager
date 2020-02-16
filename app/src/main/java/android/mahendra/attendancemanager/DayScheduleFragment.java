@@ -34,6 +34,10 @@ public class DayScheduleFragment extends Fragment {
     private PeriodListViewModel mPeriodListViewModel;
     private Callbacks mCallback;
 
+    /**
+     * callbacks needed to be implemented by hosting activity
+     * for adding period and modifying period
+     */
     public interface Callbacks {
         void onAddPeriod(int periodNumber, int weekDay);
         void onModifyPeriod(Period period);
@@ -137,7 +141,13 @@ public class DayScheduleFragment extends Fragment {
             return mPeriodList.size();
         }
 
+        /**
+         * modifies period list by replacing same period number period from
+         * periods
+         * @param periods : new period list whenever it is changed
+         */
         public void setPeriodList(List<Period> periods) {
+            // i know not a good implementation
             for (int i = 0; i < MAX_PERIODS; i++) {
                 mPeriodList.get(i).setSubjectTitle("-");
                 for (Period period : periods) {
