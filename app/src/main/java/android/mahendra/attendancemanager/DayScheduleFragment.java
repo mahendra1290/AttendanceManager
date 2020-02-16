@@ -3,8 +3,8 @@ package android.mahendra.attendancemanager;
 import android.content.Context;
 import android.mahendra.attendancemanager.databinding.FragmentDayScheduleBinding;
 import android.mahendra.attendancemanager.databinding.ListItemPeriodBinding;
+import android.mahendra.attendancemanager.dialogs.AddPeriodDialogFragment;
 import android.mahendra.attendancemanager.models.Period;
-import android.mahendra.attendancemanager.models.Subject;
 import android.mahendra.attendancemanager.viewmodels.PeriodListViewModel;
 import android.mahendra.attendancemanager.viewmodels.PeriodViewModel;
 import android.os.Bundle;
@@ -18,7 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,18 +31,18 @@ public class DayScheduleFragment extends Fragment {
     private static int MAX_PERIODS = 8;
 
     private int weekDay;
-    private LiveData<Period> mPeriods;
     private PeriodListViewModel mPeriodListViewModel;
-    private AddPeriodCallback mCallback;
+    private Callbacks mCallback;
 
-    public interface AddPeriodCallback {
-        void addPeriod(int periodNumber, int weekDay);
+    public interface Callbacks {
+        void onAddPeriod(int periodNumber, int weekDay);
+        void onModifyPeriod(Period period);
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        mCallback = (AddPeriodCallback) context;
+        mCallback = (Callbacks) context;
     }
 
     @Override
@@ -71,16 +71,17 @@ public class DayScheduleFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         FragmentDayScheduleBinding binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_day_schedule, container, false);
-        binding.periodListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         PeriodAdapter adapter = new PeriodAdapter();
-        mPeriodListViewModel.getAllPeriodsOn(weekDay).observe(getViewLifecycleOwner(), periods -> {
-            adapter.setPeriodList(periods);
-        });
+        mPeriodListViewModel.getAllPeriodsOn(weekDay).observe(getViewLifecycleOwner(), adapter::setPeriodList);
+
+        binding.periodListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.periodListRecyclerView.setAdapter(adapter);
         return binding.getRoot();
     }
 
-    private class PeriodHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private class PeriodHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
         private ListItemPeriodBinding mBinding;
         private Period mPeriod;
 
@@ -100,8 +101,12 @@ public class DayScheduleFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(getActivity(), "period -> " + mPeriod.getPeriodNumber(), Toast.LENGTH_SHORT).show();
-            mCallback.addPeriod(mPeriod.getPeriodNumber(), weekDay);
+            if (mPeriod.getSubjectTitle().equals("-")) {
+                mCallback.onAddPeriod(mPeriod.getPeriodNumber(), weekDay);
+            }
+            else {
+                mCallback.onModifyPeriod(mPeriod);
+            }
         }
     }
 
@@ -133,8 +138,13 @@ public class DayScheduleFragment extends Fragment {
         }
 
         public void setPeriodList(List<Period> periods) {
-            for (Period period : periods) {
-                mPeriodList.get(period.getPeriodNumber()-1).setSubjectTitle(period.getSubjectTitle());
+            for (int i = 0; i < MAX_PERIODS; i++) {
+                mPeriodList.get(i).setSubjectTitle("-");
+                for (Period period : periods) {
+                    if (mPeriodList.get(i).getPeriodNumber() == period.getPeriodNumber()) {
+                        mPeriodList.set(i, period);
+                    }
+                }
             }
             notifyDataSetChanged();
         }

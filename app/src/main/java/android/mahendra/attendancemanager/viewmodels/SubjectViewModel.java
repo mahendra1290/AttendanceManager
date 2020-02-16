@@ -1,6 +1,7 @@
 package android.mahendra.attendancemanager.viewmodels;
 
 import android.mahendra.attendancemanager.models.Subject;
+import android.mahendra.attendancemanager.repositories.SubjectRepository;
 import android.util.Log;
 
 import androidx.databinding.BaseObservable;
@@ -46,9 +47,5 @@ public class SubjectViewModel extends BaseObservable {
 
     public void onMissed() {
         mSubject.incrementClassesMissed();
-    }
-
-    public void onCancelled() {
-        mSubject.incrementClassesCancelled();
     }
 }

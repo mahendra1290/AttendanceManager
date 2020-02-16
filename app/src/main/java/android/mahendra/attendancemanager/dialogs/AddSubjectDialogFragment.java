@@ -1,9 +1,10 @@
-package android.mahendra.attendancemanager;
+package android.mahendra.attendancemanager.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.mahendra.attendancemanager.R;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -32,7 +33,7 @@ public class AddSubjectDialogFragment extends DialogFragment {
         builder.setTitle(R.string.add_subject);
         builder.setView(v);
         builder.setPositiveButton(R.string.add, (dialog, which) -> {
-            sendResult(Activity.RESULT_OK, mSubjectTitle.getText().toString());
+            sendResult(Activity.RESULT_OK, mSubjectTitle.getText().toString().trim());
         });
         builder.setNegativeButton(R.string.cancel, (dialog, which) -> {
 

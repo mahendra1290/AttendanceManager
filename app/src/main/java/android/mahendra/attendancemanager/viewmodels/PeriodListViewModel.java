@@ -40,4 +40,8 @@ public class PeriodListViewModel extends AndroidViewModel {
     public LiveData<List<Subject>> getAllSubjectsOn(int weekDay) {
         return mPeriodRepository.getAllSubjectsOn(weekDay);
     }
+
+    public void deletePeriod(int periodNumber, int weekDay) {
+        mPeriodRepository.deletePeriod(periodNumber, weekDay);
+    }
 }

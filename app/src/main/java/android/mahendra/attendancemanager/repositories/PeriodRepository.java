@@ -56,4 +56,10 @@ public class PeriodRepository {
     public LiveData<List<Subject>> getAllSubjectsOn(int weekDay) {
         return mSubjectPeriodDao.getAllSubjectsOn(weekDay);
     }
+
+    public void deletePeriod(int periodNumber, int weekDay) {
+        MainDatabase.databaseWriteExecutor.execute(() ->{
+                mPeriodDao.deletePeriod(periodNumber, weekDay);
+        });
+    }
 }
