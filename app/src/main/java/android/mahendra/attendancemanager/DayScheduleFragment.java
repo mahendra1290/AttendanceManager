@@ -29,7 +29,6 @@ import java.util.List;
 public class DayScheduleFragment extends Fragment {
     private static final String TAG = "DayScheduleFragment";
     private static int MAX_PERIODS = 8;
-    private static int REQUEST_PERIOD = 1;
 
     private int weekDay;
     private PeriodListViewModel mPeriodListViewModel;
@@ -72,14 +71,11 @@ public class DayScheduleFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         FragmentDayScheduleBinding binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_day_schedule, container, false);
-        binding.periodListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         PeriodAdapter adapter = new PeriodAdapter();
-        mPeriodListViewModel.getAllPeriodsOn(weekDay).observe(getViewLifecycleOwner(), periods -> {
-            for (Period period : periods) {
-                Log.i(TAG, "onCreateView: " + period.getSubjectTitle() + " " + period.getPeriodNumber());
-            }
-            adapter.setPeriodList(periods);
-        });
+        mPeriodListViewModel.getAllPeriodsOn(weekDay).observe(getViewLifecycleOwner(), adapter::setPeriodList);
+
+        binding.periodListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.periodListRecyclerView.setAdapter(adapter);
         return binding.getRoot();
     }
@@ -105,7 +101,6 @@ public class DayScheduleFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(getActivity(), "period -> " + mPeriod.getPeriodNumber(), Toast.LENGTH_SHORT).show();
             if (mPeriod.getSubjectTitle().equals("-")) {
                 mCallback.onAddPeriod(mPeriod.getPeriodNumber(), weekDay);
             }
@@ -143,8 +138,13 @@ public class DayScheduleFragment extends Fragment {
         }
 
         public void setPeriodList(List<Period> periods) {
-            for (Period period : periods) {
-                mPeriodList.get(period.getPeriodNumber() - 1).setSubjectTitle(period.getSubjectTitle());
+            for (int i = 0; i < MAX_PERIODS; i++) {
+                mPeriodList.get(i).setSubjectTitle("-");
+                for (Period period : periods) {
+                    if (mPeriodList.get(i).getPeriodNumber() == period.getPeriodNumber()) {
+                        mPeriodList.set(i, period);
+                    }
+                }
             }
             notifyDataSetChanged();
         }

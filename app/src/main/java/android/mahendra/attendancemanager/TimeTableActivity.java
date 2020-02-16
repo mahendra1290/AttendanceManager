@@ -44,6 +44,9 @@ public class TimeTableActivity extends AppCompatActivity implements
     private int mPeriodNumber = -1;
     private int mWeekDayOffSet = -1;
 
+    private Period mTempPeriod;
+    private boolean addNewPeriod;
+
     public static Intent newIntent(Context context) {
         Intent i = new Intent(context, TimeTableActivity.class);
         return i;
@@ -95,15 +98,11 @@ public class TimeTableActivity extends AppCompatActivity implements
         }
     }
 
-    public void openAddPeriodDialog(String periodTitle, int periodNumber, int weekDay) {
+    public void openAddPeriodDialog(String periodTitle) {
         AddPeriodDialogFragment dialogFragment
-                = AddPeriodDialogFragment.newInstance(periodTitle, periodNumber, weekDay);
+                = AddPeriodDialogFragment.newInstance(periodTitle);
         FragmentManager fm = getSupportFragmentManager();
         dialogFragment.show(fm, "period");
-    }
-
-    public void openAddPeriodDialog(int periodNumber, int weekDay) {
-        openAddPeriodDialog(null, periodNumber, weekDay);
     }
 
     @Override
@@ -113,22 +112,38 @@ public class TimeTableActivity extends AppCompatActivity implements
 
     @Override
     public void onAddPeriod(int periodNumber, int weekDay) {
-        openAddPeriodDialog(periodNumber, weekDay);
+        addNewPeriod = true;
+        mTempPeriod = new Period(null, periodNumber, weekDay);
+        openAddPeriodDialog(mTempPeriod.getSubjectTitle());
     }
 
     @Override
     public void onModifyPeriod(Period period) {
-        openAddPeriodDialog(period.getSubjectTitle(), period.getPeriodNumber(), period.getWeekDay());
+        Log.i(TAG, "onModifyPeriod: " + period.getSubjectTitle());
+        addNewPeriod = false;
+        mTempPeriod = period;
+        openAddPeriodDialog(period.getSubjectTitle());
     }
 
     @Override
     public void onDeletePeriod(String title) {
-
+        mPeriodListViewModel.deletePeriod(mTempPeriod.getPeriodNumber(), mTempPeriod.getWeekDay());
     }
 
     @Override
     public void onPeriodSelected(String title) {
-
+        Log.i(TAG, "onPeriodSelected: " + title);
+        mTempPeriod.setSubjectTitle(title);
+        Log.i(TAG, "mTempPeriod " + mTempPeriod.getSubjectTitle());
+        Log.i(TAG, "onPeriodSelected: " + addNewPeriod);
+        if (addNewPeriod) {
+            mPeriodListViewModel.insert(mTempPeriod);
+        }
+        else {
+            mPeriodListViewModel.update(mTempPeriod);
+        }
+        mTempPeriod = null;
+        addNewPeriod = false;
     }
 
     private void createWeekDayHash() {
