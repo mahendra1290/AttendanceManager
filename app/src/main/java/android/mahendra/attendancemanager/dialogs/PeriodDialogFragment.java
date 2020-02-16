@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -85,7 +86,7 @@ public class PeriodDialogFragment extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View v = inflater.inflate(R.layout.dialog_choose_period, null);
 
-        ImageView clearPeriod = v.findViewById(R.id.clear_period);
+        Button clearPeriod = v.findViewById(R.id.clear_period);
         clearPeriod.setOnClickListener(v1 -> {
             mCallback.onDeletePeriod(periodTitle);
             Toast.makeText(getActivity(), "Removed " + periodTitle, Toast.LENGTH_SHORT).show();
