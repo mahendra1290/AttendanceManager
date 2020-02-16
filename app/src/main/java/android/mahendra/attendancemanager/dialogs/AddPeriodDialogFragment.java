@@ -3,9 +3,8 @@ package android.mahendra.attendancemanager.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.mahendra.attendancemanager.R;
-import android.mahendra.attendancemanager.models.Period;
-import android.mahendra.attendancemanager.models.Subject;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +12,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,29 +22,21 @@ import java.util.ArrayList;
 
 public class AddPeriodDialogFragment extends DialogFragment {
     private static final String TAG = "AddPeriodDialogFragment";
-    private static final String ARG_PERIOD_NUMBER = "period number";
     private static final String ARG_PERIOD_TITLE = "period title";
-    private static final String ARG_PERIOD_WEEK = "period week";
-    private static final String KEY_SUBJECT_TITLES = "subject title";
-
-    private static final int RESULT_NEW_PERIOD = 0;
-    private static final int RESULT_MODIFY_PERIOD = 1;
-    private static final int RESULT_DELETE_PERIOD = 2;
+    private static final String KEY_TITLE_OPTIONS = "title options";
 
     private ArrayList<String> mSubjectTitles = new ArrayList<>();
     private Callbacks mCallback;
 
     public interface Callbacks {
         ArrayList<String> getSubjectTitles();
-        void onPeriodSelected(String title, int periodNumber, int weekday);
+        void onPeriodSelected(String title);
         void onDeletePeriod(String title);
     }
 
-    public static AddPeriodDialogFragment newInstance(String periodTitle, int periodNumber, int weeDay) {
+    public static AddPeriodDialogFragment newInstance(String periodTitle) {
         Bundle args = new Bundle();
         args.putString(ARG_PERIOD_TITLE, periodTitle);
-        args.putInt(ARG_PERIOD_NUMBER, periodNumber);
-        args.putInt(ARG_PERIOD_WEEK, weeDay);
         AddPeriodDialogFragment fragment = new AddPeriodDialogFragment();
         fragment.setArguments(args);
         return fragment;
@@ -53,7 +45,7 @@ public class AddPeriodDialogFragment extends DialogFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putStringArrayList(KEY_SUBJECT_TITLES, mSubjectTitles);
+        outState.putStringArrayList(KEY_TITLE_OPTIONS, mSubjectTitles);
     }
 
     @Override
@@ -77,7 +69,7 @@ public class AddPeriodDialogFragment extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            mSubjectTitles = savedInstanceState.getStringArrayList(KEY_SUBJECT_TITLES);
+            mSubjectTitles = savedInstanceState.getStringArrayList(KEY_TITLE_OPTIONS);
         }
         else {
             mSubjectTitles = mCallback.getSubjectTitles();
@@ -89,8 +81,6 @@ public class AddPeriodDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         Log.i(TAG, "onCreateDialog: created dialog");
         String periodTitle = getArguments().getString(ARG_PERIOD_TITLE, null);
-        int periodNumber = getArguments().getInt(ARG_PERIOD_NUMBER, -1);
-        int weekDay = getArguments().getInt(ARG_PERIOD_WEEK, -1);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
@@ -99,6 +89,7 @@ public class AddPeriodDialogFragment extends DialogFragment {
         ImageView clearPeriod = v.findViewById(R.id.clear_period);
         clearPeriod.setOnClickListener(v1 -> {
             mCallback.onDeletePeriod(periodTitle);
+            Toast.makeText(getActivity(), "Removed " + periodTitle, Toast.LENGTH_SHORT).show();
             dismiss();
         });
 
@@ -124,7 +115,7 @@ public class AddPeriodDialogFragment extends DialogFragment {
         }
 
         builder.setPositiveButton(R.string.add, (dialog, which) -> {
-            mCallback.onNewPeriod(spinner.getSelectedItem().toString(), periodNumber, weekDay);
+            mCallback.onPeriodSelected(spinner.getSelectedItem().toString());
         });
         builder.setNegativeButton(R.string.cancel, (dialog, which) -> {
 
