@@ -126,6 +126,7 @@ public class TimeTableActivity extends AppCompatActivity implements
 
     @Override
     public void onDeletePeriod(String title) {
+        Log.i(TAG, "onDeletePeriod: " + mTempPeriod);
         mPeriodListViewModel.deletePeriod(mTempPeriod.getPeriodNumber(), mTempPeriod.getWeekDay());
     }
 
