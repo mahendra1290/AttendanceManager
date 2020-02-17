@@ -8,5 +8,7 @@
         android:height="24dp"
         android:width="40dp"/>
     <corners
-        android:radius="8dp"/>
+        android:radius="4dp"/>
+    <stroke
+        android:color="@color/cardview_dark_background"/>
 </shape>
