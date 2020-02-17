@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.mahendra.attendancemanager.databinding.FragmentSubjectListBinding;
 import android.mahendra.attendancemanager.databinding.ListItemSubjectBinding;
 import android.mahendra.attendancemanager.dialogs.AddSubjectDialogFragment;
+import android.mahendra.attendancemanager.dialogs.SubjectOptionBottomSheetDialog;
 import android.mahendra.attendancemanager.models.Subject;
 import android.mahendra.attendancemanager.viewmodels.SubjectListViewModel;
 import android.mahendra.attendancemanager.viewmodels.SubjectViewModel;
@@ -15,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -105,19 +107,25 @@ public class SubjectListFragment extends Fragment {
         }
     }
 
-    private class SubjectHolder extends RecyclerView.ViewHolder {
+    private class SubjectHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ListItemSubjectBinding mBinding;
 
         public SubjectHolder(ListItemSubjectBinding binding) {
             super(binding.getRoot());
             mBinding = binding;
             mBinding.setSubjectViewModel(new SubjectViewModel());
+            mBinding.moreOptions.setOnClickListener(this);
         }
 
         public void bind(Subject subject) {
             mBinding.getSubjectViewModel().setSubject(subject);
             mBinding.getSubjectViewModel().notifyChange();
             mBinding.executePendingBindings();
+        }
+
+        @Override
+        public void onClick(View v) {
+            openSubjectOptionDialog(mBinding.getSubjectViewModel().getTitle());
         }
     }
 
@@ -151,6 +159,11 @@ public class SubjectListFragment extends Fragment {
     private void openAddSubjectDialog() {
         AddSubjectDialogFragment dialogFragment = new AddSubjectDialogFragment();
         dialogFragment.setTargetFragment(SubjectListFragment.this, REQUEST_SUBJECT);
-        dialogFragment.show(getFragmentManager(), "subject");
+        dialogFragment.show(getParentFragmentManager(), "subject");
+    }
+
+    private void openSubjectOptionDialog(String title) {
+        SubjectOptionBottomSheetDialog dialog = SubjectOptionBottomSheetDialog.newInstance(title);
+        dialog.show(getParentFragmentManager(), "option");
     }
 }
