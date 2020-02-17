@@ -29,7 +29,7 @@ public class SubjectOptionBottomSheetDialog extends BottomSheetDialogFragment im
     }
 
     public interface Listener {
-        void onDeleteSelected();
+        void onDeleteSelected(String title);
         void onEditTitleSelected();
         void onEditAttendanceSelected();
         void onResetAttendanceSelected();
@@ -75,7 +75,7 @@ public class SubjectOptionBottomSheetDialog extends BottomSheetDialogFragment im
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.delete_subject_option:
-                mListener.onDeleteSelected();
+                mListener.onDeleteSelected(getArguments().getString(ARG_TITLE));
                 break;
             case R.id.edit_title_option:
                 mListener.onEditTitleSelected();

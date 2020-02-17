@@ -25,5 +25,9 @@
     <string name="edit_attendance">Edit Attendance</string>
     <string name="reset">Reset Attendance</string>
     <string name="remove">Remove</string>
+    <string name="delete_subject">Delete Subject</string>
+    <string name="warning_subject_delete">Are you sure you want to delete the subject ?</string>
+    <string name="reset_attendance">Reset Attendance</string>
+    <string name="warning_reset_attendance">It will remove all the data. Are you sure you want to reset attendance ?</string>
 
 </resources>
