@@ -8,7 +8,6 @@ import android.mahendra.attendancemanager.dialogs.SubjectTitleEditDialogFragment
 import android.mahendra.attendancemanager.dialogs.ConfirmationDialogFragment;
 import android.mahendra.attendancemanager.dialogs.SubjectOptionBottomSheetDialog;
 import android.mahendra.attendancemanager.models.Subject;
-import android.mahendra.attendancemanager.viewmodels.SubjectListViewModel;
 import android.mahendra.attendancemanager.viewmodels.SubjectViewModel;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -35,7 +34,7 @@ public class SubjectListFragment extends Fragment implements SubjectOptionBottom
     private static final String TAG = "SubjectListFragment";
     private static final int REQUEST_SUBJECT = 0;
 
-    private SubjectListViewModel subjectListViewModel;
+    private SubjectViewModel mSubjectViewModel;
 
     public static SubjectListFragment newInstance() {
         return new SubjectListFragment();
@@ -56,8 +55,8 @@ public class SubjectListFragment extends Fragment implements SubjectOptionBottom
         );
 
         SubjectAdapter adapter = new SubjectAdapter();
-        subjectListViewModel = new ViewModelProvider(requireActivity()).get(SubjectListViewModel.class);
-        subjectListViewModel.getAllSubjects().observe(getViewLifecycleOwner(), adapter::setSubjects);
+        mSubjectViewModel = new ViewModelProvider(requireActivity()).get(SubjectViewModel.class);
+        mSubjectViewModel.getAllSubjects().observe(getViewLifecycleOwner(), adapter::setSubjects);
 
         binding.subjectListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.subjectListRecyclerView.setAdapter(adapter);
@@ -100,7 +99,7 @@ public class SubjectListFragment extends Fragment implements SubjectOptionBottom
             String subjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_SUBJECT_TITLE);
             Subject subject = new Subject();
             subject.setTitle(subjectTitle);
-            subjectListViewModel.insert(subject);
+            mSubjectViewModel.insert(subject);
         }
     }
 
@@ -111,7 +110,7 @@ public class SubjectListFragment extends Fragment implements SubjectOptionBottom
         public SubjectHolder(ListItemSubjectBinding binding) {
             super(binding.getRoot());
             mBinding = binding;
-            mBinding.setSubjectViewModel(subjectListViewModel);
+            mBinding.setSubjectViewModel(mSubjectViewModel);
             mBinding.moreOptions.setOnClickListener(this);
         }
 

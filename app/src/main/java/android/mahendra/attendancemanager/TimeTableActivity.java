@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.mahendra.attendancemanager.dialogs.PeriodDialogFragment;
 import android.mahendra.attendancemanager.models.Period;
 import android.mahendra.attendancemanager.viewmodels.PeriodListViewModel;
-import android.mahendra.attendancemanager.viewmodels.SubjectListViewModel;
+import android.mahendra.attendancemanager.viewmodels.SubjectViewModel;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
@@ -35,7 +35,7 @@ public class TimeTableActivity extends AppCompatActivity implements
 
     private ViewPager2 mViewPager;
 
-    private SubjectListViewModel mSubjectListViewModel;
+    private SubjectViewModel mSubjectViewModel;
     private PeriodListViewModel mPeriodListViewModel;
 
     private List<String> mSubjectsTitles;
@@ -58,9 +58,9 @@ public class TimeTableActivity extends AppCompatActivity implements
         createWeekDayHash();
         mWeekDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
 
-        mSubjectListViewModel = new ViewModelProvider(this).get(SubjectListViewModel.class);
+        mSubjectViewModel = new ViewModelProvider(this).get(SubjectViewModel.class);
 
-        mSubjectListViewModel.getSubjectTitles().observe(this, subjectTitles ->
+        mSubjectViewModel.getSubjectTitles().observe(this, subjectTitles ->
                 mSubjectsTitles = subjectTitles);
 
         mPeriodListViewModel = new ViewModelProvider(this).get(PeriodListViewModel.class);

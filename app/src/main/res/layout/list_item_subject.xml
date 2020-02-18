@@ -6,7 +6,7 @@
     <data>
         <variable
             name="subjectViewModel"
-            type="android.mahendra.attendancemanager.viewmodels.SubjectListViewModel" />
+            type="android.mahendra.attendancemanager.viewmodels.SubjectViewModel" />
         <variable
             name="subject"
             type="android.mahendra.attendancemanager.models.Subject" />
