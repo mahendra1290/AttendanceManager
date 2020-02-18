@@ -16,7 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 
-public class AddSubjectDialogFragment extends DialogFragment {
+public class SubjectTitleEditDialogFragment extends DialogFragment {
     private static final String TAG = "AddSubjectDialogFragmen";
     public static final String EXTRA_SUBJECT_TITLE =
             "com.android.mahendra.attendancemanager.subject.title";

@@ -11,8 +11,9 @@ import androidx.lifecycle.Transformations;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-public class SubjectListViewModel extends AndroidViewModel implements Subject.Callback {
+public class SubjectListViewModel extends AndroidViewModel {
     private static final String TAG = "SubjectListViewModel";
 
     private SubjectRepository mSubjectRepository;
@@ -36,21 +37,6 @@ public class SubjectListViewModel extends AndroidViewModel implements Subject.Ca
         mSubjectRepository.update(subject);
     }
 
-    @Override
-    public void onAttended(Subject subject) {
-        update(subject);
-    }
-
-    @Override
-    public void onMissed(Subject subject) {
-        update(subject);
-    }
-
-    @Override
-    public void onCancelled(Subject subject) {
-        update(subject);
-    }
-
     private List<String> extractTitles(List<Subject> subjects) {
         List<String> subjectTitles = new ArrayList<>();
         for (Subject subject : subjects) {
@@ -61,5 +47,40 @@ public class SubjectListViewModel extends AndroidViewModel implements Subject.Ca
 
     public LiveData<List<String>> getSubjectTitles() {
         return Transformations.map(mAllSubjects, this::extractTitles);
+    }
+
+    public String getTitle(Subject subject) {
+        return subject.getTitle();
+    }
+
+    public String getAttendanceStat(Subject subject) {
+        String stat = String.
+                format(Locale.ENGLISH,"%d / %d", subject.getAttendedClasses(), subject.getTotalClasses());
+        return stat;
+    }
+
+    public String getAttendancePercentage(Subject subject) {
+        if (subject.getTotalClasses() == 0) {
+            return "0.0%";
+        }
+        double percentage = ((double) subject.getAttendedClasses() / subject.getTotalClasses()) * 100;
+        return String.format(Locale.ENGLISH, "%.1f%%", percentage);
+    }
+
+    public int getAttendanceProgress(Subject subject) {
+        if (subject.getTotalClasses() == 0) {
+            return 0;
+        }
+        return (subject.getAttendedClasses() * 100) / subject.getTotalClasses();
+    }
+
+    public void onAttended(Subject subject) {
+        subject.incrementClassesAttended();
+        update(subject);
+    }
+
+    public void onMissed(Subject subject) {
+        subject.incrementClassesMissed();
+        update(subject);
     }
 }

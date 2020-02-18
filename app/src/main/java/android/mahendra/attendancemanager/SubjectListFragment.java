@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.mahendra.attendancemanager.databinding.FragmentSubjectListBinding;
 import android.mahendra.attendancemanager.databinding.ListItemSubjectBinding;
-import android.mahendra.attendancemanager.dialogs.AddSubjectDialogFragment;
+import android.mahendra.attendancemanager.dialogs.SubjectTitleEditDialogFragment;
 import android.mahendra.attendancemanager.dialogs.ConfirmationDialogFragment;
 import android.mahendra.attendancemanager.dialogs.SubjectOptionBottomSheetDialog;
 import android.mahendra.attendancemanager.models.Subject;
@@ -17,7 +17,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -58,10 +57,7 @@ public class SubjectListFragment extends Fragment implements SubjectOptionBottom
 
         SubjectAdapter adapter = new SubjectAdapter();
         subjectListViewModel = new ViewModelProvider(requireActivity()).get(SubjectListViewModel.class);
-        subjectListViewModel.getAllSubjects().observe(getViewLifecycleOwner(), subjects -> {
-            adapter.setSubjects(subjects);
-        });
-        Subject.setListner(subjectListViewModel);
+        subjectListViewModel.getAllSubjects().observe(getViewLifecycleOwner(), adapter::setSubjects);
 
         binding.subjectListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.subjectListRecyclerView.setAdapter(adapter);
@@ -101,7 +97,7 @@ public class SubjectListFragment extends Fragment implements SubjectOptionBottom
             return;
         }
         if (requestCode == REQUEST_SUBJECT) {
-            String subjectTitle = data.getStringExtra(AddSubjectDialogFragment.EXTRA_SUBJECT_TITLE);
+            String subjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_SUBJECT_TITLE);
             Subject subject = new Subject();
             subject.setTitle(subjectTitle);
             subjectListViewModel.insert(subject);
@@ -110,23 +106,23 @@ public class SubjectListFragment extends Fragment implements SubjectOptionBottom
 
     private class SubjectHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ListItemSubjectBinding mBinding;
+        private Subject mSubject;
 
         public SubjectHolder(ListItemSubjectBinding binding) {
             super(binding.getRoot());
             mBinding = binding;
-            mBinding.setSubjectViewModel(new SubjectViewModel());
+            mBinding.setSubjectViewModel(subjectListViewModel);
             mBinding.moreOptions.setOnClickListener(this);
         }
 
         public void bind(Subject subject) {
-            mBinding.getSubjectViewModel().setSubject(subject);
-            mBinding.getSubjectViewModel().notifyChange();
-            mBinding.executePendingBindings();
+            mSubject = subject;
+            mBinding.setSubject(subject);
         }
 
         @Override
         public void onClick(View v) {
-            openSubjectOptionDialog(mBinding.getSubjectViewModel().getTitle());
+            openSubjectOptionDialog(mSubject.getTitle());
         }
     }
 
@@ -158,7 +154,7 @@ public class SubjectListFragment extends Fragment implements SubjectOptionBottom
     }
 
     private void openAddSubjectDialog() {
-        AddSubjectDialogFragment dialogFragment = new AddSubjectDialogFragment();
+        SubjectTitleEditDialogFragment dialogFragment = new SubjectTitleEditDialogFragment();
         dialogFragment.setTargetFragment(SubjectListFragment.this, REQUEST_SUBJECT);
         dialogFragment.show(getParentFragmentManager(), "subject");
     }

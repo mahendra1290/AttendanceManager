@@ -1,11 +1,16 @@
 package android.mahendra.attendancemanager.models;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
+import androidx.databinding.library.baseAdapters.BR;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.Insert;
 import androidx.room.PrimaryKey;
+
+import java.util.Observer;
 
 @Entity(tableName = "subject_table")
 public class Subject {
@@ -21,30 +26,13 @@ public class Subject {
     @ColumnInfo(name = "classes_missed")
     private int mMissedClasses;
 
-    @ColumnInfo(name = "classes_cancelled")
-    private int mCancelledClasses;
-
     @Ignore
     public Subject() {
-    }
-
-    @Ignore
-    private static Callback sListner;
-
-    public interface Callback {
-        void onAttended(Subject subject);
-        void onMissed(Subject subject);
-        void onCancelled(Subject subject);
-    }
-
-    public static void setListner(Callback listener) {
-        sListner = listener;
     }
 
     public Subject(String title) {
         mTitle = title;
     }
-
 
     public String getTitle() {
         return mTitle;
@@ -70,39 +58,16 @@ public class Subject {
         mMissedClasses = missedClasses;
     }
 
-    public int getCancelledClasses() {
-        return mCancelledClasses;
-    }
-
-    public void setCancelledClasses(int cancelledClasses) {
-        mCancelledClasses = cancelledClasses;
-    }
-
     public int getTotalClasses() {
         return mAttendedClasses + mMissedClasses;
     }
 
     public void incrementClassesAttended() {
         mAttendedClasses += 1;
-        if (sListner != null) {
-            sListner.onAttended(this);
-        }
-
     }
 
     public void incrementClassesMissed() {
         mMissedClasses += 1;
-        if (sListner != null) {
-            sListner.onMissed(this);
-        }
-
-    }
-
-    public void incrementClassesCancelled() {
-        mCancelledClasses += 1;
-        if (sListner != null) {
-            sListner.onCancelled(this);
-        }
     }
 
     @NonNull
