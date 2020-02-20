@@ -30,7 +30,7 @@ public class SubjectOptionBottomSheetDialog extends BottomSheetDialogFragment im
         void onDeleteSelected(String title);
         void onEditTitleSelected(String title);
         void onEditAttendanceSelected();
-        void onResetAttendanceSelected();
+        void onResetAttendanceSelected(String title);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class SubjectOptionBottomSheetDialog extends BottomSheetDialogFragment im
                 mSubjectOptionListener.onEditAttendanceSelected();
                 break;
             case R.id.reset_attendance_option:
-                mSubjectOptionListener.onResetAttendanceSelected();
+                mSubjectOptionListener.onResetAttendanceSelected(getArguments().getString(ARG_TITLE));
                 break;
         }
         dismiss();

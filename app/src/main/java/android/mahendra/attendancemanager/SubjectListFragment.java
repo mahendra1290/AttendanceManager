@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.mahendra.attendancemanager.databinding.FragmentSubjectListBinding;
 import android.mahendra.attendancemanager.databinding.ListItemSubjectBinding;
+import android.mahendra.attendancemanager.dialogs.AttendanceEditDialogFragment;
 import android.mahendra.attendancemanager.dialogs.SubjectTitleEditDialogFragment;
 import android.mahendra.attendancemanager.dialogs.ConfirmationDialogFragment;
 import android.mahendra.attendancemanager.dialogs.SubjectOptionBottomSheetDialog;
@@ -182,7 +183,8 @@ public class SubjectListFragment extends Fragment implements SubjectOptionBottom
     @Override
     public void onDeleteSelected(String title) {
         ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.
-                newInstance(getString(R.string.delete_subject), getString(R.string.warning_subject_delete));
+                newInstance(getString(R.string.delete_subject, title), getString(R.string.warning_subject_delete),
+                        "cancel", "delete", REQUEST_SUBJECT);
         dialogFragment.show(getParentFragmentManager(), "confirmation delete subject");
     }
 
@@ -195,13 +197,15 @@ public class SubjectListFragment extends Fragment implements SubjectOptionBottom
 
     @Override
     public void onEditAttendanceSelected() {
-
+        AttendanceEditDialogFragment dialogFragment = new AttendanceEditDialogFragment();
+        dialogFragment.show(getParentFragmentManager(), "attendance");
     }
 
     @Override
-    public void onResetAttendanceSelected() {
+    public void onResetAttendanceSelected(String title) {
         ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.
-                newInstance(getString(R.string.reset_attendance), getString(R.string.warning_reset_attendance));
+                newInstance(getString(R.string.reset_attendance), getString(R.string.warning_reset_attendance, title),
+                        "cancel", "reset", 3);
         dialogFragment.show(getParentFragmentManager(), "confirmation reset attendance");
     }
 }
