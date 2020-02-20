@@ -3,12 +3,10 @@ package android.mahendra.attendancemanager.dialogs;
 import android.content.Context;
 import android.mahendra.attendancemanager.R;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,7 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 public class SubjectOptionBottomSheetDialog extends BottomSheetDialogFragment implements View.OnClickListener {
     private static final String ARG_TITLE = "subject title";
 
-    private Listener mListener;
+    private SubjectOptionListener mSubjectOptionListener;
 
     public static SubjectOptionBottomSheetDialog newInstance(String title) {
         Bundle args = new Bundle();
@@ -28,9 +26,9 @@ public class SubjectOptionBottomSheetDialog extends BottomSheetDialogFragment im
         return fragment;
     }
 
-    public interface Listener {
+    public interface SubjectOptionListener {
         void onDeleteSelected(String title);
-        void onEditTitleSelected();
+        void onEditTitleSelected(String title);
         void onEditAttendanceSelected();
         void onResetAttendanceSelected();
     }
@@ -39,18 +37,18 @@ public class SubjectOptionBottomSheetDialog extends BottomSheetDialogFragment im
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            mListener = (Listener) getTargetFragment();
+            mSubjectOptionListener = (SubjectOptionListener) getTargetFragment();
         }
         catch (ClassCastException ex) {
             throw new ClassCastException(context.toString()
-                    + "must implement SubjectOptionBottomSheetDialog.Listener");
+                    + "must implement SubjectOptionBottomSheetDialog.SubjectOptionListener");
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        mSubjectOptionListener = null;
     }
 
     @Override
@@ -75,16 +73,16 @@ public class SubjectOptionBottomSheetDialog extends BottomSheetDialogFragment im
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.delete_subject_option:
-                mListener.onDeleteSelected(getArguments().getString(ARG_TITLE));
+                mSubjectOptionListener.onDeleteSelected(getArguments().getString(ARG_TITLE));
                 break;
             case R.id.edit_title_option:
-                mListener.onEditTitleSelected();
+                mSubjectOptionListener.onEditTitleSelected(getArguments().getString(ARG_TITLE));
                 break;
             case R.id.edit_attendance_option:
-                mListener.onEditAttendanceSelected();
+                mSubjectOptionListener.onEditAttendanceSelected();
                 break;
             case R.id.reset_attendance_option:
-                mListener.onResetAttendanceSelected();
+                mSubjectOptionListener.onResetAttendanceSelected();
                 break;
         }
         dismiss();

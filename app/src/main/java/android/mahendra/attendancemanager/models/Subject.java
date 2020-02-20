@@ -18,7 +18,7 @@ public class Subject {
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "title")
-    private String mTitle;
+    private String mTitle = "";
 
     @ColumnInfo(name = "classes_attended")
     private int mAttendedClasses;
@@ -30,15 +30,16 @@ public class Subject {
     public Subject() {
     }
 
-    public Subject(String title) {
+    public Subject(@NonNull String title) {
         mTitle = title;
     }
 
+    @NonNull
     public String getTitle() {
         return mTitle;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(@NonNull String title) {
         mTitle = title;
     }
 
@@ -75,7 +76,6 @@ public class Subject {
     public String toString() {
         return "title " + getTitle() + "\n"
                 + "attended " + mAttendedClasses + "\n"
-                + "missed " + mMissedClasses + "\n"
-                + "cancelled " + mMissedClasses + "\n";
+                + "missed " + mMissedClasses + "\n";
     }
 }

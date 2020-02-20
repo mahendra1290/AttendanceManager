@@ -15,7 +15,7 @@ import java.util.List;
 @Dao
 public interface SubjectDao {
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     public void insert(Subject subject);
 
     @Update
@@ -27,7 +27,6 @@ public interface SubjectDao {
     @Query("SELECT * FROM subject_table ORDER BY title")
     LiveData<List<Subject>> getAllSubjects();
 
-    @Query("SELECT * FROM subject_table WHERE title=:subjectTitle")
-    LiveData<Subject> getSubject(String subjectTitle);
-
+    @Query("UPDATE subject_table SET title = :newTitle WHERE title = :oldTitle")
+    public void updateTitle(String oldTitle, String newTitle);
 }

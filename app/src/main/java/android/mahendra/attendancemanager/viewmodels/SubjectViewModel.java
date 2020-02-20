@@ -44,6 +44,10 @@ public class SubjectViewModel extends AndroidViewModel {
         return subjectTitles;
     }
 
+    public void onUpdateTitle(Subject subject, String newTitle) {
+        mSubjectRepository.updateTitle(subject, newTitle);
+    }
+
     public LiveData<List<String>> getSubjectTitles() {
         return Transformations.map(mAllSubjects, this::extractTitles);
     }

@@ -10,6 +10,7 @@ import android.mahendra.attendancemanager.dialogs.SubjectOptionBottomSheetDialog
 import android.mahendra.attendancemanager.models.Subject;
 import android.mahendra.attendancemanager.viewmodels.SubjectViewModel;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,12 +30,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class SubjectListFragment extends Fragment implements SubjectOptionBottomSheetDialog.Listener {
+public class SubjectListFragment extends Fragment implements SubjectOptionBottomSheetDialog.SubjectOptionListener {
 
     private static final String TAG = "SubjectListFragment";
     private static final int REQUEST_SUBJECT = 0;
+    private static final int REQUEST_SUBJECT_TITLE_EDIT = 1;
 
     private SubjectViewModel mSubjectViewModel;
+
+    private List<Subject> mSubjects;
 
     public static SubjectListFragment newInstance() {
         return new SubjectListFragment();
@@ -101,6 +105,16 @@ public class SubjectListFragment extends Fragment implements SubjectOptionBottom
             subject.setTitle(subjectTitle);
             mSubjectViewModel.insert(subject);
         }
+        if (requestCode == REQUEST_SUBJECT_TITLE_EDIT) {
+            String subjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_OLD_SUBJECT_TITLE);
+            String newSubjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_SUBJECT_TITLE);
+            for (Subject subject: mSubjects) {
+                if (subject.getTitle().equals(subjectTitle)) {
+                    mSubjectViewModel.onUpdateTitle(subject, newSubjectTitle);
+                }
+            }
+            Log.i(TAG, "old -> " + subjectTitle + " new -> " + newSubjectTitle);
+        }
     }
 
     private class SubjectHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -148,12 +162,13 @@ public class SubjectListFragment extends Fragment implements SubjectOptionBottom
 
         public void setSubjects(List<Subject> subjects) {
             this.subjects = subjects;
+            mSubjects = subjects;
             notifyDataSetChanged();
         }
     }
 
     private void openAddSubjectDialog() {
-        SubjectTitleEditDialogFragment dialogFragment = new SubjectTitleEditDialogFragment();
+        SubjectTitleEditDialogFragment dialogFragment = SubjectTitleEditDialogFragment.newInstance(null);
         dialogFragment.setTargetFragment(SubjectListFragment.this, REQUEST_SUBJECT);
         dialogFragment.show(getParentFragmentManager(), "subject");
     }
@@ -172,8 +187,10 @@ public class SubjectListFragment extends Fragment implements SubjectOptionBottom
     }
 
     @Override
-    public void onEditTitleSelected() {
-
+    public void onEditTitleSelected(String title) {
+        SubjectTitleEditDialogFragment dialogFragment = SubjectTitleEditDialogFragment.newInstance(title);
+        dialogFragment.setTargetFragment(SubjectListFragment.this, REQUEST_SUBJECT_TITLE_EDIT);
+        dialogFragment.show(getParentFragmentManager(), "subject");
     }
 
     @Override
