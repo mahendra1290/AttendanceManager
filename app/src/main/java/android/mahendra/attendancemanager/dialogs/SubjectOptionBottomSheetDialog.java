@@ -18,7 +18,7 @@ public class SubjectOptionBottomSheetDialog extends BottomSheetDialogFragment im
 
     private SubjectOptionListener mSubjectOptionListener;
 
-    public static SubjectOptionBottomSheetDialog newInstance(String title) {
+    public static SubjectOptionBottomSheetDialog newInstance(@NonNull String title) {
         Bundle args = new Bundle();
         args.putString(ARG_TITLE, title);
         SubjectOptionBottomSheetDialog fragment = new SubjectOptionBottomSheetDialog();
@@ -29,7 +29,7 @@ public class SubjectOptionBottomSheetDialog extends BottomSheetDialogFragment im
     public interface SubjectOptionListener {
         void onDeleteSelected(String title);
         void onEditTitleSelected(String title);
-        void onEditAttendanceSelected();
+        void onEditAttendanceSelected(String title);
         void onResetAttendanceSelected(String title);
     }
 
@@ -71,18 +71,19 @@ public class SubjectOptionBottomSheetDialog extends BottomSheetDialogFragment im
 
     @Override
     public void onClick(View v) {
+        String subjectTitle = getArguments().getString(ARG_TITLE);
         switch (v.getId()) {
             case R.id.delete_subject_option:
-                mSubjectOptionListener.onDeleteSelected(getArguments().getString(ARG_TITLE));
+                mSubjectOptionListener.onDeleteSelected(subjectTitle);
                 break;
             case R.id.edit_title_option:
-                mSubjectOptionListener.onEditTitleSelected(getArguments().getString(ARG_TITLE));
+                mSubjectOptionListener.onEditTitleSelected(subjectTitle);
                 break;
             case R.id.edit_attendance_option:
-                mSubjectOptionListener.onEditAttendanceSelected();
+                mSubjectOptionListener.onEditAttendanceSelected(subjectTitle);
                 break;
             case R.id.reset_attendance_option:
-                mSubjectOptionListener.onResetAttendanceSelected(getArguments().getString(ARG_TITLE));
+                mSubjectOptionListener.onResetAttendanceSelected(subjectTitle);
                 break;
         }
         dismiss();

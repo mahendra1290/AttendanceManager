@@ -72,6 +72,10 @@ public class SubjectViewModel extends AndroidViewModel {
         mSubjectRepository.update(subject);
     }
 
+    public Subject getSubject(String subjectTitle) {
+        return mSubjectRepository.getSubject(subjectTitle);
+    }
+
     public String getTitle(Subject subject) {
         return subject.getTitle();
     }

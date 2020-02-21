@@ -33,17 +33,15 @@ import java.util.Calendar;
 import java.util.List;
 
 public class SubjectListFragment extends Fragment implements SubjectOptionBottomSheetDialog.SubjectOptionListener {
-
     private static final String TAG = "SubjectListFragment";
+
     private static final int REQUEST_NEW_SUBJECT = 0;
     private static final int REQUEST_SUBJECT_TITLE_EDIT = 1;
     private static final int REQUEST_SUBJECT_DELETE = 2;
     private static final int REQUEST_RESET_ATTENDANCE = 3;
-
+    private static final int REQUEST_EDIT_ATTENDANCE = 4;
 
     private SubjectViewModel mSubjectViewModel;
-
-    private List<Subject> mSubjects;
 
     public static SubjectListFragment newInstance() {
         return new SubjectListFragment();
@@ -69,9 +67,7 @@ public class SubjectListFragment extends Fragment implements SubjectOptionBottom
 
         binding.subjectListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.subjectListRecyclerView.setAdapter(adapter);
-        binding.addSubjectFloatingButton.setOnClickListener(v -> {
-            openAddSubjectDialog();
-        });
+        binding.addSubjectFloatingButton.setOnClickListener(v -> openAddSubjectDialog());
         return binding.getRoot();
     }
 
@@ -105,28 +101,45 @@ public class SubjectListFragment extends Fragment implements SubjectOptionBottom
             return;
         }
         if (requestCode == REQUEST_NEW_SUBJECT) {
+            // when a new subject is added
             String subjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_SUBJECT_TITLE);
             Subject subject = new Subject();
             subject.setTitle(subjectTitle);
             mSubjectViewModel.insert(subject);
         }
         if (requestCode == REQUEST_SUBJECT_TITLE_EDIT) {
+            // when a subject's title is changed
             String oldSubjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_OLD_SUBJECT_TITLE);
             String newSubjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_SUBJECT_TITLE);
             mSubjectViewModel.onUpdateTitle(oldSubjectTitle, newSubjectTitle);
         }
         if (requestCode == REQUEST_SUBJECT_DELETE) {
+            // on subject delete confirmation
             String title = data.getStringExtra(ConfirmationDialogFragment.EXTRA_SUBJECT_TITLE);
             mSubjectViewModel.onDeleteSubjectWith(title);
             showSubjectDeleteToast(title);
         }
         if (requestCode == REQUEST_RESET_ATTENDANCE) {
+            // on reset attendance confirmation
             String title = data.getStringExtra(ConfirmationDialogFragment.EXTRA_SUBJECT_TITLE);
             mSubjectViewModel.onResetAttendance(title);
             showResetAttendanceToast(title);
         }
+        if (requestCode == REQUEST_EDIT_ATTENDANCE) {
+            String title = data.getStringExtra(AttendanceEditDialogFragment.EXTRA_SUBJECT_TITLE);
+            int attended = data.getIntExtra(AttendanceEditDialogFragment.EXTRA_ATTENDED, 0);
+            int total = data.getIntExtra(AttendanceEditDialogFragment.EXTRA_TOTAL, 0);
+            Log.i(TAG, "onActivityResult: attended " + attended + "total " + total);
+            Subject subject = mSubjectViewModel.getSubject(title);
+            subject.setAttendedClasses(attended);
+            subject.setMissedClasses(total-attended);
+            mSubjectViewModel.update(subject);
+        }
     }
 
+    /**
+     * view holder for subject item with data binding
+     */
     private class SubjectHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ListItemSubjectBinding mBinding;
         private Subject mSubject;
@@ -149,6 +162,9 @@ public class SubjectListFragment extends Fragment implements SubjectOptionBottom
         }
     }
 
+    /**
+     * subject list adapter which provides subject view holder to recycler view
+     */
     private class SubjectAdapter extends RecyclerView.Adapter<SubjectHolder> {
         List<Subject> subjects = new ArrayList<>();
         @NonNull
@@ -170,61 +186,103 @@ public class SubjectListFragment extends Fragment implements SubjectOptionBottom
             return subjects.size();
         }
 
-        public void setSubjects(List<Subject> subjects) {
+        /**
+         * set subject list to new list not a good way to update, need to be refactored
+         * @param subjects list of all subjects in database
+         */
+        private void setSubjects(List<Subject> subjects) {
             this.subjects = subjects;
-            mSubjects = subjects;
             notifyDataSetChanged();
         }
     }
 
+    /**
+     * uses SubjectTitleEditDialogFragment for taking new subject title input from user
+     * old title is passed as null, as there is no subject
+     */
     private void openAddSubjectDialog() {
         SubjectTitleEditDialogFragment dialogFragment = SubjectTitleEditDialogFragment.newInstance(null);
         dialogFragment.setTargetFragment(SubjectListFragment.this, REQUEST_NEW_SUBJECT);
         dialogFragment.show(getParentFragmentManager(), "subject");
     }
 
+    /**
+     * option dialog which will be opened when user clicks option menu icon on view holder
+     * and the subject title is passed so that it can be used by listener to take actions
+     * @param title subject title which is used by dialog, for listener methods
+     */
     private void openSubjectOptionDialog(String title) {
         SubjectOptionBottomSheetDialog dialog = SubjectOptionBottomSheetDialog.newInstance(title);
         dialog.setTargetFragment(this, 0);
         dialog.show(getParentFragmentManager(), "option");
     }
 
+    /**
+     * when delete option is selected from subjectOptionDialog
+     * @param subjectTitle title of subject for which this option was selected
+     */
     @Override
-    public void onDeleteSelected(String title) {
+    public void onDeleteSelected(String subjectTitle) {
         ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.
-                newInstance(title, getString(R.string.delete_subject, title), getString(R.string.warning_subject_delete),
+                newInstance(subjectTitle, getString(R.string.delete_subject, subjectTitle), getString(R.string.warning_subject_delete),
                         "cancel", "delete");
         dialogFragment.setTargetFragment(this, REQUEST_SUBJECT_DELETE);
         dialogFragment.show(getParentFragmentManager(), "confirmation delete subject");
     }
 
+    /**
+     * when edit title option in selected from subjectOptionDialog
+     * @param subjectTitle title of subject for which this option was selected
+     */
     @Override
-    public void onEditTitleSelected(String title) {
-        SubjectTitleEditDialogFragment dialogFragment = SubjectTitleEditDialogFragment.newInstance(title);
+    public void onEditTitleSelected(String subjectTitle) {
+        SubjectTitleEditDialogFragment dialogFragment = SubjectTitleEditDialogFragment.newInstance(subjectTitle);
         dialogFragment.setTargetFragment(SubjectListFragment.this, REQUEST_SUBJECT_TITLE_EDIT);
         dialogFragment.show(getParentFragmentManager(), "subject");
     }
 
+    /**
+     * when edit attendance option in selected from subjectOptionDialog
+     * @param subjectTitle title of subject for which this option was selected
+     */
     @Override
-    public void onEditAttendanceSelected() {
-        AttendanceEditDialogFragment dialogFragment = new AttendanceEditDialogFragment();
+    public void onEditAttendanceSelected(String subjectTitle) {
+        Subject subject = mSubjectViewModel.getSubject(subjectTitle);
+        AttendanceEditDialogFragment dialogFragment = AttendanceEditDialogFragment.newInstance(
+                subjectTitle,
+                subject.getAttendedClasses(), subject.getTotalClasses()
+        );
+        dialogFragment.setTargetFragment(this, REQUEST_EDIT_ATTENDANCE);
         dialogFragment.show(getParentFragmentManager(), "attendance");
     }
 
+    /**
+     * when reset attendance option is selected from subjectOptionDialog
+     * @param subjectTitle title of subject for which this option was selected
+     */
     @Override
-    public void onResetAttendanceSelected(String title) {
+    public void onResetAttendanceSelected(String subjectTitle) {
         ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.
-                newInstance(title, getString(R.string.reset_attendance), getString(R.string.warning_reset_attendance, title),
+                newInstance(subjectTitle, getString(R.string.reset_attendance),
+                        getString(R.string.warning_reset_attendance, subjectTitle),
                         "cancel", "reset");
         dialogFragment.setTargetFragment(this, REQUEST_RESET_ATTENDANCE);
         dialogFragment.show(getParentFragmentManager(), "confirmation reset attendance");
     }
 
+    /**
+     * toast shown when subject is deleted
+     * @param subjectTitle used in message
+     */
     private void showSubjectDeleteToast(String subjectTitle) {
         Toast.makeText(getActivity(),
                 "successfully deleted " + subjectTitle, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * toast shown when subject attendance is reset
+     * @param subjectTitle used in message
+     */
     private void showResetAttendanceToast(String subjectTitle) {
         Toast.makeText(getActivity(),
                 "attendance reset " + subjectTitle, Toast.LENGTH_SHORT).show();
