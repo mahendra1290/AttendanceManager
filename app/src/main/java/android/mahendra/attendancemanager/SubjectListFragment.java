@@ -4,17 +4,21 @@ import android.app.Activity;
 import android.content.Intent;
 import android.mahendra.attendancemanager.databinding.FragmentSubjectListBinding;
 import android.mahendra.attendancemanager.databinding.ListItemSubjectBinding;
-import android.mahendra.attendancemanager.dialogs.AddSubjectDialogFragment;
+import android.mahendra.attendancemanager.dialogs.AttendanceEditDialogFragment;
+import android.mahendra.attendancemanager.dialogs.SubjectTitleEditDialogFragment;
+import android.mahendra.attendancemanager.dialogs.ConfirmationDialogFragment;
+import android.mahendra.attendancemanager.dialogs.SubjectOptionBottomSheetDialog;
 import android.mahendra.attendancemanager.models.Subject;
-import android.mahendra.attendancemanager.viewmodels.SubjectListViewModel;
 import android.mahendra.attendancemanager.viewmodels.SubjectViewModel;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,12 +32,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class SubjectListFragment extends Fragment {
+public class SubjectListFragment extends Fragment implements SubjectOptionBottomSheetDialog.SubjectOptionListener {
 
     private static final String TAG = "SubjectListFragment";
-    private static final int REQUEST_SUBJECT = 0;
+    private static final int REQUEST_NEW_SUBJECT = 0;
+    private static final int REQUEST_SUBJECT_TITLE_EDIT = 1;
+    private static final int REQUEST_SUBJECT_DELETE = 2;
+    private static final int REQUEST_RESET_ATTENDANCE = 3;
 
-    private SubjectListViewModel subjectListViewModel;
+
+    private SubjectViewModel mSubjectViewModel;
+
+    private List<Subject> mSubjects;
 
     public static SubjectListFragment newInstance() {
         return new SubjectListFragment();
@@ -54,11 +64,8 @@ public class SubjectListFragment extends Fragment {
         );
 
         SubjectAdapter adapter = new SubjectAdapter();
-        subjectListViewModel = new ViewModelProvider(requireActivity()).get(SubjectListViewModel.class);
-        subjectListViewModel.getAllSubjects().observe(getViewLifecycleOwner(), subjects -> {
-            adapter.setSubjects(subjects);
-        });
-        Subject.setListner(subjectListViewModel);
+        mSubjectViewModel = new ViewModelProvider(requireActivity()).get(SubjectViewModel.class);
+        mSubjectViewModel.getAllSubjects().observe(getViewLifecycleOwner(), adapter::setSubjects);
 
         binding.subjectListRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.subjectListRecyclerView.setAdapter(adapter);
@@ -97,27 +104,48 @@ public class SubjectListFragment extends Fragment {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-        if (requestCode == REQUEST_SUBJECT) {
-            String subjectTitle = data.getStringExtra(AddSubjectDialogFragment.EXTRA_SUBJECT_TITLE);
+        if (requestCode == REQUEST_NEW_SUBJECT) {
+            String subjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_SUBJECT_TITLE);
             Subject subject = new Subject();
             subject.setTitle(subjectTitle);
-            subjectListViewModel.insert(subject);
+            mSubjectViewModel.insert(subject);
+        }
+        if (requestCode == REQUEST_SUBJECT_TITLE_EDIT) {
+            String oldSubjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_OLD_SUBJECT_TITLE);
+            String newSubjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_SUBJECT_TITLE);
+            mSubjectViewModel.onUpdateTitle(oldSubjectTitle, newSubjectTitle);
+        }
+        if (requestCode == REQUEST_SUBJECT_DELETE) {
+            String title = data.getStringExtra(ConfirmationDialogFragment.EXTRA_SUBJECT_TITLE);
+            mSubjectViewModel.onDeleteSubjectWith(title);
+            showSubjectDeleteToast(title);
+        }
+        if (requestCode == REQUEST_RESET_ATTENDANCE) {
+            String title = data.getStringExtra(ConfirmationDialogFragment.EXTRA_SUBJECT_TITLE);
+            mSubjectViewModel.onResetAttendance(title);
+            showResetAttendanceToast(title);
         }
     }
 
-    private class SubjectHolder extends RecyclerView.ViewHolder {
+    private class SubjectHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ListItemSubjectBinding mBinding;
+        private Subject mSubject;
 
         public SubjectHolder(ListItemSubjectBinding binding) {
             super(binding.getRoot());
             mBinding = binding;
-            mBinding.setSubjectViewModel(new SubjectViewModel());
+            mBinding.setSubjectViewModel(mSubjectViewModel);
+            mBinding.moreOptions.setOnClickListener(this);
         }
 
         public void bind(Subject subject) {
-            mBinding.getSubjectViewModel().setSubject(subject);
-            mBinding.getSubjectViewModel().notifyChange();
-            mBinding.executePendingBindings();
+            mSubject = subject;
+            mBinding.setSubject(subject);
+        }
+
+        @Override
+        public void onClick(View v) {
+            openSubjectOptionDialog(mSubject.getTitle());
         }
     }
 
@@ -144,13 +172,63 @@ public class SubjectListFragment extends Fragment {
 
         public void setSubjects(List<Subject> subjects) {
             this.subjects = subjects;
+            mSubjects = subjects;
             notifyDataSetChanged();
         }
     }
 
     private void openAddSubjectDialog() {
-        AddSubjectDialogFragment dialogFragment = new AddSubjectDialogFragment();
-        dialogFragment.setTargetFragment(SubjectListFragment.this, REQUEST_SUBJECT);
-        dialogFragment.show(getFragmentManager(), "subject");
+        SubjectTitleEditDialogFragment dialogFragment = SubjectTitleEditDialogFragment.newInstance(null);
+        dialogFragment.setTargetFragment(SubjectListFragment.this, REQUEST_NEW_SUBJECT);
+        dialogFragment.show(getParentFragmentManager(), "subject");
+    }
+
+    private void openSubjectOptionDialog(String title) {
+        SubjectOptionBottomSheetDialog dialog = SubjectOptionBottomSheetDialog.newInstance(title);
+        dialog.setTargetFragment(this, 0);
+        dialog.show(getParentFragmentManager(), "option");
+    }
+
+    @Override
+    public void onDeleteSelected(String title) {
+        ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.
+                newInstance(title, getString(R.string.delete_subject, title), getString(R.string.warning_subject_delete),
+                        "cancel", "delete");
+        dialogFragment.setTargetFragment(this, REQUEST_SUBJECT_DELETE);
+        dialogFragment.show(getParentFragmentManager(), "confirmation delete subject");
+    }
+
+    @Override
+    public void onEditTitleSelected(String title) {
+        SubjectTitleEditDialogFragment dialogFragment = SubjectTitleEditDialogFragment.newInstance(title);
+        dialogFragment.setTargetFragment(SubjectListFragment.this, REQUEST_SUBJECT_TITLE_EDIT);
+        dialogFragment.show(getParentFragmentManager(), "subject");
+    }
+
+    @Override
+    public void onEditAttendanceSelected() {
+        AttendanceEditDialogFragment dialogFragment = new AttendanceEditDialogFragment();
+        dialogFragment.show(getParentFragmentManager(), "attendance");
+    }
+
+    @Override
+    public void onResetAttendanceSelected(String title) {
+        ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.
+                newInstance(title, getString(R.string.reset_attendance), getString(R.string.warning_reset_attendance, title),
+                        "cancel", "reset");
+        dialogFragment.setTargetFragment(this, REQUEST_RESET_ATTENDANCE);
+        dialogFragment.show(getParentFragmentManager(), "confirmation reset attendance");
+    }
+
+    private void showSubjectDeleteToast(String subjectTitle) {
+        Toast.makeText(getActivity(),
+                "successfully deleted " + subjectTitle, Toast.LENGTH_SHORT).show();
+    }
+
+    private void showResetAttendanceToast(String subjectTitle) {
+        Toast.makeText(getActivity(),
+                "attendance reset " + subjectTitle, Toast.LENGTH_SHORT).show();
     }
 }
+
+

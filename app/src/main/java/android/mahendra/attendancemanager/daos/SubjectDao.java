@@ -15,19 +15,18 @@ import java.util.List;
 @Dao
 public interface SubjectDao {
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    public void insert(Subject subject);
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insert(Subject subject);
 
     @Update
-    public void update(Subject subject);
+    void update(Subject subject);
 
     @Delete
-    public void delete(Subject subject);
+    void delete(Subject subject);
 
     @Query("SELECT * FROM subject_table ORDER BY title")
     LiveData<List<Subject>> getAllSubjects();
 
-    @Query("SELECT * FROM subject_table WHERE title=:subjectTitle")
-    LiveData<Subject> getSubject(String subjectTitle);
-
+    @Query("UPDATE subject_table SET title = :newTitle WHERE title = :oldTitle")
+    void updateTitle(String oldTitle, String newTitle);
 }

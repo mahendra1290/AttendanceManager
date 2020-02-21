@@ -28,6 +28,19 @@ public class SubjectRepository {
         return mAllSubjects;
     }
 
+    public Subject getSubject(String title) {
+        for (Subject subject : mAllSubjects.getValue()) {
+            if (subject.getTitle().equals(title)) {
+                return subject;
+            }
+        }
+        return null;
+    }
+
+    public void updateTitle(String oldTitle, String newTitle) {
+        MainDatabase.databaseWriteExecutor.execute(() -> mSubjectDao.updateTitle(oldTitle, newTitle));
+    }
+
     public void insert(Subject subject) {
         MainDatabase.databaseWriteExecutor.execute(() -> {
             mSubjectDao.insert(subject);
@@ -35,12 +48,10 @@ public class SubjectRepository {
     }
 
     public void update(Subject subject) {
-        MainDatabase.databaseWriteExecutor.execute(() -> {
-            mSubjectDao.update(subject);
-        });
+        MainDatabase.databaseWriteExecutor.execute(() -> mSubjectDao.update(subject));
     }
 
-    public LiveData<Subject> getSubject(String title) {
-        return mSubjectDao.getSubject(title);
+    public void delete(Subject subject) {
+        MainDatabase.databaseWriteExecutor.execute(() -> mSubjectDao.delete(subject));
     }
 }

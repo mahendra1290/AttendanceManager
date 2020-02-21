@@ -2,10 +2,10 @@ package android.mahendra.attendancemanager;
 
 import android.content.Context;
 import android.content.Intent;
-import android.mahendra.attendancemanager.dialogs.AddPeriodDialogFragment;
+import android.mahendra.attendancemanager.dialogs.PeriodDialogFragment;
 import android.mahendra.attendancemanager.models.Period;
 import android.mahendra.attendancemanager.viewmodels.PeriodListViewModel;
-import android.mahendra.attendancemanager.viewmodels.SubjectListViewModel;
+import android.mahendra.attendancemanager.viewmodels.SubjectViewModel;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
@@ -28,14 +28,14 @@ import java.util.Calendar;
 import java.util.List;
 
 public class TimeTableActivity extends AppCompatActivity implements
-        DayScheduleFragment.Callbacks, AddPeriodDialogFragment.Callbacks {
+        DayScheduleFragment.Callbacks, PeriodDialogFragment.Callbacks {
     private static final String TAG = "TimeTableActivity";
 
     public static SparseArray<String> WEEK_DAYS;
 
     private ViewPager2 mViewPager;
 
-    private SubjectListViewModel mSubjectListViewModel;
+    private SubjectViewModel mSubjectViewModel;
     private PeriodListViewModel mPeriodListViewModel;
 
     private List<String> mSubjectsTitles;
@@ -58,9 +58,9 @@ public class TimeTableActivity extends AppCompatActivity implements
         createWeekDayHash();
         mWeekDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
 
-        mSubjectListViewModel = new ViewModelProvider(this).get(SubjectListViewModel.class);
+        mSubjectViewModel = new ViewModelProvider(this).get(SubjectViewModel.class);
 
-        mSubjectListViewModel.getSubjectTitles().observe(this, subjectTitles ->
+        mSubjectViewModel.getSubjectTitles().observe(this, subjectTitles ->
                 mSubjectsTitles = subjectTitles);
 
         mPeriodListViewModel = new ViewModelProvider(this).get(PeriodListViewModel.class);
@@ -98,8 +98,8 @@ public class TimeTableActivity extends AppCompatActivity implements
     }
 
     public void openAddPeriodDialog(String periodTitle) {
-        AddPeriodDialogFragment dialogFragment
-                = AddPeriodDialogFragment.newInstance(periodTitle);
+        PeriodDialogFragment dialogFragment
+                = PeriodDialogFragment.newInstance(periodTitle);
         FragmentManager fm = getSupportFragmentManager();
         dialogFragment.show(fm, "period");
     }
@@ -126,6 +126,7 @@ public class TimeTableActivity extends AppCompatActivity implements
 
     @Override
     public void onDeletePeriod(String title) {
+        Log.i(TAG, "onDeletePeriod: " + mTempPeriod);
         mPeriodListViewModel.deletePeriod(mTempPeriod.getPeriodNumber(), mTempPeriod.getWeekDay());
     }
 
