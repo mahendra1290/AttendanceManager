@@ -16,17 +16,17 @@ import java.util.List;
 public interface SubjectDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public void insert(Subject subject);
+    void insert(Subject subject);
 
     @Update
-    public void update(Subject subject);
+    void update(Subject subject);
 
     @Delete
-    public void delete(Subject subject);
+    void delete(Subject subject);
 
     @Query("SELECT * FROM subject_table ORDER BY title")
     LiveData<List<Subject>> getAllSubjects();
 
     @Query("UPDATE subject_table SET title = :newTitle WHERE title = :oldTitle")
-    public void updateTitle(String oldTitle, String newTitle);
+    void updateTitle(String oldTitle, String newTitle);
 }

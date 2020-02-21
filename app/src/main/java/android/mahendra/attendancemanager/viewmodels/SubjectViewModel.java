@@ -36,6 +36,14 @@ public class SubjectViewModel extends AndroidViewModel {
         mSubjectRepository.update(subject);
     }
 
+    public void delete(Subject subject) { mSubjectRepository.delete(subject); }
+
+    public void resetAttendance(Subject subject) {
+        subject.setMissedClasses(0);
+        subject.setAttendedClasses(0);
+        mSubjectRepository.update(subject);
+    }
+
     private List<String> extractTitles(List<Subject> subjects) {
         List<String> subjectTitles = new ArrayList<>();
         for (Subject subject : subjects) {
@@ -44,12 +52,24 @@ public class SubjectViewModel extends AndroidViewModel {
         return subjectTitles;
     }
 
-    public void onUpdateTitle(Subject subject, String newTitle) {
-        mSubjectRepository.updateTitle(subject, newTitle);
+    public void onUpdateTitle(String oldTitle, String newTitle) {
+        mSubjectRepository.updateTitle(oldTitle, newTitle);
     }
 
     public LiveData<List<String>> getSubjectTitles() {
         return Transformations.map(mAllSubjects, this::extractTitles);
+    }
+
+    public void onDeleteSubjectWith(String subjectTitle) {
+        Subject subject = mSubjectRepository.getSubject(subjectTitle);
+        mSubjectRepository.delete(subject);
+    }
+
+    public void onResetAttendance(String subjectTitle) {
+        Subject subject = mSubjectRepository.getSubject(subjectTitle);
+        subject.setAttendedClasses(0);
+        subject.setMissedClasses(0);
+        mSubjectRepository.update(subject);
     }
 
     public String getTitle(Subject subject) {
