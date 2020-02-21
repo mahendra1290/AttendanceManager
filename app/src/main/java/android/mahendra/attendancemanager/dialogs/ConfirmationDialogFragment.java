@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.mahendra.attendancemanager.R;
 import android.os.Bundle;
 
@@ -14,23 +15,20 @@ import androidx.fragment.app.DialogFragment;
 
 public class ConfirmationDialogFragment extends DialogFragment {
     public static final String ARG_REQUEST_CODE = "request_code";
-    public static final String ARG_TITLE = "title";
-    public static final String ARG_MESSAGE = "message";
-    public static final String ARG_POSITIVE = "poistive";
-    public static final String ARG_NEGATIVE = "negative";
 
-    private ConfirmationDialogListener mListener;
+    private static final String ARG_POSITIVE = "positive";
+    private static final String ARG_SUBJECT_TITLE = "subjectTitle";
+    private static final String ARG_TITLE = "title";
+    private static final String ARG_MESSAGE = "message";
+    private static final String ARG_NEGATIVE = "negative";
 
-    public interface ConfirmationDialogListener {
-        void onPositiveClick(DialogFragment dialog);
-        void onNegativeClick(DialogFragment dialog);
-    }
+    public static final String EXTRA_SUBJECT_TITLE = "subject title";
 
     public static ConfirmationDialogFragment newInstance(
-            String title, String message, String negative, String positive, int requestCode) {
+            String subjectTitle, String title, String message, String negative, String positive) {
 
         Bundle args = new Bundle();
-        args.putInt(ARG_REQUEST_CODE, requestCode);
+        args.putString(ARG_SUBJECT_TITLE, subjectTitle);
         args.putString(ARG_TITLE, title);
         args.putString(ARG_MESSAGE, message);
         args.putString(ARG_POSITIVE, positive);
@@ -54,10 +52,22 @@ public class ConfirmationDialogFragment extends DialogFragment {
         String message = getArguments().getString(ARG_MESSAGE);
         builder.setTitle(title);
         builder.setMessage(message);
-        builder.setPositiveButton(getArguments().getString(ARG_POSITIVE), null);
+        builder.setPositiveButton(getArguments().getString(ARG_POSITIVE),
+                (dialog, which) -> sendResult(Activity.RESULT_OK, getArguments().getString(ARG_SUBJECT_TITLE)));
 
-        builder.setNegativeButton(getArguments().getString(ARG_NEGATIVE), null);
+        builder.setNegativeButton(getArguments().getString(ARG_NEGATIVE), (dialog, which) -> dismiss());
 
         return builder.create();
+    }
+
+    private void sendResult(int resultCode, String subjectTitle) {
+        if (getTargetFragment() == null) {
+            return;
+        }
+        else {
+            Intent intent = new Intent();
+            intent.putExtra(EXTRA_SUBJECT_TITLE, subjectTitle);
+            getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
+        }
     }
 }
