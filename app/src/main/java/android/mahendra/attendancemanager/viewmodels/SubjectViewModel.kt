@@ -14,11 +14,7 @@ import kotlin.collections.ArrayList
 class SubjectViewModel(application: Application): AndroidViewModel(application) {
 
     private val mSubjectRepository: SubjectRepository = SubjectRepository(application)
-    private val mAllSubjects: LiveData<List<Subject>> = mSubjectRepository.allSubjects
-
-    fun getAllSubjects(): LiveData<List<Subject>> {
-        return mAllSubjects
-    }
+    val mAllSubjects: LiveData<List<Subject>> = mSubjectRepository.allSubjects
 
     fun insert(subject: Subject) = viewModelScope.launch {
         mSubjectRepository.insert(subject)
