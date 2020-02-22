@@ -11,9 +11,9 @@ import androidx.room.Transaction
 interface SubjectPeriodDao {
     @get:Query("SELECT * FROM subject_table")
     @get:Transaction
-    val subjectsWithPeriod: LiveData<List<SubjectWithPeriods?>?>?
+    val subjectsWithPeriod: LiveData<List<SubjectWithPeriods>>
 
     @Transaction
     @Query("SELECT * FROM subject_table join period_table on title = subject_title where week_day=:weekDay")
-    fun getAllSubjectsOn(weekDay: Int): LiveData<List<Subject?>?>?
+    fun getAllSubjectsOn(weekDay: Int): LiveData<List<Subject>>
 }

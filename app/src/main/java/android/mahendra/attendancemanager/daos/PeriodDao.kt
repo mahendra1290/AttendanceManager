@@ -15,26 +15,26 @@ import kotlin.collections.List
 @Dao
 interface PeriodDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    fun insert(period: Period)
+    suspend fun insert(period: Period)
 
     @Update
-    fun update(period: Period)
+    suspend fun update(period: Period)
 
     @Delete
-    fun delete(period: Period)
+    suspend fun delete(period: Period)
 
     @Query("Delete from period_table")
-    fun deleteAll()
+    suspend fun deleteAll()
 
     @Query("SELECT * FROM period_table")
-    fun getAllPeriods(): LiveData<List<Period?>?>?
+    fun getAllPeriods(): LiveData<List<Period>>
 
     @Query("SELECT * FROM PERIOD_TABLE WHERE week_day=:weekDay ORDER BY period_number")
-    fun getAllPeriodsOn(weekDay: Int): LiveData<List<Period?>?>?
+    fun getAllPeriodsOn(weekDay: Int): LiveData<List<Period>>
 
     @Query("SELECT * FROM PERIOD_TABLE WHERE subject_title=:subjectTitle")
-    fun getAllPeriodsOfSubject(subjectTitle: String): LiveData<List<Period?>?>?
+    fun getAllPeriodsOfSubject(subjectTitle: String): LiveData<List<Period>>
 
     @Query("DELETE FROM PERIOD_TABLE WHERE week_day=:weekDay AND period_number=:periodNumber")
-    fun deletePeriod(periodNumber: Int, weekDay: Int)
+    suspend fun deletePeriod(periodNumber: Int, weekDay: Int)
 }

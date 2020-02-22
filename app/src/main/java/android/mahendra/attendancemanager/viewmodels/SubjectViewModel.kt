@@ -77,7 +77,7 @@ class SubjectViewModel(application: Application): AndroidViewModel(application) 
             return "0.0%"
         }
         val percentage = (subject.attendedClasses.toDouble() / subject.totalClasses) * 100
-        return String.format(Locale.ENGLISH, "%.1f%%", percentage);
+        return String.format(Locale.ENGLISH, "%.1f%%", percentage)
     }
 
     fun getAttendanceProgress(subject: Subject): Int {

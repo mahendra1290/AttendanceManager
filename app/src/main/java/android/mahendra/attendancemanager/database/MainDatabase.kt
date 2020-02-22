@@ -20,9 +20,7 @@ abstract class MainDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var INSTANCE: MainDatabase? = null
-        private const val NUMBER_OF_THREADS = 4
-        @JvmField
-        val databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS)
+
         @JvmStatic
         fun getDatabase(context: Context): MainDatabase? {
             if (INSTANCE == null) {

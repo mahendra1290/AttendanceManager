@@ -7,18 +7,20 @@ import android.mahendra.attendancemanager.repositories.PeriodRepository
 
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 import kotlin.collections.List
 
 class PeriodListViewModel(application: Application) : AndroidViewModel(application) {
     private val mPeriodRepository: PeriodRepository = PeriodRepository(application)
-    private val mAllPeriods: LiveData<List<Period>> = mPeriodRepository.allPeriods
+    private val mAllPeriods: LiveData<List<Period>> = mPeriodRepository.mAllPeriods
 
-    fun insert(period: Period) {
+    fun insert(period: Period) = viewModelScope.launch {
         mPeriodRepository.insert(period)
     }
 
-    fun update(period: Period) {
+    fun update(period: Period) = viewModelScope.launch {
         mPeriodRepository.update(period)
     }
 
@@ -34,7 +36,7 @@ class PeriodListViewModel(application: Application) : AndroidViewModel(applicati
         return mPeriodRepository.getAllSubjectsOn(weekDay)
     }
 
-    fun deletePeriod(periodNumber: Int, weekDay: Int) {
+    fun deletePeriod(periodNumber: Int, weekDay: Int) = viewModelScope.launch {
         mPeriodRepository.deletePeriod(periodNumber, weekDay)
     }
 }

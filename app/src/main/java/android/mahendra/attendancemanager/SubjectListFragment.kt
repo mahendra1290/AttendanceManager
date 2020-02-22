@@ -1,6 +1,7 @@
 package android.mahendra.attendancemanager
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.mahendra.attendancemanager.databinding.FragmentSubjectListBinding
 import android.mahendra.attendancemanager.databinding.ListItemSubjectBinding
@@ -56,7 +57,7 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.show_timetable -> {
-                val intent = TimeTableActivity.newIntent(activity)
+                val intent = TimeTableActivity.newIntent(activity as Context)
                 startActivity(intent)
                 true
             }
