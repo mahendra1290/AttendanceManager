@@ -19,7 +19,7 @@
         <activity android:name=".TimeTableActivity"
             android:label="@string/timetable_activity"
             android:parentActivityName=".MainActivity"/>
-        <activity android:name=".MarkAttendaceActivity"
+        <activity android:name=".MarkAttendanceActivity"
             android:label="@string/mark_attendance_activity"/>
     </application>
 

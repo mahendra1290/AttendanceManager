@@ -35,6 +35,9 @@ class TimeTableActivity : AppCompatActivity(),
 
     private lateinit var mSubjectsTitles: List<String>
 
+    override val subjectTitles: List<String>
+        get() = mSubjectsTitles
+
     private var mWeekDay = -1
     private var mWeekDayOffSet = -1
 
@@ -87,11 +90,6 @@ class TimeTableActivity : AppCompatActivity(),
         dialogFragment.show(fm, "period")
     }
 
-    override fun getSubjectTitles(): ArrayList<String> {
-        return mSubjectsTitles as ArrayList<String>
-    }
-
-
     override fun onAddPeriod(periodNumber: Int, weekDay: Int) {
         addNewPeriod = true
         mTempPeriod = Period(null, periodNumber, weekDay)
@@ -104,12 +102,11 @@ class TimeTableActivity : AppCompatActivity(),
         openAddPeriodDialog(period.subjectTitle)
     }
 
-    override fun onDeletePeriod(title: String) {
-        Log.i(TAG, "onDeletePeriod: " + mTempPeriod)
+    override fun onDeletePeriod(title: String?) {
         mPeriodListViewModel.deletePeriod(mTempPeriod!!.periodNumber, mTempPeriod!!.weekDay)
     }
 
-    override fun onPeriodSelected(title: String) {
+    override fun onPeriodSelected(title: String?) {
         mTempPeriod!!.subjectTitle = title
         if (addNewPeriod) {
             mPeriodListViewModel.insert(mTempPeriod!!)

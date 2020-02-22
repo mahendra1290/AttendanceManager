@@ -62,7 +62,7 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
                 true
             }
             R.id.mark_attendance -> {
-                val intent1 = MarkAttendaceActivity.newIntent(activity,
+                val intent1 = MarkAttendanceActivity.newIntent(activity,
                         Calendar.getInstance()[Calendar.DAY_OF_WEEK])
                 startActivity(intent1)
                 true
