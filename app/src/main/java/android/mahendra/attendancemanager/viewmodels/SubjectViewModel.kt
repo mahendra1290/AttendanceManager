@@ -4,10 +4,8 @@ import android.mahendra.attendancemanager.models.Subject
 import android.mahendra.attendancemanager.repositories.SubjectRepository
 
 import android.app.Application
-
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.*
+import kotlinx.coroutines.launch
 
 import kotlin.collections.List
 import java.util.Locale
@@ -22,19 +20,19 @@ class SubjectViewModel(application: Application): AndroidViewModel(application) 
         return mAllSubjects
     }
 
-    fun insert(subject: Subject) {
+    fun insert(subject: Subject) = viewModelScope.launch {
         mSubjectRepository.insert(subject)
     }
 
-    fun update(subject: Subject) {
+    fun update(subject: Subject) = viewModelScope.launch {
         mSubjectRepository.update(subject)
     }
 
-    fun delete(subject: Subject) {
+    fun delete(subject: Subject) = viewModelScope.launch {
         mSubjectRepository.delete(subject)
     }
 
-    fun onResetAttendance(subject: Subject) {
+    fun onResetAttendance(subject: Subject) = viewModelScope.launch {
         subject.missedClasses = 0
         subject.attendedClasses = 0
         mSubjectRepository.update(subject)
@@ -48,7 +46,7 @@ class SubjectViewModel(application: Application): AndroidViewModel(application) 
         return subjectTitles
     }
 
-    fun onUpdateTitle(oldTitle : String, newTitle : String) {
+    fun onUpdateTitle(oldTitle : String, newTitle : String) = viewModelScope.launch {
         mSubjectRepository.updateTitle(oldTitle, newTitle)
     }
 
@@ -56,19 +54,19 @@ class SubjectViewModel(application: Application): AndroidViewModel(application) 
         return Transformations.map(mAllSubjects, this::extractTitles)
     }
 
-    fun onDeleteSubjectWith(subjectTitle: String) {
+    fun onDeleteSubjectWith(subjectTitle: String) = viewModelScope.launch {
         val subject = mSubjectRepository.getSubject(subjectTitle)
         mSubjectRepository.delete(subject)
     }
 
-    fun onResetAttendance(subjectTitle: String) {
+    fun onResetAttendance(subjectTitle: String) = viewModelScope.launch {
         var subject = mSubjectRepository.getSubject(subjectTitle)
-        subject.attendedClasses = 0
-        subject.missedClasses = 0
+        subject?.attendedClasses = 0
+        subject?.missedClasses = 0
         mSubjectRepository.update(subject)
     }
 
-    fun getSubject(subjectTitle: String): Subject {
+    fun getSubject(subjectTitle: String): Subject? {
         return mSubjectRepository.getSubject(subjectTitle)
     }
 
@@ -76,11 +74,7 @@ class SubjectViewModel(application: Application): AndroidViewModel(application) 
         return subject.title
     }
 
-    fun getAttendanceStat(subject: Subject): String {
-        val stat = String.
-                format(Locale.ENGLISH,"%d / %d", subject.attendedClasses, subject.totalClasses)
-        return stat
-    }
+    fun getAttendanceStat(subject: Subject) = "${subject.attendedClasses} / ${subject.totalClasses}"
 
     fun getAttendancePercentage(subject: Subject): String {
         if (subject.totalClasses == 0) {
