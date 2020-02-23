@@ -119,6 +119,7 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         fun bind(subject: Subject) {
             mSubject = subject
             mBinding.subject = subject
+            mBinding.executePendingBindings()
         }
 
         override fun onClick(v: View) {
