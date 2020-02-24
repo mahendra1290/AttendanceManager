@@ -3,12 +3,7 @@ package android.mahendra.attendancemanager.viewmodels
 import android.mahendra.attendancemanager.models.Subject
 import android.mahendra.attendancemanager.repositories.SubjectRepository
 import androidx.databinding.BaseObservable
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 
-
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 
@@ -21,7 +16,6 @@ class SubjectDetailViewModel(
 ) : BaseObservable() {
 
     var subject: Subject? = null
-
 
     fun getTitle(): String {
         return subject!!.title

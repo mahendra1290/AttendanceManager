@@ -13,10 +13,10 @@ class SubjectOptionBottomSheetDialog : BottomSheetDialogFragment(), View.OnClick
     private var mSubjectOptionListener: SubjectOptionListener? = null
 
     interface SubjectOptionListener {
-        fun onDeleteSelected(title: String)
-        fun onEditTitleSelected(title: String)
-        fun onEditAttendanceSelected(title: String)
-        fun onResetAttendanceSelected(title: String)
+        fun onDeleteSelected(subjectTitle: String)
+        fun onEditTitleSelected(subjectTitle: String)
+        fun onEditAttendanceSelected(subjectTitle: String)
+        fun onResetAttendanceSelected(subjectTitle: String)
     }
 
     override fun onAttach(context: Context) {
