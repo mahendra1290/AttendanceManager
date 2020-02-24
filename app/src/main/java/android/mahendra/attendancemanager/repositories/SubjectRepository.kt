@@ -6,9 +6,10 @@ import android.mahendra.attendancemanager.database.MainDatabase.Companion.getDat
 import android.mahendra.attendancemanager.models.Subject
 import androidx.lifecycle.LiveData
 
-class SubjectRepository(application: Application?) {
-    private val mSubjectDao: SubjectDao
-    val allSubjects: LiveData<List<Subject>>
+class SubjectRepository private constructor(
+        private val mSubjectDao: SubjectDao
+){
+    val allSubjects: LiveData<List<Subject>> = mSubjectDao.getAllSubjects()
 
     fun getSubject(title: String): Subject? {
         for (subject in allSubjects.value!!) {
@@ -35,9 +36,13 @@ class SubjectRepository(application: Application?) {
         mSubjectDao.delete(subject!!)
     }
 
-    init {
-        val db = getDatabase(application!!)
-        mSubjectDao = db!!.subjectDao()
-        allSubjects = mSubjectDao.getAllSubjects()
+    companion object {
+
+        @Volatile private var instance: SubjectRepository? = null
+
+        fun getInstance(subjectDao: SubjectDao) =
+                instance ?: synchronized(this) {
+                    instance ?: SubjectRepository(subjectDao).also { instance = it }
+                }
     }
 }

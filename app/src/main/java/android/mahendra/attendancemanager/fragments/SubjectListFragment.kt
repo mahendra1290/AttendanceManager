@@ -14,21 +14,27 @@ import android.mahendra.attendancemanager.dialogs.SubjectOptionBottomSheetDialog
 import android.mahendra.attendancemanager.dialogs.SubjectOptionBottomSheetDialog.SubjectOptionListener
 import android.mahendra.attendancemanager.dialogs.SubjectTitleEditDialogFragment
 import android.mahendra.attendancemanager.models.Subject
-import android.mahendra.attendancemanager.viewmodels.SubjectViewModel
+import android.mahendra.attendancemanager.utilities.InjectorUtils
+import android.mahendra.attendancemanager.viewmodels.SubjectDetailViewModel
+import android.mahendra.attendancemanager.viewmodels.SubjectListViewModel
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
 class SubjectListFragment : Fragment(), SubjectOptionListener {
-    private lateinit var mSubjectViewModel: SubjectViewModel
+    private val mSubjectListViewModel: SubjectListViewModel by viewModels {
+        InjectorUtils.provideSubjectListViewModelFactory(this)
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
@@ -41,9 +47,11 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
                 inflater, R.layout.fragment_subject_list, container, false
         )
         val adapter = SubjectAdapter()
-        mSubjectViewModel = ViewModelProvider(requireActivity()).get(SubjectViewModel::class.java)
-        mSubjectViewModel.mAllSubjects.observe(
-                viewLifecycleOwner, Observer { subjects: List<Subject> -> adapter.setSubjects(subjects) })
+        mSubjectListViewModel.mAllSubjects.observe(
+                viewLifecycleOwner, Observer {
+            subjects: List<Subject> -> adapter.setSubjects(subjects)
+            Log.i(TAG, "subject updated")
+        })
 
         binding.subjectListRecyclerView.layoutManager = LinearLayoutManager(activity)
         binding.subjectListRecyclerView.adapter = adapter
@@ -85,21 +93,21 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
             val subjectTitle = data!!.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_SUBJECT_TITLE)
             val subject = Subject()
             subject.title = subjectTitle
-            mSubjectViewModel.insert(subject)
+            mSubjectListViewModel.insert(subject)
         }
         if (requestCode == REQUEST_SUBJECT_TITLE_EDIT) { // when a subject's title is changed
             val oldSubjectTitle = data!!.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_OLD_SUBJECT_TITLE)
             val newSubjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_SUBJECT_TITLE)
-            mSubjectViewModel.onUpdateTitle(oldSubjectTitle, newSubjectTitle)
+            mSubjectListViewModel.onUpdateTitle(oldSubjectTitle, newSubjectTitle)
         }
         if (requestCode == REQUEST_SUBJECT_DELETE) { // on subject delete confirmation
             val title = data!!.getStringExtra(ConfirmationDialogFragment.EXTRA_SUBJECT_TITLE)
-            mSubjectViewModel.onDeleteSubjectWith(title)
+            mSubjectListViewModel.onDeleteSubjectWith(title)
             showSubjectDeleteToast(title)
         }
         if (requestCode == REQUEST_RESET_ATTENDANCE) { // on reset attendance confirmation
             val title = data!!.getStringExtra(ConfirmationDialogFragment.EXTRA_SUBJECT_TITLE)
-            mSubjectViewModel.onResetAttendance(title)
+            mSubjectListViewModel.onResetAttendance(title)
             showResetAttendanceToast(title)
         }
         if (requestCode == REQUEST_EDIT_ATTENDANCE) {
@@ -107,10 +115,10 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
             val attended = data.getIntExtra(AttendanceEditDialogFragment.EXTRA_ATTENDED, 0)
             val total = data.getIntExtra(AttendanceEditDialogFragment.EXTRA_TOTAL, 0)
             Log.i(TAG, "onActivityResult: attended " + attended + "total " + total)
-            val subject = mSubjectViewModel.getSubject(title)
+            val subject = mSubjectListViewModel.getSubject(title)
             subject!!.attendedClasses = attended
             subject.missedClasses = total - attended
-            mSubjectViewModel.update(subject)
+            mSubjectListViewModel.update(subject)
         }
     }
 
@@ -121,7 +129,9 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         private var mSubject: Subject? = null
         fun bind(subject: Subject) {
             mSubject = subject
-            mBinding.subject = subject
+            mBinding.subjectDetailViewModel!!.subject = mSubject
+            mBinding.invalidateAll()
+            mBinding.notifyChange()
             mBinding.executePendingBindings()
         }
 
@@ -130,7 +140,9 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         }
 
         init {
-            mBinding.subjectViewModel = mSubjectViewModel
+            val detailViewModel: SubjectDetailViewModel
+                    = InjectorUtils.provideSubjectDetailViewModel(this@SubjectListFragment)
+            mBinding.subjectDetailViewModel = detailViewModel
             mBinding.moreOptions.setOnClickListener(this)
         }
     }
@@ -212,7 +224,7 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
      * @param subjectTitle title of subject for which this option was selected
      */
     override fun onEditAttendanceSelected(subjectTitle: String) {
-        val subject = mSubjectViewModel.getSubject(subjectTitle)
+        val subject = mSubjectListViewModel.getSubject(subjectTitle)
         val dialogFragment = AttendanceEditDialogFragment.newInstance(
                 subjectTitle,
                 subject!!.attendedClasses, subject.totalClasses

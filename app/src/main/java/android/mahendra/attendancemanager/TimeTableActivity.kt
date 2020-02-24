@@ -6,7 +6,7 @@ import android.mahendra.attendancemanager.dialogs.PeriodDialogFragment
 import android.mahendra.attendancemanager.fragments.DayScheduleFragment
 import android.mahendra.attendancemanager.models.Period
 import android.mahendra.attendancemanager.viewmodels.PeriodListViewModel
-import android.mahendra.attendancemanager.viewmodels.SubjectViewModel
+import android.mahendra.attendancemanager.viewmodels.SubjectListViewModel
 import android.os.Bundle
 import android.util.SparseArray
 import androidx.appcompat.app.AppCompatActivity
@@ -30,7 +30,7 @@ class TimeTableActivity : AppCompatActivity(),
         DayScheduleFragment.Callbacks, PeriodDialogFragment.Callbacks {
     private lateinit var mViewPager: ViewPager2
 
-    private lateinit var mSubjectViewModel: SubjectViewModel
+    private lateinit var mSubjectListViewModel: SubjectListViewModel
     private lateinit var mPeriodListViewModel: PeriodListViewModel
 
     private lateinit var mSubjectsTitles: List<String>
@@ -50,9 +50,9 @@ class TimeTableActivity : AppCompatActivity(),
         createWeekDayHash()
         mWeekDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
 
-        mSubjectViewModel = ViewModelProvider(this).get(SubjectViewModel::class.java)
+        mSubjectListViewModel = ViewModelProvider(this).get(SubjectListViewModel::class.java)
 
-        mSubjectViewModel.getSubjectTitles().observe(this,
+        mSubjectListViewModel.getSubjectTitles().observe(this,
                 Observer { subjectTitles: List<String> -> mSubjectsTitles = subjectTitles })
 
         mPeriodListViewModel = ViewModelProvider(this).get(PeriodListViewModel::class.java)

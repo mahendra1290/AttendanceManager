@@ -21,18 +21,12 @@ abstract class MainDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: MainDatabase? = null
 
-        @JvmStatic
-        fun getDatabase(context: Context): MainDatabase? {
-            if (INSTANCE == null) {
-                synchronized(MainDatabase::class.java) {
-                    if (INSTANCE == null) {
-                        INSTANCE = Room.databaseBuilder(context.applicationContext,
-                                MainDatabase::class.java, "main_database")
-                                .build()
-                    }
-                }
+        fun getDatabase(context: Context): MainDatabase {
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: Room.databaseBuilder(context.applicationContext,
+                        MainDatabase::class.java, "main_database")
+                        .build()
             }
-            return INSTANCE
         }
     }
 }
