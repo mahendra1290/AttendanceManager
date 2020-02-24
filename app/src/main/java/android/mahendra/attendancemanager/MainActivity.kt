@@ -1,5 +1,6 @@
 package android.mahendra.attendancemanager
 
+import android.mahendra.attendancemanager.fragments.SubjectListFragment
 import androidx.fragment.app.Fragment
 
 class MainActivity : SingleFragmentActivity() {

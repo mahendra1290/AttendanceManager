@@ -2,7 +2,7 @@ package android.mahendra.attendancemanager
 
 import android.content.Context
 import android.content.Intent
-import android.mahendra.attendancemanager.PeriodFragment.Companion.newInstance
+import android.mahendra.attendancemanager.fragments.PeriodFragment.Companion.newInstance
 import android.mahendra.attendancemanager.models.Period
 import android.mahendra.attendancemanager.models.Subject
 import android.mahendra.attendancemanager.viewmodels.PeriodListViewModel

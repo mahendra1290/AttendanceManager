@@ -1,6 +1,7 @@
-package android.mahendra.attendancemanager
+package android.mahendra.attendancemanager.fragments
 
 import android.content.Context
+import android.mahendra.attendancemanager.R
 import android.mahendra.attendancemanager.databinding.FragmentDayScheduleBinding
 import android.mahendra.attendancemanager.databinding.ListItemPeriodBinding
 import android.mahendra.attendancemanager.models.Period

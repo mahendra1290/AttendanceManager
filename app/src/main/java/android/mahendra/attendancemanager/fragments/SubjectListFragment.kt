@@ -1,8 +1,11 @@
-package android.mahendra.attendancemanager
+package android.mahendra.attendancemanager.fragments
 
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.mahendra.attendancemanager.MarkAttendanceActivity
+import android.mahendra.attendancemanager.R
+import android.mahendra.attendancemanager.TimeTableActivity
 import android.mahendra.attendancemanager.databinding.FragmentSubjectListBinding
 import android.mahendra.attendancemanager.databinding.ListItemSubjectBinding
 import android.mahendra.attendancemanager.dialogs.AttendanceEditDialogFragment

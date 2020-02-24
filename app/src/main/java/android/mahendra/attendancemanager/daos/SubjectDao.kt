@@ -29,4 +29,7 @@ interface SubjectDao {
 
     @Query("UPDATE subject_table SET title = :newTitle WHERE title = :oldTitle")
     suspend fun updateTitle(oldTitle: String, newTitle: String)
+
+    @Query("SELECT * FROM subject_table WHERE title = :title")
+    fun getSubject(title: String): LiveData<Subject?>
 }

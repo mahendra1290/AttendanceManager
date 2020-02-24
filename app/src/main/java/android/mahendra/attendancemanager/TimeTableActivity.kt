@@ -3,11 +3,11 @@ package android.mahendra.attendancemanager
 import android.content.Context
 import android.content.Intent
 import android.mahendra.attendancemanager.dialogs.PeriodDialogFragment
+import android.mahendra.attendancemanager.fragments.DayScheduleFragment
 import android.mahendra.attendancemanager.models.Period
 import android.mahendra.attendancemanager.viewmodels.PeriodListViewModel
 import android.mahendra.attendancemanager.viewmodels.SubjectViewModel
 import android.os.Bundle
-import android.util.Log
 import android.util.SparseArray
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment

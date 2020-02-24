@@ -1,5 +1,6 @@
-package android.mahendra.attendancemanager
+package android.mahendra.attendancemanager.fragments
 
+import android.mahendra.attendancemanager.R
 import android.mahendra.attendancemanager.models.Period
 import android.os.Bundle
 import android.view.LayoutInflater
