@@ -5,6 +5,7 @@ import android.content.Intent
 import android.mahendra.attendancemanager.dialogs.PeriodDialogFragment
 import android.mahendra.attendancemanager.fragments.DayScheduleFragment
 import android.mahendra.attendancemanager.models.Period
+import android.mahendra.attendancemanager.utilities.InjectorUtils
 import android.mahendra.attendancemanager.viewmodels.PeriodListViewModel
 import android.mahendra.attendancemanager.viewmodels.SubjectListViewModel
 import android.os.Bundle
@@ -50,7 +51,9 @@ class TimeTableActivity : AppCompatActivity(),
         createWeekDayHash()
         mWeekDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
 
-        mSubjectListViewModel = ViewModelProvider(this).get(SubjectListViewModel::class.java)
+        mSubjectListViewModel = InjectorUtils
+                .provideSubjectListViewModelFactory(this)
+                .create(SubjectListViewModel::class.java)
 
         mSubjectListViewModel.getSubjectTitles().observe(this,
                 Observer { subjectTitles: List<String> -> mSubjectsTitles = subjectTitles })
@@ -61,7 +64,7 @@ class TimeTableActivity : AppCompatActivity(),
         mViewPager.currentItem = mWeekDay - mWeekDayOffSet
         val tabLayout: TabLayout = tab_layout_weekday
         TabLayoutMediator(tabLayout, mViewPager
-        ) { tab, position -> tab.text = WEEK_DAYS.get(position + mWeekDayOffSet)}.attach()
+        ) { tab, position -> tab.text = WEEK_DAYS.get(position + mWeekDayOffSet) }.attach()
     }
 
     private inner class DayScheduleAdapter(fragmentActivity: FragmentActivity)
@@ -110,8 +113,7 @@ class TimeTableActivity : AppCompatActivity(),
         mTempPeriod!!.subjectTitle = title
         if (addNewPeriod) {
             mPeriodListViewModel.insert(mTempPeriod!!)
-        }
-        else {
+        } else {
             mPeriodListViewModel.update(mTempPeriod!!)
         }
         mTempPeriod = null

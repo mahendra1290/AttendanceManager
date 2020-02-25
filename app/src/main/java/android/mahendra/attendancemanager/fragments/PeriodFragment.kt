@@ -33,5 +33,4 @@ class PeriodFragment(private val mPeriod: Period) : Fragment() {
             return fragment
         }
     }
-
 }

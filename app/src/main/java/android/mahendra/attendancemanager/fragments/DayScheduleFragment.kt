@@ -125,5 +125,4 @@ class DayScheduleFragment private constructor(private val weekDay: Int) : Fragme
             return DayScheduleFragment(weekDay)
         }
     }
-
 }

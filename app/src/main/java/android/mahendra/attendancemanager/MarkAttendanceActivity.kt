@@ -2,6 +2,7 @@ package android.mahendra.attendancemanager
 
 import android.content.Context
 import android.content.Intent
+import android.mahendra.attendancemanager.databinding.ActivityMarkAttendanceBinding
 import android.mahendra.attendancemanager.fragments.PeriodFragment.Companion.newInstance
 import android.mahendra.attendancemanager.models.Period
 import android.mahendra.attendancemanager.models.Subject
@@ -9,6 +10,7 @@ import android.mahendra.attendancemanager.viewmodels.PeriodListViewModel
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
@@ -23,12 +25,14 @@ class MarkAttendanceActivity : AppCompatActivity() {
     private lateinit var mViewModel: PeriodListViewModel
     private lateinit var mPeriodViewPager: ViewPager2
     private lateinit var mPagerAdapter: PeriodPagerAdapter
+    private lateinit var binding: ActivityMarkAttendanceBinding
+    private val cal = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mWeekDay = intent.getIntExtra(EXTRA_WEEKDAY, 1)
-        setContentView(R.layout.activity_mark_attendance)
-        mPeriodViewPager = findViewById(R.id.period_viewpager)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_mark_attendance)
+
+        mPeriodViewPager = binding.periodViewpager
         mPagerAdapter = PeriodPagerAdapter(this)
         mPeriodViewPager.adapter = mPagerAdapter
         mViewModel = ViewModelProvider(this).get(PeriodListViewModel::class.java)

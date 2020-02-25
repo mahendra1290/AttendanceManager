@@ -8,5 +8,4 @@ class SubjectWithPeriods {
     var subject: Subject? = null
     @Relation(parentColumn = "title", entityColumn = "subject_title")
     var periods: List<Period>? = null
-
 }

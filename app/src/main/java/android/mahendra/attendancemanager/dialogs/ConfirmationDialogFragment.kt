@@ -25,11 +25,9 @@ class ConfirmationDialogFragment : DialogFragment() {
         val builder = AlertDialog.Builder(activity)
         builder.setTitle(dialogTitle)
         builder.setMessage(dialogMessage)
-        builder.setPositiveButton(dialogPositiveResponse)
-                { dialog, which -> sendResult(Activity.RESULT_OK, subjectTitle)}
+        builder.setPositiveButton(dialogPositiveResponse) { dialog, which -> sendResult(Activity.RESULT_OK, subjectTitle) }
 
-        builder.setNegativeButton(dialogNegativeResponse)
-                { dialog, which -> sendResult(Activity.RESULT_CANCELED, subjectTitle)}
+        builder.setNegativeButton(dialogNegativeResponse) { dialog, which -> sendResult(Activity.RESULT_CANCELED, subjectTitle) }
 
         return builder.create()
     }
@@ -52,11 +50,12 @@ class ConfirmationDialogFragment : DialogFragment() {
         const val EXTRA_SUBJECT_TITLE = "subject title"
 
         fun newInstance(
-                subjectTitle: String,
-                dialogTitle: String,
-                dialogMessage: String,
-                negativeResponse: String,
-                positiveResponse: String): ConfirmationDialogFragment {
+            subjectTitle: String,
+            dialogTitle: String,
+            dialogMessage: String,
+            negativeResponse: String,
+            positiveResponse: String
+        ): ConfirmationDialogFragment {
 
             val args = Bundle()
             args.putString(ARG_SUBJECT_TITLE, subjectTitle)

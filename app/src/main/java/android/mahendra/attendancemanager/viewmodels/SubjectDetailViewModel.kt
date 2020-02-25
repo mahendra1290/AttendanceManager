@@ -10,9 +10,8 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import java.util.*
 
-
 class SubjectDetailViewModel(
-        private val subjectRepository: SubjectRepository
+    private val subjectRepository: SubjectRepository
 ) : BaseObservable() {
 
     var subject: Subject? = null
@@ -47,5 +46,4 @@ class SubjectDetailViewModel(
         subject!!.incrementClassesMissed()
         subjectRepository.update(subject)
     }
-
 }

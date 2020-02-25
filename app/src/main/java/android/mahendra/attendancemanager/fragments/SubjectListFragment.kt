@@ -31,9 +31,8 @@ import java.util.*
 
 class SubjectListFragment : Fragment(), SubjectOptionListener {
     private val mSubjectListViewModel: SubjectListViewModel by viewModels {
-        InjectorUtils.provideSubjectListViewModelFactory(this)
+        InjectorUtils.provideSubjectListViewModelFactory(activity!!)
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +41,10 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val binding = DataBindingUtil.inflate<FragmentSubjectListBinding>(
                 inflater, R.layout.fragment_subject_list, container, false
         )
@@ -136,7 +138,9 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
     /**
      * view holder for subject item with data binding
      */
-    private inner class SubjectHolder(private val mBinding: ListItemSubjectBinding) : RecyclerView.ViewHolder(mBinding.root), View.OnClickListener {
+    private inner class SubjectHolder(
+        private val mBinding: ListItemSubjectBinding
+    ) : RecyclerView.ViewHolder(mBinding.root), View.OnClickListener {
         private var mSubject: Subject? = null
         fun bind(subject: Subject) {
             mSubject = subject
@@ -151,8 +155,8 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         }
 
         init {
-            val detailViewModel: SubjectDetailViewModel
-                    = InjectorUtils.provideSubjectDetailViewModel(this@SubjectListFragment)
+            val detailViewModel: SubjectDetailViewModel =
+                    InjectorUtils.provideSubjectDetailViewModel(this@SubjectListFragment)
             mBinding.subjectDetailViewModel = detailViewModel
             mBinding.moreOptions.setOnClickListener(this)
         }
@@ -272,8 +276,11 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
                 "attendance reset $subjectTitle", Toast.LENGTH_SHORT).show()
     }
 
+    /**
+     * return [ConfirmationDialogFragment] on subject delete option
+     */
     private fun createSubjectDeleteConfirmationDialog(
-            subjectTitle: String
+        subjectTitle: String
     ): ConfirmationDialogFragment {
         return ConfirmationDialogFragment.newInstance(
                 subjectTitle = subjectTitle,
@@ -284,13 +291,16 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         )
     }
 
+    /**
+     * return [ConfirmationDialogFragment] on subject attendance reset option
+     */
     private fun createSubjectResetAttendanceConfirmationDialog(
-            subjectTitle: String
+        subjectTitle: String
     ): ConfirmationDialogFragment {
         return ConfirmationDialogFragment.newInstance(
                 subjectTitle = subjectTitle,
                 dialogTitle = getString(R.string.reset_attendance),
-                dialogMessage =  getString(R.string.warning_reset_attendance, subjectTitle),
+                dialogMessage = getString(R.string.warning_reset_attendance, subjectTitle),
                 negativeResponse = "cancel",
                 positiveResponse = "reset"
         )

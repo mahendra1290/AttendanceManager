@@ -1,8 +1,8 @@
-package android.mahendra.attendancemanager.viewmodels;
+package android.mahendra.attendancemanager.viewmodels
 
-import android.mahendra.attendancemanager.models.Period;
+import android.mahendra.attendancemanager.models.Period
 
-import androidx.databinding.BaseObservable;
+import androidx.databinding.BaseObservable
 
 class PeriodViewModel(private var mPeriod: Period? = null) : BaseObservable() {
 

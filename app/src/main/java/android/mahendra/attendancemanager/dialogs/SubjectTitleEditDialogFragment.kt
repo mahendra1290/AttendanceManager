@@ -6,7 +6,6 @@ import android.app.Dialog
 import android.content.Intent
 import android.mahendra.attendancemanager.R
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager
 import android.widget.EditText
 import androidx.fragment.app.DialogFragment
@@ -32,11 +31,9 @@ class SubjectTitleEditDialogFragment : DialogFragment() {
         val builder = AlertDialog.Builder(activity)
         builder.setTitle(R.string.add_subject)
         builder.setView(view)
-        builder.setPositiveButton(R.string.add)
-        { dialog, which -> sendResult(Activity.RESULT_OK, mSubjectTitleTextView.text.toString().trim()) }
+        builder.setPositiveButton(R.string.add) { dialog, which -> sendResult(Activity.RESULT_OK, mSubjectTitleTextView.text.toString().trim()) }
 
-        builder.setNegativeButton(R.string.cancel)
-        { dialog, which -> dismiss()}
+        builder.setNegativeButton(R.string.cancel) { dialog, which -> dismiss() }
         val dialog = builder.create()
         dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         return dialog

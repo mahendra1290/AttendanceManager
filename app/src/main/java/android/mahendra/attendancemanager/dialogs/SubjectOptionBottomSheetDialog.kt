@@ -24,8 +24,8 @@ class SubjectOptionBottomSheetDialog : BottomSheetDialogFragment(), View.OnClick
         mSubjectOptionListener = try {
             targetFragment as SubjectOptionListener?
         } catch (ex: ClassCastException) {
-            throw ClassCastException(context.toString()
-                    + "must implement SubjectOptionBottomSheetDialog.SubjectOptionListener")
+            throw ClassCastException(context.toString() +
+                    "must implement SubjectOptionBottomSheetDialog.SubjectOptionListener")
         }
     }
 

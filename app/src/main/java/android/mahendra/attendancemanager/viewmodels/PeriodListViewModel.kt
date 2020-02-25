@@ -28,7 +28,7 @@ class PeriodListViewModel(application: Application) : AndroidViewModel(applicati
         return mAllPeriods
     }
 
-    fun getAllPeriodsOn(weekDay: Int): LiveData<List<Period>>  {
+    fun getAllPeriodsOn(weekDay: Int): LiveData<List<Period>> {
         return mPeriodRepository.getAllPeriodsOn(weekDay)
     }
 

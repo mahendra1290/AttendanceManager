@@ -1,14 +1,12 @@
 package android.mahendra.attendancemanager.repositories
 
-import android.app.Application
 import android.mahendra.attendancemanager.daos.SubjectDao
-import android.mahendra.attendancemanager.database.MainDatabase.Companion.getDatabase
 import android.mahendra.attendancemanager.models.Subject
 import androidx.lifecycle.LiveData
 
 class SubjectRepository private constructor(
-        private val mSubjectDao: SubjectDao
-){
+    private val mSubjectDao: SubjectDao
+) {
     val allSubjects: LiveData<List<Subject>> = mSubjectDao.getAllSubjects()
 
     fun getSubject(title: String): Subject? {

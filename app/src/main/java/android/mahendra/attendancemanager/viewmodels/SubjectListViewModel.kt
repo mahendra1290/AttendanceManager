@@ -2,17 +2,16 @@ package android.mahendra.attendancemanager.viewmodels
 
 import android.mahendra.attendancemanager.models.Subject
 import android.mahendra.attendancemanager.repositories.SubjectRepository
-
 import androidx.lifecycle.*
+
 import kotlinx.coroutines.launch
 
 import kotlin.collections.List
-import java.util.Locale
 import kotlin.collections.ArrayList
 
 class SubjectListViewModel internal constructor(
-        private val subjectRepository: SubjectRepository,
-        private val savedStateHandle: SavedStateHandle
+    private val subjectRepository: SubjectRepository,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     val mAllSubjects: LiveData<List<Subject>> = subjectRepository.allSubjects
@@ -43,11 +42,11 @@ class SubjectListViewModel internal constructor(
         return subjectTitles
     }
 
-    fun onUpdateTitle(oldTitle : String, newTitle : String) = viewModelScope.launch {
+    fun onUpdateTitle(oldTitle: String, newTitle: String) = viewModelScope.launch {
         subjectRepository.updateTitle(oldTitle, newTitle)
     }
 
-    fun getSubjectTitles() : LiveData<List<String>> {
+    fun getSubjectTitles(): LiveData<List<String>> {
         return Transformations.map(mAllSubjects, this::extractTitles)
     }
 
