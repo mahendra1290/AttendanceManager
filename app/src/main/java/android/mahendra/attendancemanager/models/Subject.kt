@@ -2,9 +2,11 @@ package android.mahendra.attendancemanager.models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "subject_table")
+@Entity(tableName = "subject_table",
+        indices = [ Index("title") ])
 data class Subject(
     @PrimaryKey
     @ColumnInfo(name = "title")
