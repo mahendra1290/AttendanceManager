@@ -31,7 +31,7 @@ import java.util.*
 
 class SubjectListFragment : Fragment(), SubjectOptionListener {
     private val mSubjectListViewModel: SubjectListViewModel by viewModels {
-        InjectorUtils.provideSubjectListViewModelFactory(activity!!)
+        InjectorUtils.provideSubjectListViewModelFactory(requireActivity())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

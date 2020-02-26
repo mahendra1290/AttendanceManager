@@ -3,6 +3,7 @@ package android.mahendra.attendancemanager.viewmodels
 import android.mahendra.attendancemanager.models.Subject
 import android.mahendra.attendancemanager.repositories.SubjectRepository
 import androidx.databinding.BaseObservable
+import androidx.lifecycle.ViewModel
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -12,7 +13,8 @@ import java.util.*
 
 class SubjectDetailViewModel(
     private val subjectRepository: SubjectRepository
-) : BaseObservable() {
+
+) : ViewModel() {
 
     var subject: Subject? = null
 
