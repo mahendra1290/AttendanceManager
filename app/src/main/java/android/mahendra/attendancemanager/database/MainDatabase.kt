@@ -13,8 +13,8 @@ import androidx.room.RoomDatabase
 @Database(entities = [Subject::class, Period::class], version = 1, exportSchema = false)
 abstract class MainDatabase : RoomDatabase() {
     abstract fun subjectDao(): SubjectDao
-    abstract fun mPeriodDao(): PeriodDao
-    abstract fun mSubjectPeriodDao(): SubjectPeriodDao
+    abstract fun periodDao(): PeriodDao
+    abstract fun subjectPeriodDao(): SubjectPeriodDao
 
     companion object {
         @Volatile

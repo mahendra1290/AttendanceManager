@@ -21,10 +21,10 @@ import java.util.*
 
 class MarkAttendanceActivity : AppCompatActivity() {
 
-    private var mWeekDay = 0
-    private lateinit var mViewModel: PeriodListViewModel
-    private lateinit var mPeriodViewPager: ViewPager2
-    private lateinit var mPagerAdapter: PeriodPagerAdapter
+    private var weekDay = 0
+    private lateinit var periodListViewModel: PeriodListViewModel
+    private lateinit var periodViewPager: ViewPager2
+    private lateinit var pagerAdapter: PeriodPagerAdapter
     private lateinit var binding: ActivityMarkAttendanceBinding
     private val cal = Calendar.getInstance()
 
@@ -32,42 +32,42 @@ class MarkAttendanceActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_mark_attendance)
 
-        mPeriodViewPager = binding.periodViewpager
-        mPagerAdapter = PeriodPagerAdapter(this)
-        mPeriodViewPager.adapter = mPagerAdapter
-        mViewModel = ViewModelProvider(this).get(PeriodListViewModel::class.java)
-        mViewModel.getAllSubjectsOn(mWeekDay).observe(this, Observer { subjects: List<Subject> ->
+        periodViewPager = binding.periodViewpager
+        pagerAdapter = PeriodPagerAdapter(this)
+        periodViewPager.adapter = pagerAdapter
+        periodListViewModel = ViewModelProvider(this).get(PeriodListViewModel::class.java)
+        periodListViewModel.getAllSubjectsOn(weekDay).observe(this, Observer { subjects: List<Subject> ->
             for ((title) in subjects) {
                 Log.i(TAG, "title -> $title")
             }
         })
-        mViewModel.getAllPeriodsOn(mWeekDay).observe(this, Observer { periods: List<Period> ->
+        periodListViewModel.getAllPeriodsOn(weekDay).observe(this, Observer { periods: List<Period> ->
             for (period in periods) {
                 Log.i(TAG, "period " + period.subjectTitle + "weekday " + period.weekDay)
             }
-            mPagerAdapter.setPeriods(periods)
+            pagerAdapter.setPeriods(periods)
         })
     }
 
     private inner class PeriodPagerAdapter(activity: FragmentActivity?) : FragmentStateAdapter(activity!!) {
-        var mPeriods: List<Period> = ArrayList()
+        private var periods: List<Period> = ArrayList()
         override fun createFragment(position: Int): Fragment {
-            return newInstance(mPeriods[position])
+            return newInstance(periods[position])
         }
 
         override fun getItemCount(): Int {
-            return mPeriods.size
+            return periods.size
         }
 
         fun setPeriods(periods: List<Period>) {
-            mPeriods = periods
+            this.periods = periods
             notifyDataSetChanged()
         }
     }
 
     companion object {
-        private const val TAG = "MarkAttendaceActivity"
-        const val EXTRA_WEEKDAY = "MarkAttendaceActivity.EXTRA_WEEKDAY"
+        private const val TAG = "MarkAttendanceActivity"
+        private const val EXTRA_WEEKDAY = "MarkAttendanceActivity.EXTRA_WEEKDAY"
         fun newIntent(context: Context?, weekDay: Int): Intent {
             val i = Intent(context, MarkAttendanceActivity::class.java)
             i.putExtra(EXTRA_WEEKDAY, weekDay)

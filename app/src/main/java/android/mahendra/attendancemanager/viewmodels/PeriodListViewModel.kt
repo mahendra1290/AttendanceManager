@@ -13,30 +13,30 @@ import kotlinx.coroutines.launch
 import kotlin.collections.List
 
 class PeriodListViewModel(application: Application) : AndroidViewModel(application) {
-    private val mPeriodRepository: PeriodRepository = PeriodRepository(application)
-    private val mAllPeriods: LiveData<List<Period>> = mPeriodRepository.mAllPeriods
+    private val periodRepository: PeriodRepository = PeriodRepository(application)
+    private val allPeriods: LiveData<List<Period>> = periodRepository.mAllPeriods
 
     fun insert(period: Period) = viewModelScope.launch {
-        mPeriodRepository.insert(period)
+        periodRepository.insert(period)
     }
 
     fun update(period: Period) = viewModelScope.launch {
-        mPeriodRepository.update(period)
+        periodRepository.update(period)
     }
 
     fun getAllPeriods(): LiveData<List<Period>> {
-        return mAllPeriods
+        return allPeriods
     }
 
     fun getAllPeriodsOn(weekDay: Int): LiveData<List<Period>> {
-        return mPeriodRepository.getAllPeriodsOn(weekDay)
+        return periodRepository.getAllPeriodsOn(weekDay)
     }
 
     fun getAllSubjectsOn(weekDay: Int): LiveData<List<Subject>> {
-        return mPeriodRepository.getAllSubjectsOn(weekDay)
+        return periodRepository.getAllSubjectsOn(weekDay)
     }
 
     fun deletePeriod(periodNumber: Int, weekDay: Int) = viewModelScope.launch {
-        mPeriodRepository.deletePeriod(periodNumber, weekDay)
+        periodRepository.deletePeriod(periodNumber, weekDay)
     }
 }

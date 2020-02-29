@@ -10,7 +10,7 @@ import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class SubjectOptionBottomSheetDialog : BottomSheetDialogFragment(), View.OnClickListener {
-    private var mSubjectOptionListener: SubjectOptionListener? = null
+    private var subjectOptionListener: SubjectOptionListener? = null
 
     interface SubjectOptionListener {
         fun onDeleteSelected(subjectTitle: String)
@@ -21,7 +21,7 @@ class SubjectOptionBottomSheetDialog : BottomSheetDialogFragment(), View.OnClick
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        mSubjectOptionListener = try {
+        subjectOptionListener = try {
             targetFragment as SubjectOptionListener?
         } catch (ex: ClassCastException) {
             throw ClassCastException(context.toString() +
@@ -31,7 +31,7 @@ class SubjectOptionBottomSheetDialog : BottomSheetDialogFragment(), View.OnClick
 
     override fun onDetach() {
         super.onDetach()
-        mSubjectOptionListener = null
+        subjectOptionListener = null
     }
 
     override fun getTheme(): Int {
@@ -41,7 +41,7 @@ class SubjectOptionBottomSheetDialog : BottomSheetDialogFragment(), View.OnClick
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.bottom_sheet_subject, container, false)
         val title = view.findViewById<TextView>(R.id.subject_title_modal_sheet)
-        title.text = arguments!!.getString(ARG_SUBJECT_TITLE, " ")
+        title.text = requireArguments().getString(ARG_SUBJECT_TITLE, " ")
         view.findViewById<View>(R.id.delete_subject_option).setOnClickListener(this)
         view.findViewById<View>(R.id.edit_title_option).setOnClickListener(this)
         view.findViewById<View>(R.id.edit_attendance_option).setOnClickListener(this)
@@ -50,12 +50,12 @@ class SubjectOptionBottomSheetDialog : BottomSheetDialogFragment(), View.OnClick
     }
 
     override fun onClick(v: View) {
-        val subjectTitle = arguments!!.getString(ARG_SUBJECT_TITLE, "")
+        val subjectTitle = requireArguments().getString(ARG_SUBJECT_TITLE, "")
         when (v.id) {
-            R.id.delete_subject_option -> mSubjectOptionListener!!.onDeleteSelected(subjectTitle)
-            R.id.edit_title_option -> mSubjectOptionListener!!.onEditTitleSelected(subjectTitle)
-            R.id.edit_attendance_option -> mSubjectOptionListener!!.onEditAttendanceSelected(subjectTitle)
-            R.id.reset_attendance_option -> mSubjectOptionListener!!.onResetAttendanceSelected(subjectTitle)
+            R.id.delete_subject_option -> subjectOptionListener!!.onDeleteSelected(subjectTitle)
+            R.id.edit_title_option -> subjectOptionListener!!.onEditTitleSelected(subjectTitle)
+            R.id.edit_attendance_option -> subjectOptionListener!!.onEditAttendanceSelected(subjectTitle)
+            R.id.reset_attendance_option -> subjectOptionListener!!.onResetAttendanceSelected(subjectTitle)
         }
         dismiss()
     }

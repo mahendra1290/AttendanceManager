@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 
 object InjectorUtils {
-    fun getSubjectRepository(context: Context): SubjectRepository {
+    private fun getSubjectRepository(context: Context): SubjectRepository {
         return SubjectRepository.getInstance(
                 MainDatabase.getDatabase(context.applicationContext).subjectDao()
         )

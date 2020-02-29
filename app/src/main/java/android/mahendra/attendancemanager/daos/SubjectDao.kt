@@ -32,4 +32,7 @@ interface SubjectDao {
 
     @Query("SELECT * FROM subject_table WHERE title = :title")
     fun getSubject(title: String): LiveData<Subject?>
+
+    @Query("UPDATE subject_table SET classes_attended = :attendedClasses, classes_missed = :missedClasses WHERE title = :title")
+    suspend fun updateAttendance(title: String, attendedClasses: Int, missedClasses: Int)
 }

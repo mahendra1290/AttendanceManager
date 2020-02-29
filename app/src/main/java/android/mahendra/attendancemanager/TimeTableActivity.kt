@@ -29,42 +29,42 @@ import kotlin.collections.List
 
 class TimeTableActivity : AppCompatActivity(),
         DayScheduleFragment.Callbacks, PeriodDialogFragment.Callbacks {
-    private lateinit var mViewPager: ViewPager2
+    private lateinit var viewPager: ViewPager2
 
-    private lateinit var mSubjectListViewModel: SubjectListViewModel
-    private lateinit var mPeriodListViewModel: PeriodListViewModel
+    private lateinit var subjectListViewModel: SubjectListViewModel
+    private lateinit var periodListViewModel: PeriodListViewModel
 
-    private lateinit var mSubjectsTitles: List<String>
+    private lateinit var allSubjectsTitles: List<String>
 
     override val subjectTitles: List<String>
-        get() = mSubjectsTitles
+        get() = allSubjectsTitles
 
-    private var mWeekDay = -1
-    private var mWeekDayOffSet = -1
+    private var weekDay = -1
+    private var weekDayOffSet = -1
 
-    private var mTempPeriod: Period? = null
+    private var tempPeriod: Period? = null
     private var addNewPeriod: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timetable)
         createWeekDayHash()
-        mWeekDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
+        weekDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
 
-        mSubjectListViewModel = InjectorUtils
+        subjectListViewModel = InjectorUtils
                 .provideSubjectListViewModelFactory(this)
                 .create(SubjectListViewModel::class.java)
 
-        mSubjectListViewModel.getSubjectTitles().observe(this,
-                Observer { subjectTitles: List<String> -> mSubjectsTitles = subjectTitles })
+        subjectListViewModel.getSubjectTitles().observe(this,
+                Observer { subjectTitles: List<String> -> allSubjectsTitles = subjectTitles })
 
-        mPeriodListViewModel = ViewModelProvider(this).get(PeriodListViewModel::class.java)
-        mViewPager = day_schedule_viewpager
-        mViewPager.adapter = DayScheduleAdapter(this)
-        mViewPager.currentItem = mWeekDay - mWeekDayOffSet
+        periodListViewModel = ViewModelProvider(this).get(PeriodListViewModel::class.java)
+        viewPager = day_schedule_viewpager
+        viewPager.adapter = DayScheduleAdapter(this)
+        viewPager.currentItem = weekDay - weekDayOffSet
         val tabLayout: TabLayout = tab_layout_weekday
-        TabLayoutMediator(tabLayout, mViewPager
-        ) { tab, position -> tab.text = WEEK_DAYS.get(position + mWeekDayOffSet) }.attach()
+        TabLayoutMediator(tabLayout, viewPager
+        ) { tab, position -> tab.text = WEEK_DAYS.get(position + weekDayOffSet) }.attach()
     }
 
     private inner class DayScheduleAdapter(fragmentActivity: FragmentActivity)
@@ -75,7 +75,7 @@ class TimeTableActivity : AppCompatActivity(),
             for (i in 2..7) {
                 weekDays.add(i)
             }
-            mWeekDayOffSet = weekDays[0]
+            weekDayOffSet = weekDays[0]
         }
 
         override fun createFragment(position: Int): Fragment {
@@ -95,28 +95,28 @@ class TimeTableActivity : AppCompatActivity(),
 
     override fun onAddPeriod(periodNumber: Int, weekDay: Int) {
         addNewPeriod = true
-        mTempPeriod = Period(null, periodNumber, weekDay)
-        openAddPeriodDialog(mTempPeriod!!.subjectTitle)
+        tempPeriod = Period(null, periodNumber, weekDay)
+        openAddPeriodDialog(tempPeriod!!.subjectTitle)
     }
 
     override fun onModifyPeriod(period: Period) {
         addNewPeriod = false
-        mTempPeriod = period
+        tempPeriod = period
         openAddPeriodDialog(period.subjectTitle)
     }
 
     override fun onDeletePeriod(title: String?) {
-        mPeriodListViewModel.deletePeriod(mTempPeriod!!.periodNumber, mTempPeriod!!.weekDay)
+        periodListViewModel.deletePeriod(tempPeriod!!.periodNumber, tempPeriod!!.weekDay)
     }
 
     override fun onPeriodSelected(title: String?) {
-        mTempPeriod!!.subjectTitle = title
+        tempPeriod!!.subjectTitle = title
         if (addNewPeriod) {
-            mPeriodListViewModel.insert(mTempPeriod!!)
+            periodListViewModel.insert(tempPeriod!!)
         } else {
-            mPeriodListViewModel.update(mTempPeriod!!)
+            periodListViewModel.update(tempPeriod!!)
         }
-        mTempPeriod = null
+        tempPeriod = null
         addNewPeriod = false
     }
 

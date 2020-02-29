@@ -13,25 +13,25 @@ import kotlinx.android.synthetic.main.dialog_add_subject.view.*
 
 class SubjectTitleEditDialogFragment : DialogFragment() {
 
-    private lateinit var mSubjectTitleTextView: EditText
+    private lateinit var subjectTitleEditText: EditText
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
         val view = requireActivity().layoutInflater.inflate(R.layout.dialog_add_subject, null)
 
-        mSubjectTitleTextView = view.subjectTitleEditText
-        mSubjectTitleTextView.requestFocus()
+        subjectTitleEditText = view.subjectTitleEditText
+        subjectTitleEditText.requestFocus()
 
         val subjectTitle = arguments?.getString(ARG_SUBJECT_TITLE)
         if (subjectTitle != null) {
-            mSubjectTitleTextView.setText(subjectTitle)
-            mSubjectTitleTextView.setSelection(0, subjectTitle.length)
+            subjectTitleEditText.setText(subjectTitle)
+            subjectTitleEditText.setSelection(0, subjectTitle.length)
         }
 
         val builder = AlertDialog.Builder(activity)
         builder.setTitle(R.string.add_subject)
         builder.setView(view)
-        builder.setPositiveButton(R.string.add) { dialog, which -> sendResult(Activity.RESULT_OK, mSubjectTitleTextView.text.toString().trim()) }
+        builder.setPositiveButton(R.string.add) { dialog, which -> sendResult(Activity.RESULT_OK, subjectTitleEditText.text.toString().trim()) }
 
         builder.setNegativeButton(R.string.cancel) { dialog, which -> dismiss() }
         val dialog = builder.create()
@@ -41,7 +41,7 @@ class SubjectTitleEditDialogFragment : DialogFragment() {
 
     override fun onResume() {
         super.onResume()
-        mSubjectTitleTextView.requestFocus()
+        subjectTitleEditText.requestFocus()
     }
 
     private fun sendResult(resultCode: Int, subjectTitle: String) {

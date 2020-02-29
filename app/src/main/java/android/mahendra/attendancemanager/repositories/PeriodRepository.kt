@@ -10,42 +10,42 @@ import android.mahendra.attendancemanager.models.Subject
 import androidx.lifecycle.LiveData
 
 class PeriodRepository(application: Application) {
-    private val mPeriodDao: PeriodDao
-    private val mSubjectPeriodDao: SubjectPeriodDao
+    private val periodDao: PeriodDao
+    private val subjectPeriodDao: SubjectPeriodDao
     val mAllPeriods: LiveData<List<Period>>
 
     init {
         val db = MainDatabase.getDatabase(application)
-        mPeriodDao = db!!.mPeriodDao()
-        mSubjectPeriodDao = db.mSubjectPeriodDao()
-        mAllPeriods = mPeriodDao.getAllPeriods()
+        periodDao = db.periodDao()
+        subjectPeriodDao = db.subjectPeriodDao()
+        mAllPeriods = periodDao.getAllPeriods()
     }
 
     suspend fun insert(period: Period) {
-            mPeriodDao.insert(period)
+            periodDao.insert(period)
     }
 
     suspend fun update(period: Period) {
-            mPeriodDao.update(period)
+            periodDao.update(period)
     }
 
     suspend fun delete(period: Period) {
-            mPeriodDao.delete(period)
+            periodDao.delete(period)
     }
 
     fun getAllPeriodsOn(weekDay: Int): LiveData<List<Period>> {
-        return mPeriodDao.getAllPeriodsOn(weekDay)
+        return periodDao.getAllPeriodsOn(weekDay)
     }
 
     fun getAllPeriodsOfSubject(subjectTitle: String): LiveData<List<Period>> {
-        return mPeriodDao.getAllPeriodsOfSubject(subjectTitle)
+        return periodDao.getAllPeriodsOfSubject(subjectTitle)
     }
 
     fun getAllSubjectsOn(weekDay: Int): LiveData<List<Subject>> {
-        return mSubjectPeriodDao.getAllSubjectsOn(weekDay)
+        return subjectPeriodDao.getAllSubjectsOn(weekDay)
     }
 
     suspend fun deletePeriod(periodNumber: Int, weekDay: Int) {
-        mPeriodDao.deletePeriod(periodNumber, weekDay)
+        periodDao.deletePeriod(periodNumber, weekDay)
     }
 }

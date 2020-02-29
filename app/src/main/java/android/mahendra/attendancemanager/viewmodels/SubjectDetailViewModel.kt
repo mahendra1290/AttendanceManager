@@ -2,18 +2,14 @@ package android.mahendra.attendancemanager.viewmodels
 
 import android.mahendra.attendancemanager.models.Subject
 import android.mahendra.attendancemanager.repositories.SubjectRepository
-import androidx.databinding.BaseObservable
 import androidx.lifecycle.ViewModel
-
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
+import androidx.lifecycle.viewModelScope
 
 import kotlinx.coroutines.launch
 import java.util.*
 
 class SubjectDetailViewModel(
     private val subjectRepository: SubjectRepository
-
 ) : ViewModel() {
 
     var subject: Subject? = null
@@ -39,12 +35,12 @@ class SubjectDetailViewModel(
         return (subject!!.attendedClasses * 100) / subject!!.totalClasses
     }
 
-    fun onAttended() = CoroutineScope(IO).launch {
+    fun onAttended() = viewModelScope.launch {
         subject!!.incrementClassesAttended()
         subjectRepository.update(subject)
     }
 
-    fun onMissed() = CoroutineScope(IO).launch {
+    fun onMissed() = viewModelScope.launch {
         subject!!.incrementClassesMissed()
         subjectRepository.update(subject)
     }

@@ -4,15 +4,15 @@ import android.mahendra.attendancemanager.models.Period
 
 import androidx.databinding.BaseObservable
 
-class PeriodViewModel(private var mPeriod: Period? = null) : BaseObservable() {
+class PeriodViewModel(private var period: Period? = null) : BaseObservable() {
 
     fun setPeriod(period: Period?) {
-        mPeriod = period
+        this.period = period
     }
 
     val title: String?
-        get() = mPeriod!!.subjectTitle
+        get() = period!!.subjectTitle
 
     val periodNumber: String
-        get() = mPeriod!!.periodNumber.toString()
+        get() = period!!.periodNumber.toString()
 }

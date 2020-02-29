@@ -18,7 +18,6 @@ import android.mahendra.attendancemanager.utilities.InjectorUtils
 import android.mahendra.attendancemanager.viewmodels.SubjectDetailViewModel
 import android.mahendra.attendancemanager.viewmodels.SubjectListViewModel
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
@@ -30,7 +29,7 @@ import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
 class SubjectListFragment : Fragment(), SubjectOptionListener {
-    private val mSubjectListViewModel: SubjectListViewModel by viewModels {
+    private val subjectListViewModel: SubjectListViewModel by viewModels {
         InjectorUtils.provideSubjectListViewModelFactory(requireActivity())
     }
 
@@ -49,15 +48,14 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
                 inflater, R.layout.fragment_subject_list, container, false
         )
         val adapter = SubjectAdapter()
-        mSubjectListViewModel.mAllSubjects.observe(
+        subjectListViewModel.allSubjects.observe(
                 viewLifecycleOwner, Observer {
             subjects: List<Subject> -> adapter.setSubjects(subjects)
-            Log.i(TAG, "subject updated")
         })
 
         binding.subjectListRecyclerView.layoutManager = LinearLayoutManager(activity)
         binding.subjectListRecyclerView.adapter = adapter
-        binding.addSubjectFloatingButton.setOnClickListener { v: View? -> openAddSubjectDialog() }
+        binding.addSubjectFloatingButton.setOnClickListener { openAddSubjectDialog() }
 
         return binding.root
     }
@@ -102,37 +100,32 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
 
     private fun handleNewSubjectRequest(data: Intent) {
         val subjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_SUBJECT_TITLE)!!
-        val subject = Subject()
-        subject.title = subjectTitle
-        mSubjectListViewModel.insert(subject)
+        subjectListViewModel.onNewSubject(subjectTitle)
     }
 
     private fun handleSubjectTitleEditRequest(data: Intent) {
         val oldSubjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_OLD_SUBJECT_TITLE)!!
         val newSubjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_SUBJECT_TITLE)!!
-        mSubjectListViewModel.onUpdateTitle(oldSubjectTitle, newSubjectTitle)
+        subjectListViewModel.onUpdateTitle(oldSubjectTitle, newSubjectTitle)
     }
 
     private fun handleSubjectDeleteRequest(data: Intent) {
-        val title = data.getStringExtra(ConfirmationDialogFragment.EXTRA_SUBJECT_TITLE)!!
-        mSubjectListViewModel.onDeleteSubjectWith(title)
-        showSubjectDeleteToast(title)
+        val subjectTitle = data.getStringExtra(ConfirmationDialogFragment.EXTRA_SUBJECT_TITLE)!!
+        subjectListViewModel.onDeleteSubjectWith(subjectTitle)
+        showSubjectDeleteToast(subjectTitle)
     }
 
     private fun handleSubjectAttendanceResetRequest(data: Intent) {
         val title = data.getStringExtra(ConfirmationDialogFragment.EXTRA_SUBJECT_TITLE)!!
-        mSubjectListViewModel.onResetAttendance(title)
+        subjectListViewModel.onResetAttendance(title)
         showResetAttendanceToast(title)
     }
 
     private fun handleSubjectAttendanceEditRequest(data: Intent) {
-        val title = data.getStringExtra(AttendanceEditDialogFragment.EXTRA_SUBJECT_TITLE)!!
-        val attended = data.getIntExtra(AttendanceEditDialogFragment.EXTRA_ATTENDED, 0)
-        val total = data.getIntExtra(AttendanceEditDialogFragment.EXTRA_TOTAL, 0)
-        val subject = mSubjectListViewModel.getSubject(title)
-        subject!!.attendedClasses = attended
-        subject.missedClasses = total - attended
-        mSubjectListViewModel.update(subject)
+        val subjectTitle = data.getStringExtra(AttendanceEditDialogFragment.EXTRA_SUBJECT_TITLE)!!
+        val attendedClasses = data.getIntExtra(AttendanceEditDialogFragment.EXTRA_ATTENDED_CLASSES, 0)
+        val totalClasses = data.getIntExtra(AttendanceEditDialogFragment.EXTRA_TOTAL_CLASSES, 0)
+        subjectListViewModel.onUpdateAttendance(subjectTitle, attendedClasses, totalClasses)
     }
 
     /**
@@ -237,7 +230,7 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
      * @param subjectTitle title of subject for which this option was selected
      */
     override fun onEditAttendanceSelected(subjectTitle: String) {
-        val subject = mSubjectListViewModel.getSubject(subjectTitle)
+        val subject = subjectListViewModel.getSubject(subjectTitle)
         val dialogFragment = AttendanceEditDialogFragment.newInstance(
                 subjectTitle = subjectTitle,
                 attendedClasses = subject!!.attendedClasses,

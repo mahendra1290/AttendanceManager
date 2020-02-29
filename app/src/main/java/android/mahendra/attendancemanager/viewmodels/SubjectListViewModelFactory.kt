@@ -8,9 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
 
 class SubjectListViewModelFactory(
-    private val respository: SubjectRepository,
-    owner: SavedStateRegistryOwner,
-    defaultArgs: Bundle? = null
+        private val repository: SubjectRepository,
+        owner: SavedStateRegistryOwner,
+        defaultArgs: Bundle? = null
 ) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
 
     @Suppress("UNCHECKED_CAST")
@@ -19,6 +19,6 @@ class SubjectListViewModelFactory(
         modelClass: Class<T>,
         handle: SavedStateHandle
     ): T {
-        return SubjectListViewModel(respository, handle) as T
+        return SubjectListViewModel(repository, handle) as T
     }
 }

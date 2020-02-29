@@ -16,8 +16,8 @@ import androidx.fragment.app.DialogFragment
 import java.util.*
 
 class PeriodDialogFragment : DialogFragment() {
-    private var mSubjectTitle: String? = null
-    private var mSubjectTitles: List<String> = emptyList()
+    private var subjectTitle: String? = null
+    private var allSubjectTitles: List<String> = emptyList()
 
     private var mCallback: Callbacks? = null
 
@@ -29,8 +29,8 @@ class PeriodDialogFragment : DialogFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(KEY_PERIOD_TITLE, mSubjectTitle)
-        outState.putStringArrayList(KEY_TITLE_OPTIONS, mSubjectTitles as ArrayList<String>)
+        outState.putString(KEY_PERIOD_TITLE, subjectTitle)
+        outState.putStringArrayList(KEY_TITLE_OPTIONS, allSubjectTitles as ArrayList<String>)
     }
 
     override fun onAttach(context: Context) {
@@ -50,11 +50,11 @@ class PeriodDialogFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null) {
-            mSubjectTitle = savedInstanceState.getString(KEY_PERIOD_TITLE, null)
-            mSubjectTitles = savedInstanceState.getStringArrayList(KEY_TITLE_OPTIONS) as List<String>
+            subjectTitle = savedInstanceState.getString(KEY_PERIOD_TITLE, null)
+            allSubjectTitles = savedInstanceState.getStringArrayList(KEY_TITLE_OPTIONS) as List<String>
         } else {
-            mSubjectTitles = mCallback!!.subjectTitles
-            mSubjectTitle = arguments?.getString(ARG_PERIOD_TITLE, null)
+            allSubjectTitles = mCallback!!.subjectTitles
+            subjectTitle = arguments?.getString(ARG_PERIOD_TITLE, null)
         }
     }
 
@@ -64,32 +64,32 @@ class PeriodDialogFragment : DialogFragment() {
         val positiveButtonText: Int
         val inflater = requireActivity().layoutInflater
         val view = inflater.inflate(R.layout.dialog_choose_period, null)
-        val clearPeriod = view.findViewById<Button>(R.id.clear_period)
+        val removePeriodButton = view.findViewById<Button>(R.id.remove_period_button)
 
-        clearPeriod.setOnClickListener { v1: View? ->
-            mCallback!!.onDeletePeriod(mSubjectTitle)
-            Toast.makeText(activity, "Removed $mSubjectTitle", Toast.LENGTH_SHORT).show()
+        removePeriodButton.setOnClickListener { v1: View? ->
+            mCallback!!.onDeletePeriod(subjectTitle)
+            Toast.makeText(activity, "Removed $subjectTitle", Toast.LENGTH_SHORT).show()
             dismiss()
         }
 
-        if (mSubjectTitle != null) {
-            clearPeriod.visibility = View.VISIBLE
+        if (subjectTitle != null) {
+            removePeriodButton.visibility = View.VISIBLE
             dialogTitle = R.string.update_period
             positiveButtonText = R.string.update
         } else {
-            clearPeriod.visibility = View.GONE
+            removePeriodButton.visibility = View.GONE
             dialogTitle = R.string.add_period
             positiveButtonText = R.string.add
         }
 
         val spinner = view.findViewById<Spinner>(R.id.spinner_select_period)
-        val adapter: ArrayAdapter<String> = ArrayAdapter(activity!!, android.R.layout.simple_spinner_item)
-        adapter.addAll(mSubjectTitles)
+        val adapter: ArrayAdapter<String> = ArrayAdapter(requireActivity(), android.R.layout.simple_spinner_item)
+        adapter.addAll(allSubjectTitles)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
 
-        if (mSubjectTitle != null) {
-            val position = adapter.getPosition(mSubjectTitle)
+        if (subjectTitle != null) {
+            val position = adapter.getPosition(subjectTitle)
             spinner.setSelection(position)
         }
 

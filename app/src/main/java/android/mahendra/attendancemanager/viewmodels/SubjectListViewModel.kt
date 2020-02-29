@@ -14,7 +14,7 @@ class SubjectListViewModel internal constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val mAllSubjects: LiveData<List<Subject>> = subjectRepository.allSubjects
+    val allSubjects: LiveData<List<Subject>> = subjectRepository.allSubjects
 
     fun insert(subject: Subject) = viewModelScope.launch {
         subjectRepository.insert(subject)
@@ -47,7 +47,7 @@ class SubjectListViewModel internal constructor(
     }
 
     fun getSubjectTitles(): LiveData<List<String>> {
-        return Transformations.map(mAllSubjects, this::extractTitles)
+        return Transformations.map(allSubjects, this::extractTitles)
     }
 
     fun onDeleteSubjectWith(subjectTitle: String) = viewModelScope.launch {
@@ -56,7 +56,7 @@ class SubjectListViewModel internal constructor(
     }
 
     fun onResetAttendance(subjectTitle: String) = viewModelScope.launch {
-        var subject = subjectRepository.getSubject(subjectTitle)
+        val subject = subjectRepository.getSubject(subjectTitle)
         subject?.attendedClasses = 0
         subject?.missedClasses = 0
         subjectRepository.update(subject)
@@ -64,5 +64,14 @@ class SubjectListViewModel internal constructor(
 
     fun getSubject(subjectTitle: String): Subject? {
         return subjectRepository.getSubject(subjectTitle)
+    }
+
+    fun onNewSubject(subjectTitle: String) = viewModelScope.launch {
+        subjectRepository.insert(Subject(subjectTitle))
+    }
+
+    fun onUpdateAttendance(subjectTitle: String, attendedClasses: Int, totalClasses: Int) = viewModelScope.launch {
+        val missedClasses = totalClasses - attendedClasses
+        subjectRepository.updateAttendance(subjectTitle, attendedClasses, missedClasses)
     }
 }

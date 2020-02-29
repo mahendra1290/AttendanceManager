@@ -21,8 +21,8 @@ import java.util.*
 
 class DayScheduleFragment private constructor(private val weekDay: Int) : Fragment() {
 
-    private lateinit var mPeriodListViewModel: PeriodListViewModel
-    private var mCallback: Callbacks? = null
+    private lateinit var periodListViewModel: PeriodListViewModel
+    private var callbacks: Callbacks? = null
 
     interface Callbacks {
         fun onAddPeriod(periodNumber: Int, weekDay: Int)
@@ -31,55 +31,55 @@ class DayScheduleFragment private constructor(private val weekDay: Int) : Fragme
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        mCallback = context as Callbacks
+        callbacks = context as Callbacks
     }
 
     override fun onDetach() {
         super.onDetach()
-        mCallback = null
+        callbacks = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
-        mPeriodListViewModel = ViewModelProvider(requireActivity()).get(PeriodListViewModel::class.java)
+        periodListViewModel = ViewModelProvider(requireActivity()).get(PeriodListViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentDayScheduleBinding>(
                 inflater, R.layout.fragment_day_schedule, container, false)
         val adapter = PeriodAdapter()
-        mPeriodListViewModel.getAllPeriodsOn(weekDay).observe(viewLifecycleOwner, Observer { periods: List<Period> -> adapter.setPeriodList(periods) })
+        periodListViewModel.getAllPeriodsOn(weekDay).observe(viewLifecycleOwner, Observer { periods: List<Period> -> adapter.setPeriodList(periods) })
         binding.periodListRecyclerView.layoutManager = LinearLayoutManager(activity)
         binding.periodListRecyclerView.adapter = adapter
         return binding.root
     }
 
-    private inner class PeriodHolder(private val mBinding: ListItemPeriodBinding) : RecyclerView.ViewHolder(mBinding.root), View.OnClickListener {
+    private inner class PeriodHolder(private val binding: ListItemPeriodBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
         private var mPeriod: Period? = null
         fun bind(period: Period) {
             mPeriod = period
-            mBinding.periodViewModel?.setPeriod(period)
-            mBinding.periodViewModel?.notifyChange()
-            mBinding.executePendingBindings()
+            binding.periodViewModel?.setPeriod(period)
+            binding.periodViewModel?.notifyChange()
+            binding.executePendingBindings()
         }
 
         override fun onClick(v: View) {
             if (mPeriod!!.subjectTitle == "-") {
-                mCallback!!.onAddPeriod(mPeriod!!.periodNumber, weekDay)
+                callbacks!!.onAddPeriod(mPeriod!!.periodNumber, weekDay)
             } else {
-                mCallback!!.onModifyPeriod(mPeriod!!)
+                callbacks!!.onModifyPeriod(mPeriod!!)
             }
         }
 
         init {
-            mBinding.periodViewModel = PeriodViewModel()
+            binding.periodViewModel = PeriodViewModel()
             itemView.setOnClickListener(this)
         }
     }
 
     private inner class PeriodAdapter : RecyclerView.Adapter<PeriodHolder>() {
-        var mPeriodList: MutableList<Period> = ArrayList()
+        private var periods: MutableList<Period> = ArrayList()
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PeriodHolder {
             val binding = DataBindingUtil.inflate<ListItemPeriodBinding>(
                     layoutInflater, R.layout.list_item_period, parent, false)
@@ -87,11 +87,11 @@ class DayScheduleFragment private constructor(private val weekDay: Int) : Fragme
         }
 
         override fun onBindViewHolder(holder: PeriodHolder, position: Int) {
-            holder.bind(mPeriodList[position])
+            holder.bind(periods[position])
         }
 
         override fun getItemCount(): Int {
-            return mPeriodList.size
+            return periods.size
         }
 
         /**
@@ -101,10 +101,10 @@ class DayScheduleFragment private constructor(private val weekDay: Int) : Fragme
          */
         fun setPeriodList(periods: List<Period>) { // i know not a good implementation
             for (i in 0 until MAX_PERIODS) {
-                mPeriodList[i].subjectTitle = "-"
+                this.periods[i].subjectTitle = "-"
                 for (period in periods) {
-                    if (mPeriodList[i].periodNumber == period.periodNumber) {
-                        mPeriodList[i] = period
+                    if (this.periods[i].periodNumber == period.periodNumber) {
+                        this.periods[i] = period
                     }
                 }
             }
@@ -113,7 +113,7 @@ class DayScheduleFragment private constructor(private val weekDay: Int) : Fragme
 
         init {
             for (i in 0 until MAX_PERIODS) {
-                mPeriodList.add(Period("-", i + 1, weekDay))
+                periods.add(Period("-", i + 1, weekDay))
             }
         }
     }

@@ -5,9 +5,9 @@ import android.mahendra.attendancemanager.models.Subject
 import androidx.lifecycle.LiveData
 
 class SubjectRepository private constructor(
-    private val mSubjectDao: SubjectDao
+    private val subjectDao: SubjectDao
 ) {
-    val allSubjects: LiveData<List<Subject>> = mSubjectDao.getAllSubjects()
+    val allSubjects: LiveData<List<Subject>> = subjectDao.getAllSubjects()
 
     fun getSubject(title: String): Subject? {
         for (subject in allSubjects.value!!) {
@@ -19,19 +19,23 @@ class SubjectRepository private constructor(
     }
 
     suspend fun updateTitle(oldTitle: String?, newTitle: String?) {
-        mSubjectDao.updateTitle(oldTitle!!, newTitle!!)
+        subjectDao.updateTitle(oldTitle!!, newTitle!!)
     }
 
     suspend fun insert(subject: Subject?) {
-        mSubjectDao.insert(subject!!)
+        subjectDao.insert(subject!!)
     }
 
     suspend fun update(subject: Subject?) {
-        mSubjectDao.update(subject!!)
+        subjectDao.update(subject!!)
     }
 
     suspend fun delete(subject: Subject?) {
-        mSubjectDao.delete(subject!!)
+        subjectDao.delete(subject!!)
+    }
+
+    suspend fun updateAttendance(title: String, attendedClasses: Int, missedClasses: Int) {
+        subjectDao.updateAttendance(title, attendedClasses, missedClasses)
     }
 
     companion object {

@@ -17,10 +17,10 @@ class PeriodFragment(private val mPeriod: Period) : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_attendance, container, false)
-        val mTitle = v.findViewById<TextView>(R.id.period_title)
-        val mPeriodNumber = v.findViewById<TextView>(R.id.period_number)
-        mTitle.text = mPeriod.subjectTitle
-        mPeriodNumber.text = mPeriod.periodNumber.toString()
+        val title = v.findViewById<TextView>(R.id.period_title)
+        val periodNumber = v.findViewById<TextView>(R.id.period_number)
+        title.text = mPeriod.subjectTitle
+        periodNumber.text = mPeriod.periodNumber.toString()
         return v
     }
 
