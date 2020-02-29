@@ -19,7 +19,7 @@ class PeriodDialogFragment : DialogFragment() {
     private var subjectTitle: String? = null
     private var allSubjectTitles: List<String> = emptyList()
 
-    private var mCallback: Callbacks? = null
+    private var callbacks: Callbacks? = null
 
     interface Callbacks {
         val subjectTitles: List<String>
@@ -36,7 +36,7 @@ class PeriodDialogFragment : DialogFragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
-            mCallback = context as Callbacks
+            callbacks = context as Callbacks
         } catch (ex: ClassCastException) {
             Log.e(TAG, "onAttach: $ex")
         }
@@ -44,7 +44,7 @@ class PeriodDialogFragment : DialogFragment() {
 
     override fun onDetach() {
         super.onDetach()
-        mCallback = null
+        callbacks = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +53,7 @@ class PeriodDialogFragment : DialogFragment() {
             subjectTitle = savedInstanceState.getString(KEY_PERIOD_TITLE, null)
             allSubjectTitles = savedInstanceState.getStringArrayList(KEY_TITLE_OPTIONS) as List<String>
         } else {
-            allSubjectTitles = mCallback!!.subjectTitles
+            allSubjectTitles = callbacks!!.subjectTitles
             subjectTitle = arguments?.getString(ARG_PERIOD_TITLE, null)
         }
     }
@@ -67,7 +67,7 @@ class PeriodDialogFragment : DialogFragment() {
         val removePeriodButton = view.findViewById<Button>(R.id.remove_period_button)
 
         removePeriodButton.setOnClickListener { v1: View? ->
-            mCallback!!.onDeletePeriod(subjectTitle)
+            callbacks!!.onDeletePeriod(subjectTitle)
             Toast.makeText(activity, "Removed $subjectTitle", Toast.LENGTH_SHORT).show()
             dismiss()
         }
@@ -96,7 +96,7 @@ class PeriodDialogFragment : DialogFragment() {
         val builder = AlertDialog.Builder(activity)
         builder.setTitle(dialogTitle)
         builder.setView(view)
-        builder.setPositiveButton(positiveButtonText) { dialog: DialogInterface?, which: Int -> mCallback!!.onPeriodSelected(spinner.selectedItem.toString()) }
+        builder.setPositiveButton(positiveButtonText) { dialog: DialogInterface?, which: Int -> callbacks!!.onPeriodSelected(spinner.selectedItem.toString()) }
         builder.setNegativeButton(R.string.cancel) { dialog: DialogInterface?, which: Int -> }
         return builder.create()
     }

@@ -132,15 +132,15 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
      * view holder for subject item with data binding
      */
     private inner class SubjectHolder(
-        private val mBinding: ListItemSubjectBinding
-    ) : RecyclerView.ViewHolder(mBinding.root), View.OnClickListener {
+        private val binding: ListItemSubjectBinding
+    ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
         private var mSubject: Subject? = null
         fun bind(subject: Subject) {
             mSubject = subject
-            mBinding.subjectDetailViewModel!!.subject = mSubject
-            mBinding.invalidateAll()
-            mBinding.notifyChange()
-            mBinding.executePendingBindings()
+            binding.subjectDetailViewModel!!.subject = mSubject
+            binding.invalidateAll()
+            binding.notifyChange()
+            binding.executePendingBindings()
         }
 
         override fun onClick(v: View) {
@@ -150,8 +150,8 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         init {
             val detailViewModel: SubjectDetailViewModel =
                     InjectorUtils.provideSubjectDetailViewModel(this@SubjectListFragment)
-            mBinding.subjectDetailViewModel = detailViewModel
-            mBinding.moreOptions.setOnClickListener(this)
+            binding.subjectDetailViewModel = detailViewModel
+            binding.moreOptions.setOnClickListener(this)
         }
     }
 

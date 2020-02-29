@@ -14,7 +14,7 @@ import kotlin.collections.List
 
 class PeriodListViewModel(application: Application) : AndroidViewModel(application) {
     private val periodRepository: PeriodRepository = PeriodRepository(application)
-    private val allPeriods: LiveData<List<Period>> = periodRepository.mAllPeriods
+    private val allPeriods: LiveData<List<Period>> = periodRepository.allPeriods
 
     fun insert(period: Period) = viewModelScope.launch {
         periodRepository.insert(period)

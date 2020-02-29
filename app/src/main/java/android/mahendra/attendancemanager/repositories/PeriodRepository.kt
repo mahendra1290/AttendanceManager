@@ -12,13 +12,13 @@ import androidx.lifecycle.LiveData
 class PeriodRepository(application: Application) {
     private val periodDao: PeriodDao
     private val subjectPeriodDao: SubjectPeriodDao
-    val mAllPeriods: LiveData<List<Period>>
+    val allPeriods: LiveData<List<Period>>
 
     init {
         val db = MainDatabase.getDatabase(application)
         periodDao = db.periodDao()
         subjectPeriodDao = db.subjectPeriodDao()
-        mAllPeriods = periodDao.getAllPeriods()
+        allPeriods = periodDao.getAllPeriods()
     }
 
     suspend fun insert(period: Period) {
