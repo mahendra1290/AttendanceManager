@@ -13,6 +13,7 @@ import android.util.SparseArray
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentTransaction
 
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -89,6 +90,12 @@ class TimeTableActivity : AppCompatActivity(),
 
     private fun openAddPeriodDialog(periodTitle: String?) {
         val dialogFragment = PeriodDialogFragment.newInstance(periodTitle)
+//        val transaction = supportFragmentManager.beginTransaction()
+//        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+//        transaction
+//                .add(android.R.id.content, dialogFragment)
+//                .addToBackStack(null)
+//                .commit()
         val fm = supportFragmentManager
         dialogFragment.show(fm, "period")
     }

@@ -1,24 +1,29 @@
 package android.mahendra.attendancemanager.dialogs
 
+import android.app.ActionBar
 import android.app.AlertDialog
 import android.app.Dialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.mahendra.attendancemanager.R
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.Spinner
-import android.widget.Toast
+import android.view.ViewGroup
+import android.view.Window
+import android.widget.*
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import java.util.*
 
 class PeriodDialogFragment : DialogFragment() {
     private var subjectTitle: String? = null
     private var allSubjectTitles: List<String> = emptyList()
-
+    private lateinit var toolbar: Toolbar
     private var callbacks: Callbacks? = null
 
     interface Callbacks {
@@ -38,7 +43,7 @@ class PeriodDialogFragment : DialogFragment() {
         try {
             callbacks = context as Callbacks
         } catch (ex: ClassCastException) {
-            Log.e(TAG, "onAttach: $ex")
+            throw java.lang.ClassCastException("callbacks must be implemented by $context")
         }
     }
 
@@ -58,31 +63,36 @@ class PeriodDialogFragment : DialogFragment() {
         }
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-
-        val dialogTitle: Int
-        val positiveButtonText: Int
-        val inflater = requireActivity().layoutInflater
-        val view = inflater.inflate(R.layout.dialog_choose_period, null)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        val view = inflater.inflate(R.layout.dialog_choose_period, container, false)
+        toolbar = view.findViewById(R.id.toolbar)
         val removePeriodButton = view.findViewById<Button>(R.id.remove_period_button)
-
+        val periodTimeButton  = view.findViewById<Button>(R.id.period_time_button)
+        val spinner = view.findViewById<Spinner>(R.id.spinner_select_period)
         removePeriodButton.setOnClickListener { v1: View? ->
             callbacks!!.onDeletePeriod(subjectTitle)
             Toast.makeText(activity, "Removed $subjectTitle", Toast.LENGTH_SHORT).show()
             dismiss()
         }
+        var hours: Int = 0
+        var minutes: Int = 30
+        periodTimeButton.setOnClickListener {
+            val dialog = TimePickerDialog(
+                    activity,
+                    TimePickerDialog.OnTimeSetListener() { _: TimePicker, _: Int, _: Int ->
+
+                    }, hours, minutes, false)
+            dialog.show()
+        }
+
 
         if (subjectTitle != null) {
             removePeriodButton.visibility = View.VISIBLE
-            dialogTitle = R.string.update_period
-            positiveButtonText = R.string.update
+
         } else {
             removePeriodButton.visibility = View.GONE
-            dialogTitle = R.string.add_period
-            positiveButtonText = R.string.add
         }
-
-        val spinner = view.findViewById<Spinner>(R.id.spinner_select_period)
         val adapter: ArrayAdapter<String> = ArrayAdapter(requireActivity(), android.R.layout.simple_spinner_item)
         adapter.addAll(allSubjectTitles)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -92,13 +102,31 @@ class PeriodDialogFragment : DialogFragment() {
             val position = adapter.getPosition(subjectTitle)
             spinner.setSelection(position)
         }
+        return view
+    }
 
-        val builder = AlertDialog.Builder(activity)
-        builder.setTitle(dialogTitle)
-        builder.setView(view)
-        builder.setPositiveButton(positiveButtonText) { dialog: DialogInterface?, which: Int -> callbacks!!.onPeriodSelected(spinner.selectedItem.toString()) }
-        builder.setNegativeButton(R.string.cancel) { dialog: DialogInterface?, which: Int -> }
-        return builder.create()
+    override fun getTheme(): Int {
+        return R.style.DialogTheme
+    }
+
+//    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+//
+//
+////        val builder = AlertDialog.Builder(activity)
+////        builder.setTitle(dialogTitleId)
+////        builder.setView(view)
+////        builder.setPositiveButton(positiveButtonTextId) { dialog: DialogInterface?, which: Int -> callbacks!!.onPeriodSelected(spinner.selectedItem.toString()) }
+////        builder.setNegativeButton(R.string.cancel) { dialog: DialogInterface?, which: Int -> }
+////        return builder.create()
+//        Log.i(TAG, "on create dialog called")
+//        return super.onCreateDialog(savedInstanceState)
+//    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        toolbar.title = "Add Period"
+        toolbar.inflateMenu(R.menu.period_dialog_fragment)
+
     }
 
     companion object {
