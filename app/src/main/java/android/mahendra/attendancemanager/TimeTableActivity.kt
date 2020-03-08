@@ -9,6 +9,7 @@ import android.mahendra.attendancemanager.utilities.InjectorUtils
 import android.mahendra.attendancemanager.viewmodels.PeriodListViewModel
 import android.mahendra.attendancemanager.viewmodels.SubjectListViewModel
 import android.os.Bundle
+import android.util.Log
 import android.util.SparseArray
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -101,8 +102,10 @@ class TimeTableActivity : AppCompatActivity(),
     }
 
     override fun onAddPeriod(periodNumber: Int, weekDay: Int) {
+        Log.i(TAG, "on add period $periodNumber $weekDay")
         addNewPeriod = true
         tempPeriod = Period(null, periodNumber, weekDay)
+        Log.i(TAG, "on add period $tempPeriod")
         openAddPeriodDialog(tempPeriod!!.subjectTitle)
     }
 
