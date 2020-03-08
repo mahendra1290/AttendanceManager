@@ -128,9 +128,6 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         subjectListViewModel.onUpdateAttendance(subjectTitle, attendedClasses, totalClasses)
     }
 
-    /**
-     * view holder for subject item with data binding
-     */
     private inner class SubjectHolder(
         private val binding: ListItemSubjectBinding
     ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
@@ -155,9 +152,6 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         }
     }
 
-    /**
-     * subject list adapter which provides subject view holder to recycler view
-     */
     private inner class SubjectAdapter : RecyclerView.Adapter<SubjectHolder>() {
         private var subjects = emptyList<Subject>()
 
@@ -182,31 +176,18 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         }
     }
 
-    /**
-     * uses SubjectTitleEditDialogFragment for taking new subject title input from user
-     * old title is passed as null, as there is no subject
-     */
     private fun openAddSubjectDialog() {
         val dialogFragment = SubjectTitleEditDialogFragment.newInstance(null)
         dialogFragment.setTargetFragment(this@SubjectListFragment, REQUEST_NEW_SUBJECT)
         dialogFragment.show(parentFragmentManager, "subject")
     }
 
-    /**
-     * option dialog which will be opened when user clicks option menu icon on view holder
-     * and the subject title is passed so that it can be used by listener to take actions
-     * @param title subject title which is used by dialog, for listener methods
-     */
     private fun openSubjectOptionDialog(title: String) {
         val dialog = SubjectOptionBottomSheetDialog.newInstance(title)
         dialog.setTargetFragment(this, 0)
         dialog.show(parentFragmentManager, "option")
     }
 
-    /**
-     * when delete option is selected from subjectOptionDialog
-     * @param subjectTitle title of subject for which this option was selected
-     */
     override fun onDeleteSelected(subjectTitle: String) {
         createSubjectDeleteConfirmationDialog(subjectTitle).also {
             it.setTargetFragment(this, REQUEST_SUBJECT_DELETE)
@@ -214,10 +195,6 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         }
     }
 
-    /**
-     * when edit title option in selected from subjectOptionDialog
-     * @param subjectTitle title of subject for which this option was selected
-     */
     override fun onEditTitleSelected(subjectTitle: String) {
         SubjectTitleEditDialogFragment.newInstance(subjectTitle).also {
             it.setTargetFragment(this, REQUEST_SUBJECT_TITLE_EDIT)
@@ -225,10 +202,6 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         }
     }
 
-    /**
-     * when edit attendance option in selected from subjectOptionDialog
-     * @param subjectTitle title of subject for which this option was selected
-     */
     override fun onEditAttendanceSelected(subjectTitle: String) {
         val subject = subjectListViewModel.getSubject(subjectTitle)
         val dialogFragment = AttendanceEditDialogFragment.newInstance(
@@ -240,10 +213,6 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         dialogFragment.show(parentFragmentManager, "attendance")
     }
 
-    /**
-     * when reset attendance option is selected from subjectOptionDialog
-     * @param subjectTitle title of subject for which this option was selected
-     */
     override fun onResetAttendanceSelected(subjectTitle: String) {
         createSubjectResetAttendanceConfirmationDialog(subjectTitle).also {
             it.setTargetFragment(this, REQUEST_RESET_ATTENDANCE)
@@ -251,27 +220,16 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         }
     }
 
-    /**
-     * toast shown when subject is deleted
-     * @param subjectTitle used in message
-     */
     private fun showSubjectDeleteToast(subjectTitle: String) {
         Toast.makeText(activity,
                 "successfully deleted $subjectTitle", Toast.LENGTH_SHORT).show()
     }
 
-    /**
-     * toast shown when subject attendance is reset
-     * @param subjectTitle used in message
-     */
     private fun showResetAttendanceToast(subjectTitle: String) {
         Toast.makeText(activity,
                 "attendance reset $subjectTitle", Toast.LENGTH_SHORT).show()
     }
 
-    /**
-     * return [ConfirmationDialogFragment] on subject delete option
-     */
     private fun createSubjectDeleteConfirmationDialog(
         subjectTitle: String
     ): ConfirmationDialogFragment {
@@ -283,10 +241,7 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
                 positiveResponse = "delete"
         )
     }
-
-    /**
-     * return [ConfirmationDialogFragment] on subject attendance reset option
-     */
+    
     private fun createSubjectResetAttendanceConfirmationDialog(
         subjectTitle: String
     ): ConfirmationDialogFragment {

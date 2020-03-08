@@ -23,6 +23,9 @@ interface PeriodDao {
     @Delete
     suspend fun delete(period: Period)
 
+    @Query("SELECT * FROM period_table WHERE id = :periodId")
+    fun getPeriod(periodId: Long): LiveData<Period>
+
     @Query("Delete from period_table")
     suspend fun deleteAll()
 

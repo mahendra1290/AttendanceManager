@@ -45,6 +45,10 @@ class PeriodRepository(application: Application) {
         return subjectPeriodDao.getAllSubjectsOn(weekDay)
     }
 
+    fun getPeriod(periodId: Long): LiveData<Period> {
+        return periodDao.getPeriod(periodId)
+    }
+
     suspend fun deletePeriod(periodNumber: Int, weekDay: Int) {
         periodDao.deletePeriod(periodNumber, weekDay)
     }

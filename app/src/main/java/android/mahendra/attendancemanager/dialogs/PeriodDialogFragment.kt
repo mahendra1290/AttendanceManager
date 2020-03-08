@@ -24,6 +24,7 @@ class PeriodDialogFragment : DialogFragment() {
     private var subjectTitle: String? = null
     private var allSubjectTitles: List<String> = emptyList()
     private lateinit var toolbar: Toolbar
+    private lateinit var spinner: Spinner
     private var callbacks: Callbacks? = null
 
     interface Callbacks {
@@ -40,6 +41,7 @@ class PeriodDialogFragment : DialogFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        Log.i(TAG, "on attach")
         try {
             callbacks = context as Callbacks
         } catch (ex: ClassCastException) {
@@ -63,20 +65,24 @@ class PeriodDialogFragment : DialogFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         val view = inflater.inflate(R.layout.dialog_choose_period, container, false)
         toolbar = view.findViewById(R.id.toolbar)
         val removePeriodButton = view.findViewById<Button>(R.id.remove_period_button)
         val periodTimeButton  = view.findViewById<Button>(R.id.period_time_button)
-        val spinner = view.findViewById<Spinner>(R.id.spinner_select_period)
+        spinner = view.findViewById(R.id.spinner_select_period)
         removePeriodButton.setOnClickListener { v1: View? ->
             callbacks!!.onDeletePeriod(subjectTitle)
             Toast.makeText(activity, "Removed $subjectTitle", Toast.LENGTH_SHORT).show()
             dismiss()
         }
-        var hours: Int = 0
-        var minutes: Int = 30
+        val hours = 0
+        val minutes = 30
         periodTimeButton.setOnClickListener {
             val dialog = TimePickerDialog(
                     activity,
@@ -110,23 +116,29 @@ class PeriodDialogFragment : DialogFragment() {
     }
 
 //    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-//
-//
-////        val builder = AlertDialog.Builder(activity)
-////        builder.setTitle(dialogTitleId)
-////        builder.setView(view)
-////        builder.setPositiveButton(positiveButtonTextId) { dialog: DialogInterface?, which: Int -> callbacks!!.onPeriodSelected(spinner.selectedItem.toString()) }
-////        builder.setNegativeButton(R.string.cancel) { dialog: DialogInterface?, which: Int -> }
-////        return builder.create()
+//        val builder = AlertDialog.Builder(activity)
+//        builder.setTitle(dialogTitleId)
+//        builder.setView(view)
+//        builder.setPositiveButton(positiveButtonTextId) { dialog: DialogInterface?, which: Int ->
+//        callbacks!!.onPeriodSelected(spinner.selectedItem.toString()) }
+//        builder.setNegativeButton(R.string.cancel) { dialog: DialogInterface?, which: Int -> }
+//        return builder.create()
 //        Log.i(TAG, "on create dialog called")
 //        return super.onCreateDialog(savedInstanceState)
 //    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.i(TAG, "on view created")
+        toolbar.setNavigationOnClickListener { dismiss() }
         toolbar.title = "Add Period"
         toolbar.inflateMenu(R.menu.period_dialog_fragment)
-
+        toolbar.setOnMenuItemClickListener {
+            Log.i(TAG, "callbacks $callbacks")
+            callbacks!!.onPeriodSelected(spinner.selectedItem.toString())
+            dismiss()
+            return@setOnMenuItemClickListener true
+        }
     }
 
     companion object {
