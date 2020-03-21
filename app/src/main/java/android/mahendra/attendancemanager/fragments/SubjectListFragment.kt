@@ -241,7 +241,7 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
                 positiveResponse = "delete"
         )
     }
-    
+
     private fun createSubjectResetAttendanceConfirmationDialog(
         subjectTitle: String
     ): ConfirmationDialogFragment {

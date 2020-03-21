@@ -4,7 +4,6 @@ import android.mahendra.attendancemanager.repositories.PeriodRepository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import java.time.Period
 
 class PeriodDetailViewModel(
         periodRepository: PeriodRepository,
@@ -15,5 +14,10 @@ class PeriodDetailViewModel(
     val title: LiveData<String>
         get() = Transformations.map(period) {
             it.subjectTitle
+        }
+
+    val periodNumber: LiveData<Int>
+        get() = Transformations.map(period) {
+            it.periodNumber
         }
 }
