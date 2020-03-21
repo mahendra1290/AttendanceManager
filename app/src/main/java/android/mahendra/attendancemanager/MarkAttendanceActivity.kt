@@ -17,6 +17,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import timber.log.Timber
 import java.util.*
 
 class MarkAttendanceActivity : AppCompatActivity() {
@@ -38,12 +39,12 @@ class MarkAttendanceActivity : AppCompatActivity() {
         periodListViewModel = ViewModelProvider(this).get(PeriodListViewModel::class.java)
         periodListViewModel.getAllSubjectsOn(weekDay).observe(this, Observer { subjects: List<Subject> ->
             for ((title) in subjects) {
-                Log.i(TAG, "title -> $title")
+                Timber.i("title -> $title")
             }
         })
         periodListViewModel.getAllPeriodsOn(weekDay).observe(this, Observer { periods: List<Period> ->
             for (period in periods) {
-                Log.i(TAG, "period " + period.subjectTitle + "weekday " + period.weekDay)
+                Timber.i("period $period.subjectTitle weekday $period.weekDay")
             }
             pagerAdapter.setPeriods(periods)
         })

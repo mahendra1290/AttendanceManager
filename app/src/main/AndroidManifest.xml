@@ -3,6 +3,7 @@
     package="android.mahendra.attendancemanager">
 
     <application
+        android:name=".AttendanceManagerApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_app_icon"
         android:label="@string/app_name"

@@ -9,12 +9,10 @@ import android.mahendra.attendancemanager.utilities.InjectorUtils
 import android.mahendra.attendancemanager.viewmodels.PeriodListViewModel
 import android.mahendra.attendancemanager.viewmodels.SubjectListViewModel
 import android.os.Bundle
-import android.util.Log
 import android.util.SparseArray
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentTransaction
 
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -102,10 +100,8 @@ class TimeTableActivity : AppCompatActivity(),
     }
 
     override fun onAddPeriod(periodNumber: Int, weekDay: Int) {
-        Log.i(TAG, "on add period $periodNumber $weekDay")
         addNewPeriod = true
         tempPeriod = Period(null, periodNumber, weekDay)
-        Log.i(TAG, "on add period $tempPeriod")
         openAddPeriodDialog(tempPeriod!!.subjectTitle)
     }
 
@@ -131,7 +127,6 @@ class TimeTableActivity : AppCompatActivity(),
     }
 
     companion object {
-        private const val TAG = "TimeTableActivity"
         lateinit var WEEK_DAYS: SparseArray<String>
 
         fun newIntent(context: Context): Intent {
