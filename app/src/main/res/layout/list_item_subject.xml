@@ -6,7 +6,7 @@
     <data>
         <variable
             name="subjectDetailViewModel"
-            type="android.mahendra.attendancemanager.viewmodels.SubjectDetailViewModel" />
+            type="android.mahendra.attendancemanager.viewmodels.subject.SubjectDetailViewModel" />
     </data>
 
     <androidx.cardview.widget.CardView

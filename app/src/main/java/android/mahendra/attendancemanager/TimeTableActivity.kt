@@ -6,10 +6,11 @@ import android.mahendra.attendancemanager.dialogs.PeriodDialogFragment
 import android.mahendra.attendancemanager.fragments.DayScheduleFragment
 import android.mahendra.attendancemanager.models.Period
 import android.mahendra.attendancemanager.utilities.InjectorUtils
-import android.mahendra.attendancemanager.viewmodels.PeriodListViewModel
-import android.mahendra.attendancemanager.viewmodels.SubjectListViewModel
+import android.mahendra.attendancemanager.viewmodels.period.PeriodListViewModel
+import android.mahendra.attendancemanager.viewmodels.subject.SubjectListViewModel
 import android.os.Bundle
 import android.util.SparseArray
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -51,14 +52,19 @@ class TimeTableActivity : AppCompatActivity(),
         createWeekDayHash()
         weekDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
 
-        subjectListViewModel = InjectorUtils
-                .provideSubjectListViewModelFactory(this)
-                .create(SubjectListViewModel::class.java)
+        subjectListViewModel = ViewModelProvider(
+                this,
+                InjectorUtils.provideSubjectListViewModelFactory(this)
+        ).get(SubjectListViewModel::class.java)
 
         subjectListViewModel.getSubjectTitles().observe(this,
                 Observer { subjectTitles: List<String> -> allSubjectsTitles = subjectTitles })
 
-        periodListViewModel = ViewModelProvider(this).get(PeriodListViewModel::class.java)
+        periodListViewModel = ViewModelProvider(
+                this,
+                InjectorUtils.providePeriodListViewModelFactory(this)
+        ).get(PeriodListViewModel::class.java)
+
         viewPager = day_schedule_viewpager
         viewPager.adapter = DayScheduleAdapter(this)
         viewPager.currentItem = weekDay - weekDayOffSet
