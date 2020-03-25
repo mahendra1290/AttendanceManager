@@ -5,8 +5,9 @@ import android.mahendra.attendancemanager.R
 import android.mahendra.attendancemanager.databinding.FragmentDayScheduleBinding
 import android.mahendra.attendancemanager.databinding.ListItemPeriodBinding
 import android.mahendra.attendancemanager.models.Period
-import android.mahendra.attendancemanager.viewmodels.PeriodListViewModel
-import android.mahendra.attendancemanager.viewmodels.PeriodViewModel
+import android.mahendra.attendancemanager.utilities.InjectorUtils
+import android.mahendra.attendancemanager.viewmodels.period.PeriodListViewModel
+import android.mahendra.attendancemanager.viewmodels.period.PeriodViewModel
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -42,14 +43,17 @@ class DayScheduleFragment private constructor(private val weekDay: Int) : Fragme
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
-        periodListViewModel = ViewModelProvider(requireActivity()).get(PeriodListViewModel::class.java)
+        val viewModelFactory = InjectorUtils.providePeriodListViewModelFactory(requireActivity())
+        periodListViewModel = ViewModelProvider(this, viewModelFactory).get(PeriodListViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = DataBindingUtil.inflate<FragmentDayScheduleBinding>(
                 inflater, R.layout.fragment_day_schedule, container, false)
         val adapter = PeriodAdapter()
-        periodListViewModel.getAllPeriodsOn(weekDay).observe(viewLifecycleOwner, Observer { periods: List<Period> -> adapter.setPeriodList(periods) })
+        periodListViewModel.getAllPeriodsOn(weekDay).observe(viewLifecycleOwner, Observer { periods: List<Period> ->
+            adapter.setPeriodList(periods)
+        })
         binding.periodListRecyclerView.layoutManager = LinearLayoutManager(activity)
         binding.periodListRecyclerView.adapter = adapter
         return binding.root
@@ -119,7 +123,6 @@ class DayScheduleFragment private constructor(private val weekDay: Int) : Fragme
     }
 
     companion object {
-        private const val TAG = "DayScheduleFragment"
         private const val MAX_PERIODS = 8
         fun newInstance(weekDay: Int): DayScheduleFragment {
             return DayScheduleFragment(weekDay)
