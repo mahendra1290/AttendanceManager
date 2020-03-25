@@ -6,9 +6,8 @@ import android.mahendra.attendancemanager.databinding.ActivityMarkAttendanceBind
 import android.mahendra.attendancemanager.fragments.PeriodFragment.Companion.newInstance
 import android.mahendra.attendancemanager.models.Period
 import android.mahendra.attendancemanager.models.Subject
-import android.mahendra.attendancemanager.viewmodels.PeriodListViewModel
+import android.mahendra.attendancemanager.viewmodels.period.PeriodListViewModel
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -67,7 +66,6 @@ class MarkAttendanceActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val TAG = "MarkAttendanceActivity"
         private const val EXTRA_WEEKDAY = "MarkAttendanceActivity.EXTRA_WEEKDAY"
         fun newIntent(context: Context?, weekDay: Int): Intent {
             val i = Intent(context, MarkAttendanceActivity::class.java)

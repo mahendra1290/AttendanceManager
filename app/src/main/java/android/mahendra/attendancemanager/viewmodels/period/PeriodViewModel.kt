@@ -1,4 +1,4 @@
-package android.mahendra.attendancemanager.viewmodels
+package android.mahendra.attendancemanager.viewmodels.period
 
 import android.mahendra.attendancemanager.models.Period
 
