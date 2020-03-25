@@ -29,8 +29,8 @@ object InjectorUtils {
         return SubjectListViewModelFactory(repository)
     }
 
-    fun provideSubjectDetailViewModel(activity: FragmentActivity): SubjectDetailViewModel {
-        return SubjectDetailViewModel(getSubjectRepository(activity))
+    fun provideSubjectDetailViewModel(context: Context): SubjectDetailViewModel {
+        return SubjectDetailViewModel(getSubjectRepository(context))
     }
 
     fun providePeriodListViewModelFactory(activity: FragmentActivity): PeriodListViewModelFactory {
