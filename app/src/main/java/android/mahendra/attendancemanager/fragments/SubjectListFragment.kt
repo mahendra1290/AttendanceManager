@@ -14,9 +14,10 @@ import android.mahendra.attendancemanager.dialogs.SubjectOptionBottomSheetDialog
 import android.mahendra.attendancemanager.dialogs.SubjectOptionBottomSheetDialog.SubjectOptionListener
 import android.mahendra.attendancemanager.dialogs.SubjectTitleEditDialogFragment
 import android.mahendra.attendancemanager.models.Subject
+import android.mahendra.attendancemanager.repositories.SubjectRepository
 import android.mahendra.attendancemanager.utilities.InjectorUtils
-import android.mahendra.attendancemanager.viewmodels.SubjectDetailViewModel
-import android.mahendra.attendancemanager.viewmodels.SubjectListViewModel
+import android.mahendra.attendancemanager.viewmodels.subject.SubjectDetailViewModel
+import android.mahendra.attendancemanager.viewmodels.subject.SubjectListViewModel
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -146,7 +147,7 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
 
         init {
             val detailViewModel: SubjectDetailViewModel =
-                    InjectorUtils.provideSubjectDetailViewModel(this@SubjectListFragment)
+                    InjectorUtils.provideSubjectDetailViewModel(requireActivity())
             binding.subjectDetailViewModel = detailViewModel
             binding.moreOptions.setOnClickListener(this)
         }
@@ -255,7 +256,6 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
     }
 
     companion object {
-        private const val TAG = "SubjectListFragment"
         private const val REQUEST_NEW_SUBJECT = 0
         private const val REQUEST_SUBJECT_TITLE_EDIT = 1
         private const val REQUEST_SUBJECT_DELETE = 2
