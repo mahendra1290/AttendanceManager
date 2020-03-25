@@ -1,4 +1,4 @@
-package android.mahendra.attendancemanager.viewmodels
+package android.mahendra.attendancemanager.viewmodels.subject
 
 import android.mahendra.attendancemanager.models.Subject
 import android.mahendra.attendancemanager.repositories.SubjectRepository
@@ -10,8 +10,7 @@ import kotlin.collections.List
 import kotlin.collections.ArrayList
 
 class SubjectListViewModel internal constructor(
-    private val subjectRepository: SubjectRepository,
-    private val savedStateHandle: SavedStateHandle
+    private val subjectRepository: SubjectRepository
 ) : ViewModel() {
 
     val allSubjects: LiveData<List<Subject>> = subjectRepository.allSubjects

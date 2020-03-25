@@ -1,4 +1,4 @@
-package android.mahendra.attendancemanager.viewmodels
+package android.mahendra.attendancemanager.viewmodels.subject
 
 import android.mahendra.attendancemanager.models.Subject
 import android.mahendra.attendancemanager.repositories.SubjectRepository
