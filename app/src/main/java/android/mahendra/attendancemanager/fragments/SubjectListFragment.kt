@@ -6,6 +6,7 @@ import android.content.Intent
 import android.mahendra.attendancemanager.MarkAttendanceActivity
 import android.mahendra.attendancemanager.R
 import android.mahendra.attendancemanager.TimeTableActivity
+import android.mahendra.attendancemanager.adapters.SubjectAdapter
 import android.mahendra.attendancemanager.databinding.FragmentSubjectListBinding
 import android.mahendra.attendancemanager.databinding.ListItemSubjectBinding
 import android.mahendra.attendancemanager.dialogs.AttendanceEditDialogFragment
@@ -29,7 +30,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
-class SubjectListFragment : Fragment(), SubjectOptionListener {
+class SubjectListFragment : Fragment(), SubjectOptionListener, SubjectAdapter.Callbacks {
     private val subjectListViewModel: SubjectListViewModel by viewModels {
         InjectorUtils.provideSubjectListViewModelFactory(requireActivity())
     }
@@ -48,10 +49,10 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         val binding = DataBindingUtil.inflate<FragmentSubjectListBinding>(
                 inflater, R.layout.fragment_subject_list, container, false
         )
-        val adapter = SubjectAdapter()
+        val adapter = SubjectAdapter(this)
         subjectListViewModel.allSubjects.observe(
                 viewLifecycleOwner, Observer {
-            subjects: List<Subject> -> adapter.setSubjects(subjects)
+            subjects: List<Subject> -> adapter.subjects = subjects
         })
 
         binding.subjectListRecyclerView.layoutManager = LinearLayoutManager(activity)
@@ -129,53 +130,53 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         subjectListViewModel.onUpdateAttendance(subjectTitle, attendedClasses, totalClasses)
     }
 
-    private inner class SubjectHolder(
-        private val binding: ListItemSubjectBinding
-    ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
-        private var mSubject: Subject? = null
-        fun bind(subject: Subject) {
-            mSubject = subject
-            binding.subjectDetailViewModel!!.subject = mSubject
-            binding.invalidateAll()
-            binding.notifyChange()
-            binding.executePendingBindings()
-        }
-
-        override fun onClick(v: View) {
-            openSubjectOptionDialog(mSubject!!.title)
-        }
-
-        init {
-            val detailViewModel: SubjectDetailViewModel =
-                    InjectorUtils.provideSubjectDetailViewModel(requireActivity())
-            binding.subjectDetailViewModel = detailViewModel
-            binding.moreOptions.setOnClickListener(this)
-        }
-    }
-
-    private inner class SubjectAdapter : RecyclerView.Adapter<SubjectHolder>() {
-        private var subjects = emptyList<Subject>()
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubjectHolder {
-            val inflater = layoutInflater
-            val binding = DataBindingUtil.inflate<ListItemSubjectBinding>(
-                    inflater, R.layout.list_item_subject, parent, false)
-            return SubjectHolder(binding)
-        }
-
-        override fun onBindViewHolder(holder: SubjectHolder, position: Int) {
-            holder.bind(subjects[position])
-        }
-
-        override fun getItemCount(): Int {
-            return subjects.size
-        }
-
-        internal fun setSubjects(subjects: List<Subject>) {
-            this.subjects = subjects
-            notifyDataSetChanged()
-        }
-    }
+//    private inner class SubjectHolder(
+//        private val binding: ListItemSubjectBinding
+//    ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
+//        private var mSubject: Subject? = null
+//        fun bind(subject: Subject) {
+//            mSubject = subject
+//            binding.subjectDetailViewModel!!.subject = mSubject
+//            binding.invalidateAll()
+//            binding.notifyChange()
+//            binding.executePendingBindings()
+//        }
+//
+//        override fun onClick(v: View) {
+//            openSubjectOptionDialog(mSubject!!.title)
+//        }
+//
+//        init {
+//            val detailViewModel: SubjectDetailViewModel =
+//                    InjectorUtils.provideSubjectDetailViewModel(requireActivity())
+//            binding.subjectDetailViewModel = detailViewModel
+//            binding.moreOptions.setOnClickListener(this)
+//        }
+//    }
+//
+//    private inner class SubjectAdapter : RecyclerView.Adapter<SubjectHolder>() {
+//        private var subjects = emptyList<Subject>()
+//
+//        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubjectHolder {
+//            val inflater = layoutInflater
+//            val binding = DataBindingUtil.inflate<ListItemSubjectBinding>(
+//                    inflater, R.layout.list_item_subject, parent, false)
+//            return SubjectHolder(binding)
+//        }
+//
+//        override fun onBindViewHolder(holder: SubjectHolder, position: Int) {
+//            holder.bind(subjects[position])
+//        }
+//
+//        override fun getItemCount(): Int {
+//            return subjects.size
+//        }
+//
+//        internal fun setSubjects(subjects: List<Subject>) {
+//            this.subjects = subjects
+//            notifyDataSetChanged()
+//        }
+//    }
 
     private fun openAddSubjectDialog() {
         val dialogFragment = SubjectTitleEditDialogFragment.newInstance(null)
@@ -253,6 +254,10 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
                 negativeResponse = "cancel",
                 positiveResponse = "reset"
         )
+    }
+
+    override fun onSubjectOptionClicked(subject: Subject) {
+        openSubjectOptionDialog(subject.title)
     }
 
     companion object {
