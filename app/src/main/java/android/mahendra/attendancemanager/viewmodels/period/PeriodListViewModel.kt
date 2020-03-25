@@ -1,19 +1,19 @@
-package android.mahendra.attendancemanager.viewmodels
+package android.mahendra.attendancemanager.viewmodels.period
 
 import android.app.Application
 import android.mahendra.attendancemanager.models.Period
 import android.mahendra.attendancemanager.models.Subject
 import android.mahendra.attendancemanager.repositories.PeriodRepository
+import android.mahendra.attendancemanager.repositories.SubjectRepository
+import androidx.lifecycle.*
 
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
 import kotlin.collections.List
 
-class PeriodListViewModel(application: Application) : AndroidViewModel(application) {
-    private val periodRepository: PeriodRepository = PeriodRepository(application)
+class PeriodListViewModel internal constructor(
+        private val periodRepository: PeriodRepository
+) : ViewModel() {
     private val allPeriods: LiveData<List<Period>> = periodRepository.allPeriods
 
     fun insert(period: Period) = viewModelScope.launch {
