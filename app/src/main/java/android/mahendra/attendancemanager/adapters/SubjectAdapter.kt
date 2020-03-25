@@ -9,18 +9,16 @@ import android.mahendra.attendancemanager.viewmodels.subject.SubjectDetailViewMo
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ListView
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
 class SubjectAdapter(
         private val callbacks: Callbacks
-) : RecyclerView.Adapter<SubjectAdapter.SubjectViewHolder>() {
+) : ListAdapter<Subject, SubjectAdapter.SubjectViewHolder>(SubjectDiffCallback()) {
     private lateinit var context: Context
-    var subjects = emptyList<Subject>()
-    set(value) {
-        field = value
-        notifyDataSetChanged()
-    }
 
     interface Callbacks {
         fun onSubjectOptionClicked(subject: Subject)
@@ -34,12 +32,8 @@ class SubjectAdapter(
         return SubjectViewHolder(binding)
     }
 
-    override fun getItemCount(): Int {
-        return subjects.size
-    }
-
     override fun onBindViewHolder(holder: SubjectViewHolder, position: Int) {
-        holder.bind(subjects[position])
+        holder.bind(getItem(position))
     }
 
     inner class SubjectViewHolder(
@@ -65,5 +59,15 @@ class SubjectAdapter(
             binding.subjectDetailViewModel = detailViewModel
             binding.moreOptions.setOnClickListener(this)
         }
+    }
+}
+
+class SubjectDiffCallback : DiffUtil.ItemCallback<Subject>() {
+    override fun areItemsTheSame(oldItem: Subject, newItem: Subject): Boolean {
+        return oldItem.title == newItem.title
+    }
+
+    override fun areContentsTheSame(oldItem: Subject, newItem: Subject): Boolean {
+        return oldItem == newItem
     }
 }
