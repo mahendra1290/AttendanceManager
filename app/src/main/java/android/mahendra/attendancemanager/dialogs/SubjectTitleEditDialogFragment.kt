@@ -55,7 +55,6 @@ class SubjectTitleEditDialogFragment : DialogFragment() {
     }
 
     companion object {
-        private const val TAG = "AddSubjectDialogFragment"
         private const val ARG_SUBJECT_TITLE = "subject_title"
         const val EXTRA_OLD_SUBJECT_TITLE = "com.android.mahendra.attendancemanager.subject.old_title"
         const val EXTRA_SUBJECT_TITLE = "com.android.mahendra.attendancemanager.subject.title"

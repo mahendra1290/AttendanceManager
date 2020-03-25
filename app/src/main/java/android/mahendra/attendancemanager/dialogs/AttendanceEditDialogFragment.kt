@@ -9,9 +9,9 @@ import android.mahendra.attendancemanager.R
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.widget.EditText
 import androidx.fragment.app.DialogFragment
+import timber.log.Timber
 
 class AttendanceEditDialogFragment : DialogFragment() {
     private lateinit var attendedClassesEditText: EditText
@@ -51,16 +51,16 @@ class AttendanceEditDialogFragment : DialogFragment() {
         totalClassesEditText.setText(requireArguments().getInt(ARG_TOTAL_CLASSES).toString())
         totalClassesEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-                Log.i(TAG, "before changed total classes $s")
+                Timber.i("before changed total classes $s")
             }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                Log.i(TAG, "on text changed total $s start $start before $before count $count")
+                Timber.i("on text changed total $s start $start before $before count $count")
                 updatePositiveButton()
             }
 
             override fun afterTextChanged(s: Editable) {
-                Log.i(TAG, "after changed total classes $s")
+                Timber.i("after changed total classes $s")
             }
         })
 
@@ -94,8 +94,6 @@ class AttendanceEditDialogFragment : DialogFragment() {
     }
 
     companion object {
-        private const val TAG = "AttendanceEditDialog"
-
         private const val ARG_SUBJECT_TITLE = "subject_title"
         private const val ARG_ATTENDED_CLASSES = "com.android.mahendra.attendancemanager.subject.attendedClasses"
         private const val ARG_TOTAL_CLASSES = "com.android.mahendra.attendancemanager.subject.totalClasses"
