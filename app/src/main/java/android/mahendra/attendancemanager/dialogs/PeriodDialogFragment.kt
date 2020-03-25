@@ -1,23 +1,18 @@
 package android.mahendra.attendancemanager.dialogs
 
-import android.app.ActionBar
-import android.app.AlertDialog
-import android.app.Dialog
 import android.app.TimePickerDialog
 import android.content.Context
-import android.content.DialogInterface
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.mahendra.attendancemanager.R
+import android.mahendra.attendancemanager.viewmodels.period.PeriodDetailViewModel
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import android.widget.*
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
+import timber.log.Timber
 import java.util.*
 
 class PeriodDialogFragment : DialogFragment() {
@@ -41,7 +36,7 @@ class PeriodDialogFragment : DialogFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        Log.i(TAG, "on attach")
+        Timber.i("on attach")
         try {
             callbacks = context as Callbacks
         } catch (ex: ClassCastException) {
@@ -63,6 +58,7 @@ class PeriodDialogFragment : DialogFragment() {
             allSubjectTitles = callbacks!!.subjectTitles
             subjectTitle = arguments?.getString(ARG_PERIOD_TITLE, null)
         }
+        val periodDetailViewModel = viewModels<PeriodDetailViewModel>()
     }
 
     override fun onCreateView(
@@ -86,7 +82,7 @@ class PeriodDialogFragment : DialogFragment() {
         periodTimeButton.setOnClickListener {
             val dialog = TimePickerDialog(
                     activity,
-                    TimePickerDialog.OnTimeSetListener() { _: TimePicker, _: Int, _: Int ->
+                    TimePickerDialog.OnTimeSetListener { _: TimePicker, _: Int, _: Int ->
 
                     }, hours, minutes, false)
             dialog.show()
@@ -129,12 +125,12 @@ class PeriodDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.i(TAG, "on view created")
+        Timber.i("on view created")
         toolbar.setNavigationOnClickListener { dismiss() }
         toolbar.title = "Add Period"
         toolbar.inflateMenu(R.menu.period_dialog_fragment)
         toolbar.setOnMenuItemClickListener {
-            Log.i(TAG, "callbacks $callbacks")
+            Timber.i("callbacks $callbacks")
             callbacks!!.onPeriodSelected(spinner.selectedItem.toString())
             dismiss()
             return@setOnMenuItemClickListener true
@@ -142,7 +138,6 @@ class PeriodDialogFragment : DialogFragment() {
     }
 
     companion object {
-        private const val TAG = "PeriodDialogFragment"
         private const val ARG_PERIOD_TITLE = "period title"
         private const val KEY_TITLE_OPTIONS = "title options"
         private const val KEY_PERIOD_TITLE = "period_title"
