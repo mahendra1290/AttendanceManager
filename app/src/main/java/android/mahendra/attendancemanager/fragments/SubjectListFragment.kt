@@ -30,7 +30,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
-class SubjectListFragment : Fragment(), SubjectOptionListener, SubjectAdapter.Callbacks {
+class SubjectListFragment : Fragment(), SubjectOptionListener {
     private val subjectListViewModel: SubjectListViewModel by viewModels {
         InjectorUtils.provideSubjectListViewModelFactory(requireActivity())
     }
@@ -49,7 +49,7 @@ class SubjectListFragment : Fragment(), SubjectOptionListener, SubjectAdapter.Ca
         val binding = DataBindingUtil.inflate<FragmentSubjectListBinding>(
                 inflater, R.layout.fragment_subject_list, container, false
         )
-        val adapter = SubjectAdapter(this)
+        val adapter = SubjectAdapter(subjectListViewModel)
         subjectListViewModel.allSubjects.observe(
                 viewLifecycleOwner, Observer {
             subjects: List<Subject> -> adapter.submitList(subjects)
@@ -254,10 +254,6 @@ class SubjectListFragment : Fragment(), SubjectOptionListener, SubjectAdapter.Ca
                 negativeResponse = "cancel",
                 positiveResponse = "reset"
         )
-    }
-
-    override fun onSubjectOptionClicked(subject: Subject) {
-        openSubjectOptionDialog(subject.title)
     }
 
     companion object {

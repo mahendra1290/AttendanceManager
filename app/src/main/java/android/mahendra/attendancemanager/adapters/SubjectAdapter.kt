@@ -6,68 +6,69 @@ import android.mahendra.attendancemanager.databinding.ListItemSubjectBinding
 import android.mahendra.attendancemanager.models.Subject
 import android.mahendra.attendancemanager.utilities.InjectorUtils
 import android.mahendra.attendancemanager.viewmodels.subject.SubjectDetailViewModel
+import android.mahendra.attendancemanager.viewmodels.subject.SubjectListViewModel
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import timber.log.Timber
 
 class SubjectAdapter(
-        private val callbacks: Callbacks
+        private val subjectListViewModel: SubjectListViewModel
 ) : ListAdapter<Subject, SubjectAdapter.SubjectViewHolder>(SubjectDiffCallback()) {
-    private lateinit var context: Context
-
-    interface Callbacks {
-        fun onSubjectOptionClicked(subject: Subject)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubjectViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val binding = DataBindingUtil.inflate<ListItemSubjectBinding>(
-                inflater, R.layout.list_item_subject, parent, false)
-        context = parent.context
-        return SubjectViewHolder(binding)
+        return SubjectViewHolder.from(parent, subjectListViewModel)
     }
 
     override fun onBindViewHolder(holder: SubjectViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    inner class SubjectViewHolder(
-            private val binding: ListItemSubjectBinding
+    class SubjectViewHolder private constructor(
+            private val binding: ListItemSubjectBinding,
+            private val subjectListViewModel: SubjectListViewModel
     ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
         private var subject: Subject? = null
         fun bind(subject: Subject) {
             this.subject = subject
             binding.subjectDetailViewModel!!.subject = subject
-            binding.invalidateAll()
-            binding.notifyChange()
             binding.executePendingBindings()
         }
 
         override fun onClick(v: View) {
-            this@SubjectAdapter.callbacks.onSubjectOptionClicked(subject!!)
 
         }
 
         init {
-            val detailViewModel: SubjectDetailViewModel =
-                    InjectorUtils.provideSubjectDetailViewModel(context)
+            val detailViewModel = SubjectDetailViewModel(subjectListViewModel)
             binding.subjectDetailViewModel = detailViewModel
             binding.moreOptions.setOnClickListener(this)
+        }
+
+        companion object {
+            fun from(parent: ViewGroup, subjectListViewModel: SubjectListViewModel): SubjectViewHolder {
+                val inflater = LayoutInflater.from(parent.context)
+                val binding = DataBindingUtil.inflate<ListItemSubjectBinding>(
+                        inflater, R.layout.list_item_subject, parent, false)
+                return SubjectViewHolder(binding, subjectListViewModel)
+            }
         }
     }
 }
 
 class SubjectDiffCallback : DiffUtil.ItemCallback<Subject>() {
     override fun areItemsTheSame(oldItem: Subject, newItem: Subject): Boolean {
+        Timber.i("are item same $oldItem == $newItem")
         return oldItem.title == newItem.title
     }
 
     override fun areContentsTheSame(oldItem: Subject, newItem: Subject): Boolean {
+        Timber.i("are content same $oldItem == $newItem")
         return oldItem == newItem
     }
 }
