@@ -49,10 +49,10 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         val binding = DataBindingUtil.inflate<FragmentSubjectListBinding>(
                 inflater, R.layout.fragment_subject_list, container, false
         )
-        val adapter = SubjectAdapter(subjectListViewModel)
+        val adapter = SubjectAdapter()
         subjectListViewModel.allSubjects.observe(
                 viewLifecycleOwner, Observer {
-            subjects: List<Subject> -> adapter.subjects = subjects
+            subjects: List<Subject> -> adapter.data = subjects
         })
 
         binding.subjectListRecyclerView.layoutManager = LinearLayoutManager(activity)
