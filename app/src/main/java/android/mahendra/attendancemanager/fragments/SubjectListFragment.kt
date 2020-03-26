@@ -52,7 +52,7 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         val adapter = SubjectAdapter(subjectListViewModel)
         subjectListViewModel.allSubjects.observe(
                 viewLifecycleOwner, Observer {
-            subjects: List<Subject> -> adapter.submitList(subjects)
+            subjects: List<Subject> -> adapter.subjects = subjects
         })
 
         binding.subjectListRecyclerView.layoutManager = LinearLayoutManager(activity)

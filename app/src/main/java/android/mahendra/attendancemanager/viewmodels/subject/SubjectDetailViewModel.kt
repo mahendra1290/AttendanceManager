@@ -1,5 +1,6 @@
 package android.mahendra.attendancemanager.viewmodels.subject
 
+import android.mahendra.attendancemanager.BR
 import android.mahendra.attendancemanager.models.Subject
 import android.mahendra.attendancemanager.repositories.SubjectRepository
 import androidx.databinding.BaseObservable
@@ -16,17 +17,18 @@ import java.util.*
 
 class SubjectDetailViewModel(
         private val subjectListViewModel: SubjectListViewModel
-) {
+) : BaseObservable() {
 
     var subject: Subject? = null
 
     val title: String
-        get() = subject!!.title
+        @Bindable get() = subject!!.title
 
     val attendanceStat: String
-        get() = "${subject!!.attendedClasses} / ${subject!!.totalClasses}"
+        @Bindable get() = "${subject!!.attendedClasses} / ${subject!!.totalClasses}"
 
-    fun getAttendancePercentage(): String {
+    val attendancePercentage: String
+        @Bindable get() {
         if (subject!!.totalClasses == 0) {
             return "0.0%"
         }
@@ -34,7 +36,8 @@ class SubjectDetailViewModel(
         return String.format(Locale.ENGLISH, "%.1f%%", percentage)
     }
 
-    fun getAttendanceProgress(): Int {
+    val attendanceProgress: Int
+        @Bindable get() {
         if (subject!!.totalClasses == 0) {
             return 0
         }
@@ -43,11 +46,13 @@ class SubjectDetailViewModel(
 
     fun onAttended() {
         subject!!.incrementClassesAttended()
+        notifyChange()
         subjectListViewModel.update(subject!!)
     }
 
     fun onMissed() {
         subject!!.incrementClassesMissed()
+        notifyChange()
         subjectListViewModel.update(subject!!)
     }
 }
