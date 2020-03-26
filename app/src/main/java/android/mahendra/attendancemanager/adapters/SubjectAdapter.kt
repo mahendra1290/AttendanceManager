@@ -20,14 +20,22 @@ import timber.log.Timber
 
 class SubjectAdapter(
         private val subjectListViewModel: SubjectListViewModel
-) : ListAdapter<Subject, SubjectAdapter.SubjectViewHolder>(SubjectDiffCallback()) {
+) : RecyclerView.Adapter<SubjectAdapter.SubjectViewHolder>() {
+    var subjects = emptyList<Subject>()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubjectViewHolder {
         return SubjectViewHolder.from(parent, subjectListViewModel)
     }
 
     override fun onBindViewHolder(holder: SubjectViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(subjects[position])
     }
+
+    override fun getItemCount() = subjects.size
 
     class SubjectViewHolder private constructor(
             private val binding: ListItemSubjectBinding,
@@ -63,12 +71,12 @@ class SubjectAdapter(
 
 class SubjectDiffCallback : DiffUtil.ItemCallback<Subject>() {
     override fun areItemsTheSame(oldItem: Subject, newItem: Subject): Boolean {
-        Timber.i("are item same $oldItem == $newItem")
+//        Timber.i("are item same $oldItem == $newItem")
         return oldItem.title == newItem.title
     }
 
     override fun areContentsTheSame(oldItem: Subject, newItem: Subject): Boolean {
-        Timber.i("are content same $oldItem == $newItem")
+//        Timber.i("are content same $oldItem == $newItem")
         return oldItem == newItem
     }
 }
