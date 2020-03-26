@@ -2,23 +2,29 @@ package android.mahendra.attendancemanager.viewmodels.subject
 
 import android.mahendra.attendancemanager.models.Subject
 import android.mahendra.attendancemanager.repositories.SubjectRepository
+import androidx.databinding.BaseObservable
+import androidx.databinding.Bindable
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers.IO
 
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class SubjectDetailViewModel(
-    private val subjectRepository: SubjectRepository
-) : ViewModel() {
+        private val subjectListViewModel: SubjectListViewModel
+) {
 
     var subject: Subject? = null
 
-    fun getTitle(): String {
-        return subject!!.title
-    }
+    val title: String
+        get() = subject!!.title
 
-    fun getAttendanceStat() = "${subject!!.attendedClasses} / ${subject!!.totalClasses}"
+    val attendanceStat: String
+        get() = "${subject!!.attendedClasses} / ${subject!!.totalClasses}"
 
     fun getAttendancePercentage(): String {
         if (subject!!.totalClasses == 0) {
@@ -35,13 +41,13 @@ class SubjectDetailViewModel(
         return (subject!!.attendedClasses * 100) / subject!!.totalClasses
     }
 
-    fun onAttended() = viewModelScope.launch {
+    fun onAttended() {
         subject!!.incrementClassesAttended()
-        subjectRepository.update(subject)
+        subjectListViewModel.update(subject!!)
     }
 
-    fun onMissed() = viewModelScope.launch {
+    fun onMissed() {
         subject!!.incrementClassesMissed()
-        subjectRepository.update(subject)
+        subjectListViewModel.update(subject!!)
     }
 }
