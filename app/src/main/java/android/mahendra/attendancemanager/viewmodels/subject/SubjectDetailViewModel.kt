@@ -1,23 +1,18 @@
 package android.mahendra.attendancemanager.viewmodels.subject
 
-import android.mahendra.attendancemanager.BR
 import android.mahendra.attendancemanager.models.Subject
 import android.mahendra.attendancemanager.repositories.SubjectRepository
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers.IO
-
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.util.*
 
-class SubjectDetailViewModel(
-        private val subjectListViewModel: SubjectListViewModel
+class SubjectDetailViewModel (
+        private val repository: SubjectRepository
 ) : BaseObservable() {
+    private val viewModelJob: Job = Job()
+    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     var subject: Subject? = null
 
@@ -45,14 +40,24 @@ class SubjectDetailViewModel(
     }
 
     fun onAttended() {
-        subject!!.incrementClassesAttended()
-        notifyChange()
-        subjectListViewModel.update(subject!!)
+        uiScope.launch {
+            subject!!.incrementClassesAttended()
+            update(subject!!)
+            notifyChange()
+        }
     }
 
     fun onMissed() {
-        subject!!.incrementClassesMissed()
-        notifyChange()
-        subjectListViewModel.update(subject!!)
+        uiScope.launch {
+            subject!!.incrementClassesMissed()
+            update(subject!!)
+            notifyChange()
+        }
+    }
+
+    suspend fun update(subject: Subject) {
+        withContext(Dispatchers.IO) {
+            repository.update(subject)
+        }
     }
 }

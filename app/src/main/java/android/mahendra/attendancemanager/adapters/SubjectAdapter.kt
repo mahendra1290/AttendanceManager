@@ -18,28 +18,25 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import timber.log.Timber
 
-class SubjectAdapter(
-        private val subjectListViewModel: SubjectListViewModel
-) : RecyclerView.Adapter<SubjectAdapter.SubjectViewHolder>() {
-    var subjects = emptyList<Subject>()
+class SubjectAdapter : RecyclerView.Adapter<SubjectAdapter.SubjectViewHolder>() {
+    var data = emptyList<Subject>()
         set(value) {
             field = value
             notifyDataSetChanged()
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubjectViewHolder {
-        return SubjectViewHolder.from(parent, subjectListViewModel)
+        return SubjectViewHolder.from(parent)
     }
 
     override fun onBindViewHolder(holder: SubjectViewHolder, position: Int) {
-        holder.bind(subjects[position])
+        holder.bind(data[position])
     }
 
-    override fun getItemCount() = subjects.size
+    override fun getItemCount() = data.size
 
     class SubjectViewHolder private constructor(
-            private val binding: ListItemSubjectBinding,
-            private val subjectListViewModel: SubjectListViewModel
+            private val binding: ListItemSubjectBinding
     ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
         private var subject: Subject? = null
         fun bind(subject: Subject) {
@@ -53,30 +50,19 @@ class SubjectAdapter(
         }
 
         init {
-            val detailViewModel = SubjectDetailViewModel(subjectListViewModel)
+            val detailViewModel =
+                    InjectorUtils.provideSubjectDetailViewModel(binding.root.context)
             binding.subjectDetailViewModel = detailViewModel
             binding.moreOptions.setOnClickListener(this)
         }
 
         companion object {
-            fun from(parent: ViewGroup, subjectListViewModel: SubjectListViewModel): SubjectViewHolder {
+            fun from(parent: ViewGroup): SubjectViewHolder {
                 val inflater = LayoutInflater.from(parent.context)
                 val binding = DataBindingUtil.inflate<ListItemSubjectBinding>(
                         inflater, R.layout.list_item_subject, parent, false)
-                return SubjectViewHolder(binding, subjectListViewModel)
+                return SubjectViewHolder(binding)
             }
         }
-    }
-}
-
-class SubjectDiffCallback : DiffUtil.ItemCallback<Subject>() {
-    override fun areItemsTheSame(oldItem: Subject, newItem: Subject): Boolean {
-//        Timber.i("are item same $oldItem == $newItem")
-        return oldItem.title == newItem.title
-    }
-
-    override fun areContentsTheSame(oldItem: Subject, newItem: Subject): Boolean {
-//        Timber.i("are content same $oldItem == $newItem")
-        return oldItem == newItem
     }
 }
