@@ -35,4 +35,11 @@ interface SubjectDao {
 
     @Query("UPDATE subject_table SET classes_attended = :attendedClasses, classes_missed = :missedClasses WHERE title = :title")
     suspend fun updateAttendance(title: String, attendedClasses: Int, missedClasses: Int)
+
+    @Query("UPDATE subject_table SET classes_attended = classes_attended + 1 WHERE title = :title")
+    suspend fun incrementAttendedClasses(title: String)
+
+    @Query("UPDATE subject_table SET classes_missed = classes_missed + 1 WHERE title = :title")
+    suspend fun incrementMissedClasses(title: String)
+
 }
