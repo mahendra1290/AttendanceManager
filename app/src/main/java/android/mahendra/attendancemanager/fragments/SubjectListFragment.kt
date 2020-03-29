@@ -7,6 +7,7 @@ import android.mahendra.attendancemanager.MarkAttendanceActivity
 import android.mahendra.attendancemanager.R
 import android.mahendra.attendancemanager.TimeTableActivity
 import android.mahendra.attendancemanager.adapters.SubjectAdapter
+import android.mahendra.attendancemanager.adapters.SubjectClickListener
 import android.mahendra.attendancemanager.databinding.FragmentSubjectListBinding
 import android.mahendra.attendancemanager.databinding.ListItemSubjectBinding
 import android.mahendra.attendancemanager.dialogs.AttendanceEditDialogFragment
@@ -28,6 +29,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import timber.log.Timber
 import java.util.*
 
 class SubjectListFragment : Fragment(), SubjectOptionListener {
@@ -37,7 +39,6 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        retainInstance = true
         setHasOptionsMenu(true)
     }
 
@@ -49,16 +50,20 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         val binding = DataBindingUtil.inflate<FragmentSubjectListBinding>(
                 inflater, R.layout.fragment_subject_list, container, false
         )
-        val adapter = SubjectAdapter()
-        subjectListViewModel.allSubjects.observe(
-                viewLifecycleOwner, Observer {
-            subjects: List<Subject> -> adapter.data = subjects
+
+        val adapter = SubjectAdapter(object : SubjectClickListener() {
+            override fun onSubjectOptionClick(subject: Subject) {
+                openSubjectOptionDialog(subject.title)
+            }
+        })
+        subjectListViewModel.allSubjects.observe(viewLifecycleOwner, Observer { subjects: List<Subject> ->
+//            Timber.i("\n new list submitted \n$subjects")
+            adapter.submitList(subjects)
         })
 
         binding.subjectListRecyclerView.layoutManager = LinearLayoutManager(activity)
         binding.subjectListRecyclerView.adapter = adapter
         binding.addSubjectFloatingButton.setOnClickListener { openAddSubjectDialog() }
-
         return binding.root
     }
 
@@ -129,54 +134,6 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         val totalClasses = data.getIntExtra(AttendanceEditDialogFragment.EXTRA_TOTAL_CLASSES, 0)
         subjectListViewModel.onUpdateAttendance(subjectTitle, attendedClasses, totalClasses)
     }
-
-//    private inner class SubjectHolder(
-//        private val binding: ListItemSubjectBinding
-//    ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
-//        private var mSubject: Subject? = null
-//        fun bind(subject: Subject) {
-//            mSubject = subject
-//            binding.subjectDetailViewModel!!.subject = mSubject
-//            binding.invalidateAll()
-//            binding.notifyChange()
-//            binding.executePendingBindings()
-//        }
-//
-//        override fun onClick(v: View) {
-//            openSubjectOptionDialog(mSubject!!.title)
-//        }
-//
-//        init {
-//            val detailViewModel: SubjectDetailViewModel =
-//                    InjectorUtils.provideSubjectDetailViewModel(requireActivity())
-//            binding.subjectDetailViewModel = detailViewModel
-//            binding.moreOptions.setOnClickListener(this)
-//        }
-//    }
-//
-//    private inner class SubjectAdapter : RecyclerView.Adapter<SubjectHolder>() {
-//        private var subjects = emptyList<Subject>()
-//
-//        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubjectHolder {
-//            val inflater = layoutInflater
-//            val binding = DataBindingUtil.inflate<ListItemSubjectBinding>(
-//                    inflater, R.layout.list_item_subject, parent, false)
-//            return SubjectHolder(binding)
-//        }
-//
-//        override fun onBindViewHolder(holder: SubjectHolder, position: Int) {
-//            holder.bind(subjects[position])
-//        }
-//
-//        override fun getItemCount(): Int {
-//            return subjects.size
-//        }
-//
-//        internal fun setSubjects(subjects: List<Subject>) {
-//            this.subjects = subjects
-//            notifyDataSetChanged()
-//        }
-//    }
 
     private fun openAddSubjectDialog() {
         val dialogFragment = SubjectTitleEditDialogFragment.newInstance(null)

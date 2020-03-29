@@ -30,6 +30,14 @@ class SubjectRepository private constructor(
         subjectDao.update(subject!!)
     }
 
+    suspend fun incrementAttendedClasses(title: String) {
+        subjectDao.incrementAttendedClasses(title)
+    }
+
+    suspend fun incrementMissedClasses(title: String) {
+        subjectDao.incrementMissedClasses(title)
+    }
+
     suspend fun delete(subject: Subject?) {
         subjectDao.delete(subject!!)
     }

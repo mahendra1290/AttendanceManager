@@ -1,29 +1,29 @@
 package android.mahendra.attendancemanager.viewmodels.subject
 
+import android.mahendra.attendancemanager.BR
 import android.mahendra.attendancemanager.models.Subject
 import android.mahendra.attendancemanager.repositories.SubjectRepository
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 import java.util.*
 
 class SubjectDetailViewModel (
         private val repository: SubjectRepository
-) : BaseObservable() {
-    private val viewModelJob: Job = Job()
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+) : ViewModel() {
 
     var subject: Subject? = null
 
     val title: String
-        @Bindable get() = subject!!.title
+        get() = subject!!.title
 
     val attendanceStat: String
-        @Bindable get() = "${subject!!.attendedClasses} / ${subject!!.totalClasses}"
+        get() = "${subject!!.attendedClasses} / ${subject!!.totalClasses}"
 
     val attendancePercentage: String
-        @Bindable get() {
+        get() {
         if (subject!!.totalClasses == 0) {
             return "0.0%"
         }
@@ -32,32 +32,18 @@ class SubjectDetailViewModel (
     }
 
     val attendanceProgress: Int
-        @Bindable get() {
+        get() {
         if (subject!!.totalClasses == 0) {
             return 0
         }
         return (subject!!.attendedClasses * 100) / subject!!.totalClasses
     }
 
-    fun onAttended() {
-        uiScope.launch {
-            subject!!.incrementClassesAttended()
-            update(subject!!)
-            notifyChange()
-        }
+    fun onAttended() = viewModelScope.launch {
+        repository.incrementAttendedClasses(subject!!.title)
     }
 
-    fun onMissed() {
-        uiScope.launch {
-            subject!!.incrementClassesMissed()
-            update(subject!!)
-            notifyChange()
-        }
-    }
-
-    suspend fun update(subject: Subject) {
-        withContext(Dispatchers.IO) {
-            repository.update(subject)
-        }
+    fun onMissed() = viewModelScope.launch {
+        repository.incrementMissedClasses(subject!!.title)
     }
 }
