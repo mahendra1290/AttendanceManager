@@ -29,6 +29,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
+import kotlinx.android.synthetic.main.fragment_subject_list.view.*
 import timber.log.Timber
 import java.util.*
 
@@ -60,7 +62,8 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
 //            Timber.i("\n new list submitted \n$subjects")
             adapter.submitList(subjects)
         })
-
+        val itemAnimator = binding.subjectListRecyclerView.itemAnimator as SimpleItemAnimator
+        itemAnimator.supportsChangeAnimations = false
         binding.subjectListRecyclerView.layoutManager = LinearLayoutManager(activity)
         binding.subjectListRecyclerView.adapter = adapter
         binding.addSubjectFloatingButton.setOnClickListener { openAddSubjectDialog() }

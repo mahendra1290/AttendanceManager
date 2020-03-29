@@ -64,12 +64,10 @@ class SubjectAdapter(private val subjectClickListener: SubjectClickListener) : L
 
 class SubjectDiffCallback : DiffUtil.ItemCallback<Subject>() {
     override fun areItemsTheSame(oldItem: Subject, newItem: Subject): Boolean {
-//        Timber.i("\nare item same\n $oldItem == $newItem")
         return oldItem.title == newItem.title
     }
 
     override fun areContentsTheSame(oldItem: Subject, newItem: Subject): Boolean {
-//        Timber.i("\nare content same\n $oldItem == $newItem")
         return oldItem == newItem
     }
 }
