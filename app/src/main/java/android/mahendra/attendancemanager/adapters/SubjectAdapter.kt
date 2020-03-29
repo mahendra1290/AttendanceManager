@@ -1,11 +1,9 @@
 package android.mahendra.attendancemanager.adapters
 
-import android.mahendra.attendancemanager.BR
 import android.mahendra.attendancemanager.R
 import android.mahendra.attendancemanager.databinding.ListItemSubjectBinding
 import android.mahendra.attendancemanager.models.Subject
 import android.mahendra.attendancemanager.utilities.InjectorUtils
-import android.mahendra.attendancemanager.viewmodels.subject.SubjectDetailViewModel
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
