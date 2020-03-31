@@ -13,10 +13,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import timber.log.Timber
 
-class SubjectAdapter(private val subjectClickListener: SubjectClickListener) : ListAdapter<Subject, SubjectAdapter.SubjectViewHolder>(SubjectDiffCallback()) {
+class SubjectAdapter(
+        private val subjectOptionClickListener: SubjectOptionClickListener
+) : ListAdapter<Subject, SubjectAdapter.SubjectViewHolder>(SubjectDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubjectViewHolder {
-        return SubjectViewHolder.from(parent, subjectClickListener)
+        return SubjectViewHolder.from(parent, subjectOptionClickListener)
     }
 
     override fun onBindViewHolder(holder: SubjectViewHolder, position: Int) {
@@ -25,32 +27,28 @@ class SubjectAdapter(private val subjectClickListener: SubjectClickListener) : L
 
     class SubjectViewHolder private constructor(
             private val binding: ListItemSubjectBinding,
-            private val subjectClickListener: SubjectClickListener
-    ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
+            private val subjectOptionClickListener: SubjectOptionClickListener
+    ) : RecyclerView.ViewHolder(binding.root) {
 
-        private var subject: Subject? = null
         fun bind(subject: Subject) {
-            Timber.i("\nbind called for $subject")
-            this.subject = subject
+            binding.subject = subject
             binding.subjectDetailViewModel!!.subject = subject
             binding.invalidateAll()
             binding.executePendingBindings()
         }
 
-        override fun onClick(v: View) {
-            subjectClickListener.onSubjectOptionClick(subject!!)
-        }
-
         init {
-            Timber.i("View model created")
             val subjectDetailViewModel =
                     InjectorUtils.provideSubjectDetailViewModel(binding.root.context)
             binding.subjectDetailViewModel = subjectDetailViewModel
-            binding.moreOptions.setOnClickListener(this)
+            binding.subjectOptionClickListener = subjectOptionClickListener
         }
 
         companion object {
-            fun from(parent: ViewGroup, subjectClickListener: SubjectClickListener): SubjectViewHolder {
+            fun from(
+                    parent: ViewGroup,
+                    subjectClickListener: SubjectOptionClickListener
+            ): SubjectViewHolder {
                 val inflater = LayoutInflater.from(parent.context)
                 val binding = DataBindingUtil.inflate<ListItemSubjectBinding>(
                         inflater, R.layout.list_item_subject, parent, false)
@@ -70,6 +68,6 @@ class SubjectDiffCallback : DiffUtil.ItemCallback<Subject>() {
     }
 }
 
-abstract class SubjectClickListener {
-    abstract fun onSubjectOptionClick(subject: Subject)
+class SubjectOptionClickListener(val clickListener: (subjectTitle: String) -> Unit) {
+    fun onClick(subject: Subject) = clickListener(subject.title)
 }
