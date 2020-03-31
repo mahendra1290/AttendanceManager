@@ -7,7 +7,7 @@ import android.mahendra.attendancemanager.MarkAttendanceActivity
 import android.mahendra.attendancemanager.R
 import android.mahendra.attendancemanager.TimeTableActivity
 import android.mahendra.attendancemanager.adapters.SubjectAdapter
-import android.mahendra.attendancemanager.adapters.SubjectClickListener
+import android.mahendra.attendancemanager.adapters.SubjectOptionClickListener
 import android.mahendra.attendancemanager.databinding.FragmentSubjectListBinding
 import android.mahendra.attendancemanager.databinding.ListItemSubjectBinding
 import android.mahendra.attendancemanager.dialogs.AttendanceEditDialogFragment
@@ -16,9 +16,7 @@ import android.mahendra.attendancemanager.dialogs.SubjectOptionBottomSheetDialog
 import android.mahendra.attendancemanager.dialogs.SubjectOptionBottomSheetDialog.SubjectOptionListener
 import android.mahendra.attendancemanager.dialogs.SubjectTitleEditDialogFragment
 import android.mahendra.attendancemanager.models.Subject
-import android.mahendra.attendancemanager.repositories.SubjectRepository
 import android.mahendra.attendancemanager.utilities.InjectorUtils
-import android.mahendra.attendancemanager.viewmodels.subject.SubjectDetailViewModel
 import android.mahendra.attendancemanager.viewmodels.subject.SubjectListViewModel
 import android.os.Bundle
 import android.view.*
@@ -28,10 +26,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
-import kotlinx.android.synthetic.main.fragment_subject_list.view.*
-import timber.log.Timber
 import java.util.*
 
 class SubjectListFragment : Fragment(), SubjectOptionListener {
@@ -53,10 +48,8 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
                 inflater, R.layout.fragment_subject_list, container, false
         )
 
-        val adapter = SubjectAdapter(object : SubjectClickListener() {
-            override fun onSubjectOptionClick(subject: Subject) {
-                openSubjectOptionDialog(subject.title)
-            }
+        val adapter = SubjectAdapter(SubjectOptionClickListener {subjectTitle ->
+            openSubjectOptionDialog(subjectTitle)
         })
         subjectListViewModel.allSubjects.observe(viewLifecycleOwner, Observer { subjects: List<Subject> ->
 //            Timber.i("\n new list submitted \n$subjects")
