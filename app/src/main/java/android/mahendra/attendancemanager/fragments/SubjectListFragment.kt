@@ -9,12 +9,7 @@ import android.mahendra.attendancemanager.TimeTableActivity
 import android.mahendra.attendancemanager.adapters.SubjectAdapter
 import android.mahendra.attendancemanager.adapters.SubjectOptionClickListener
 import android.mahendra.attendancemanager.databinding.FragmentSubjectListBinding
-import android.mahendra.attendancemanager.databinding.ListItemSubjectBinding
-import android.mahendra.attendancemanager.dialogs.AttendanceEditDialogFragment
-import android.mahendra.attendancemanager.dialogs.ConfirmationDialogFragment
-import android.mahendra.attendancemanager.dialogs.SubjectOptionBottomSheetDialog
-import android.mahendra.attendancemanager.dialogs.SubjectOptionBottomSheetDialog.SubjectOptionListener
-import android.mahendra.attendancemanager.dialogs.SubjectTitleEditDialogFragment
+import android.mahendra.attendancemanager.dialogs.*
 import android.mahendra.attendancemanager.models.Subject
 import android.mahendra.attendancemanager.utilities.InjectorUtils
 import android.mahendra.attendancemanager.viewmodels.subject.SubjectListViewModel
@@ -29,7 +24,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import java.util.*
 
-class SubjectListFragment : Fragment(), SubjectOptionListener {
+class SubjectListFragment : Fragment(), SubjectOptionBottomSheetDialog.OptionClickListener {
+
     private val subjectListViewModel: SubjectListViewModel by viewModels {
         InjectorUtils.provideSubjectListViewModelFactory(requireActivity())
     }
@@ -48,7 +44,7 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
                 inflater, R.layout.fragment_subject_list, container, false
         )
 
-        val adapter = SubjectAdapter(SubjectOptionClickListener {subjectTitle ->
+        val adapter = SubjectAdapter(SubjectOptionClickListener { subjectTitle ->
             openSubjectOptionDialog(subjectTitle)
         })
         subjectListViewModel.allSubjects.observe(viewLifecycleOwner, Observer { subjects: List<Subject> ->
@@ -143,21 +139,21 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         dialog.show(parentFragmentManager, "option")
     }
 
-    override fun onDeleteSelected(subjectTitle: String) {
+    override fun onDelete(subjectTitle: String) {
         createSubjectDeleteConfirmationDialog(subjectTitle).also {
             it.setTargetFragment(this, REQUEST_SUBJECT_DELETE)
             it.show(parentFragmentManager, "confirmation delete subject")
         }
     }
 
-    override fun onEditTitleSelected(subjectTitle: String) {
+    override fun onEditTitle(subjectTitle: String) {
         SubjectTitleEditDialogFragment.newInstance(subjectTitle).also {
             it.setTargetFragment(this, REQUEST_SUBJECT_TITLE_EDIT)
             it.show(parentFragmentManager, "subject")
         }
     }
 
-    override fun onEditAttendanceSelected(subjectTitle: String) {
+    override fun onEditAttendance(subjectTitle: String) {
         val subject = subjectListViewModel.getSubject(subjectTitle)
         val dialogFragment = AttendanceEditDialogFragment.newInstance(
                 subjectTitle = subjectTitle,
@@ -168,7 +164,7 @@ class SubjectListFragment : Fragment(), SubjectOptionListener {
         dialogFragment.show(parentFragmentManager, "attendance")
     }
 
-    override fun onResetAttendanceSelected(subjectTitle: String) {
+    override fun onResetAttendance(subjectTitle: String) {
         createSubjectResetAttendanceConfirmationDialog(subjectTitle).also {
             it.setTargetFragment(this, REQUEST_RESET_ATTENDANCE)
             it.show(parentFragmentManager, "confirmation reset attendance")
