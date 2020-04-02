@@ -28,8 +28,8 @@ class SubjectViewModel internal constructor(
         subjectRepository.update(subject)
     }
 
-    fun delete(subject: Subject) = viewModelScope.launch {
-        subjectRepository.delete(subject)
+    fun delete(subjectTitle: String) = viewModelScope.launch {
+        subjectRepository.delete(subjectTitle)
     }
 
     fun onResetAttendance(subjectTitle: String) = viewModelScope.launch {

@@ -99,8 +99,6 @@ class SubjectListFragment : Fragment(), SubjectOptionBottomSheetDialog.OptionCli
         when (requestCode) {
             REQUEST_NEW_SUBJECT -> handleNewSubjectRequest(data!!)
             REQUEST_SUBJECT_TITLE_EDIT -> handleSubjectTitleEditRequest(data!!)
-            REQUEST_SUBJECT_DELETE -> handleSubjectDeleteRequest(data!!)
-            REQUEST_RESET_ATTENDANCE -> handleSubjectAttendanceResetRequest(data!!)
             REQUEST_EDIT_ATTENDANCE -> handleSubjectAttendanceEditRequest(data!!)
         }
     }
@@ -114,18 +112,6 @@ class SubjectListFragment : Fragment(), SubjectOptionBottomSheetDialog.OptionCli
         val oldSubjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_OLD_SUBJECT_TITLE)!!
         val newSubjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_SUBJECT_TITLE)!!
         subjectViewModel.onUpdateTitle(oldSubjectTitle, newSubjectTitle)
-    }
-
-    private fun handleSubjectDeleteRequest(data: Intent) {
-        val subjectTitle = data.getStringExtra(ConfirmationDialogFragment.EXTRA_SUBJECT_TITLE)!!
-        subjectViewModel.onDeleteSubjectWith(subjectTitle)
-        showSubjectDeleteToast(subjectTitle)
-    }
-
-    private fun handleSubjectAttendanceResetRequest(data: Intent) {
-        val title = data.getStringExtra(ConfirmationDialogFragment.EXTRA_SUBJECT_TITLE)!!
-        subjectViewModel.onResetAttendance(title)
-        showResetAttendanceToast(title)
     }
 
     private fun handleSubjectAttendanceEditRequest(data: Intent) {
@@ -148,10 +134,13 @@ class SubjectListFragment : Fragment(), SubjectOptionBottomSheetDialog.OptionCli
     }
 
     override fun onDelete(subjectTitle: String) {
-        createSubjectDeleteConfirmationDialog(subjectTitle).also {
-            it.setTargetFragment(this, REQUEST_SUBJECT_DELETE)
-            it.show(parentFragmentManager, "confirmation delete subject")
-        }
+        val listener = ConfirmationDialogListener(
+                onPositiveClick = {
+                    subjectViewModel.delete(subjectTitle)
+                }
+        )
+        val dialog = DeleteSubjectConfirmationDialog.newInstance(subjectTitle, listener)
+        dialog.show(parentFragmentManager, "delete subject")
     }
 
     override fun onEditTitle(subjectTitle: String) {
@@ -173,10 +162,13 @@ class SubjectListFragment : Fragment(), SubjectOptionBottomSheetDialog.OptionCli
     }
 
     override fun onResetAttendance(subjectTitle: String) {
-        createSubjectResetAttendanceConfirmationDialog(subjectTitle).also {
-            it.setTargetFragment(this, REQUEST_RESET_ATTENDANCE)
-            it.show(parentFragmentManager, "confirmation reset attendance")
-        }
+        val listener = ConfirmationDialogListener(
+                onPositiveClick = {
+                    subjectViewModel.onResetAttendance(subjectTitle)
+                }
+        )
+        val dialog = ResetAttendanceConfirmationDialog.newInstance(subjectTitle, listener)
+        dialog.show(parentFragmentManager, "reset subject attendance")
     }
 
     private fun showSubjectDeleteToast(subjectTitle: String) {
@@ -189,35 +181,9 @@ class SubjectListFragment : Fragment(), SubjectOptionBottomSheetDialog.OptionCli
                 "attendance reset $subjectTitle", Toast.LENGTH_SHORT).show()
     }
 
-    private fun createSubjectDeleteConfirmationDialog(
-        subjectTitle: String
-    ): ConfirmationDialogFragment {
-        return ConfirmationDialogFragment.newInstance(
-                subjectTitle = subjectTitle,
-                dialogTitle = getString(R.string.delete_subject, subjectTitle.capitalize()),
-                dialogMessage = getString(R.string.warning_subject_delete),
-                negativeResponse = "cancel",
-                positiveResponse = "delete"
-        )
-    }
-
-    private fun createSubjectResetAttendanceConfirmationDialog(
-        subjectTitle: String
-    ): ConfirmationDialogFragment {
-        return ConfirmationDialogFragment.newInstance(
-                subjectTitle = subjectTitle,
-                dialogTitle = getString(R.string.reset_attendance),
-                dialogMessage = getString(R.string.warning_reset_attendance, subjectTitle),
-                negativeResponse = "cancel",
-                positiveResponse = "reset"
-        )
-    }
-
     companion object {
         private const val REQUEST_NEW_SUBJECT = 0
         private const val REQUEST_SUBJECT_TITLE_EDIT = 1
-        private const val REQUEST_SUBJECT_DELETE = 2
-        private const val REQUEST_RESET_ATTENDANCE = 3
         private const val REQUEST_EDIT_ATTENDANCE = 4
 
         fun newInstance(): SubjectListFragment {

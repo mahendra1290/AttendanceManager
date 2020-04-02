@@ -24,6 +24,9 @@ interface SubjectDao {
     @Delete
     suspend fun delete(subject: Subject)
 
+    @Query("DELETE FROM subject_table WHERE title = :title")
+    suspend fun delete(title: String)
+
     @Query("SELECT * FROM subject_table ORDER BY title")
     fun getAllSubjects(): LiveData<List<Subject>>
 

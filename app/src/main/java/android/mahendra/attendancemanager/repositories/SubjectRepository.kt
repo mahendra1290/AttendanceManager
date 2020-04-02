@@ -42,6 +42,10 @@ class SubjectRepository private constructor(
         subjectDao.delete(subject!!)
     }
 
+    suspend fun delete(subjectTitle: String) {
+        subjectDao.delete(subjectTitle)
+    }
+
     suspend fun updateAttendance(title: String, attendedClasses: Int, missedClasses: Int) {
         subjectDao.updateAttendance(title, attendedClasses, missedClasses)
     }
