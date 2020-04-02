@@ -1,5 +1,6 @@
 package android.mahendra.attendancemanager.viewmodels.subject
 
+import android.mahendra.attendancemanager.Event
 import android.mahendra.attendancemanager.models.Subject
 import android.mahendra.attendancemanager.repositories.SubjectRepository
 import androidx.lifecycle.*
@@ -9,9 +10,13 @@ import kotlinx.coroutines.launch
 import kotlin.collections.List
 import kotlin.collections.ArrayList
 
-class SubjectListViewModel internal constructor(
+class SubjectViewModel internal constructor(
     private val subjectRepository: SubjectRepository
 ) : ViewModel() {
+
+    private val _openOptionDialog = MutableLiveData<Event<String>>()
+    val openOptionDialog: LiveData<Event<String>>
+         get() = _openOptionDialog
 
     val allSubjects: LiveData<List<Subject>> = subjectRepository.allSubjects
 
@@ -27,10 +32,8 @@ class SubjectListViewModel internal constructor(
         subjectRepository.delete(subject)
     }
 
-    fun onResetAttendance(subject: Subject) = viewModelScope.launch {
-        subject.missedClasses = 0
-        subject.attendedClasses = 0
-        subjectRepository.update(subject)
+    fun onResetAttendance(subjectTitle: String) = viewModelScope.launch {
+        subjectRepository.resetAttendance(subjectTitle)
     }
 
     private fun extractTitles(subjects: List<Subject>): List<String> {
@@ -54,11 +57,8 @@ class SubjectListViewModel internal constructor(
         subjectRepository.delete(subject)
     }
 
-    fun onResetAttendance(subjectTitle: String) = viewModelScope.launch {
-        val subject = subjectRepository.getSubject(subjectTitle)
-        subject?.attendedClasses = 0
-        subject?.missedClasses = 0
-        subjectRepository.update(subject)
+    fun onOptionSelected(subjectTitle: String) {
+        _openOptionDialog.value = Event(subjectTitle)
     }
 
     fun getSubject(subjectTitle: String): Subject? {

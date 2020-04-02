@@ -6,8 +6,7 @@ import android.mahendra.attendancemanager.repositories.PeriodRepository
 import android.mahendra.attendancemanager.repositories.SubjectRepository
 import android.mahendra.attendancemanager.viewmodels.period.PeriodListViewModelFactory
 import android.mahendra.attendancemanager.viewmodels.subject.SubjectDetailViewModel
-import android.mahendra.attendancemanager.viewmodels.subject.SubjectListViewModelFactory
-import androidx.fragment.app.Fragment
+import android.mahendra.attendancemanager.viewmodels.subject.SubjectViewModelFactory
 import androidx.fragment.app.FragmentActivity
 object InjectorUtils {
     private fun getSubjectRepository(context: Context): SubjectRepository {
@@ -23,9 +22,9 @@ object InjectorUtils {
         )
     }
 
-    fun provideSubjectListViewModelFactory(activity: FragmentActivity): SubjectListViewModelFactory {
+    fun provideSubjectListViewModelFactory(activity: FragmentActivity): SubjectViewModelFactory {
         val repository = getSubjectRepository(activity)
-        return SubjectListViewModelFactory(repository)
+        return SubjectViewModelFactory(repository)
     }
 
     fun provideSubjectDetailViewModel(context: Context): SubjectDetailViewModel {

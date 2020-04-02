@@ -46,6 +46,10 @@ class SubjectRepository private constructor(
         subjectDao.updateAttendance(title, attendedClasses, missedClasses)
     }
 
+    suspend fun resetAttendance(title: String) {
+        updateAttendance(title, 0, 0)
+    }
+
     companion object {
 
         @Volatile private var instance: SubjectRepository? = null

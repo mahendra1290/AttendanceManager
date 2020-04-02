@@ -3,6 +3,7 @@ package android.mahendra.attendancemanager.fragments
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.mahendra.attendancemanager.EventObserver
 import android.mahendra.attendancemanager.MarkAttendanceActivity
 import android.mahendra.attendancemanager.R
 import android.mahendra.attendancemanager.TimeTableActivity
@@ -12,7 +13,7 @@ import android.mahendra.attendancemanager.databinding.FragmentSubjectListBinding
 import android.mahendra.attendancemanager.dialogs.*
 import android.mahendra.attendancemanager.models.Subject
 import android.mahendra.attendancemanager.utilities.InjectorUtils
-import android.mahendra.attendancemanager.viewmodels.subject.SubjectListViewModel
+import android.mahendra.attendancemanager.viewmodels.subject.SubjectViewModel
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -22,11 +23,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
+import timber.log.Timber
 import java.util.*
 
 class SubjectListFragment : Fragment(), SubjectOptionBottomSheetDialog.OptionClickListener {
 
-    private val subjectListViewModel: SubjectListViewModel by viewModels {
+    private val subjectViewModel: SubjectViewModel by viewModels {
         InjectorUtils.provideSubjectListViewModelFactory(requireActivity())
     }
 
@@ -45,13 +47,19 @@ class SubjectListFragment : Fragment(), SubjectOptionBottomSheetDialog.OptionCli
         )
 
         val adapter = SubjectAdapter(SubjectOptionClickListener { subjectTitle ->
-            openSubjectOptionDialog(subjectTitle)
+            subjectViewModel.onOptionSelected(subjectTitle)
         })
-        subjectListViewModel.allSubjects.observe(viewLifecycleOwner, Observer { subjects: List<Subject> ->
-//            Timber.i("\n new list submitted \n$subjects")
+
+        subjectViewModel.allSubjects.observe(viewLifecycleOwner, Observer { subjects: List<Subject> ->
+            Timber.i("\n new list submitted \n$subjects")
             adapter.submitList(subjects)
         })
-        val itemAnimator = binding.subjectListRecyclerView.itemAnimator as SimpleItemAnimator
+
+        subjectViewModel.openOptionDialog.observe(viewLifecycleOwner, EventObserver { subjectTitle ->
+            openSubjectOptionDialog(subjectTitle)
+        })
+
+        val itemAnimator= binding.subjectListRecyclerView.itemAnimator as SimpleItemAnimator
         itemAnimator.supportsChangeAnimations = false
         binding.subjectListRecyclerView.layoutManager = LinearLayoutManager(activity)
         binding.subjectListRecyclerView.adapter = adapter
@@ -99,24 +107,24 @@ class SubjectListFragment : Fragment(), SubjectOptionBottomSheetDialog.OptionCli
 
     private fun handleNewSubjectRequest(data: Intent) {
         val subjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_SUBJECT_TITLE)!!
-        subjectListViewModel.onNewSubject(subjectTitle)
+        subjectViewModel.onNewSubject(subjectTitle)
     }
 
     private fun handleSubjectTitleEditRequest(data: Intent) {
         val oldSubjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_OLD_SUBJECT_TITLE)!!
         val newSubjectTitle = data.getStringExtra(SubjectTitleEditDialogFragment.EXTRA_SUBJECT_TITLE)!!
-        subjectListViewModel.onUpdateTitle(oldSubjectTitle, newSubjectTitle)
+        subjectViewModel.onUpdateTitle(oldSubjectTitle, newSubjectTitle)
     }
 
     private fun handleSubjectDeleteRequest(data: Intent) {
         val subjectTitle = data.getStringExtra(ConfirmationDialogFragment.EXTRA_SUBJECT_TITLE)!!
-        subjectListViewModel.onDeleteSubjectWith(subjectTitle)
+        subjectViewModel.onDeleteSubjectWith(subjectTitle)
         showSubjectDeleteToast(subjectTitle)
     }
 
     private fun handleSubjectAttendanceResetRequest(data: Intent) {
         val title = data.getStringExtra(ConfirmationDialogFragment.EXTRA_SUBJECT_TITLE)!!
-        subjectListViewModel.onResetAttendance(title)
+        subjectViewModel.onResetAttendance(title)
         showResetAttendanceToast(title)
     }
 
@@ -124,7 +132,7 @@ class SubjectListFragment : Fragment(), SubjectOptionBottomSheetDialog.OptionCli
         val subjectTitle = data.getStringExtra(AttendanceEditDialogFragment.EXTRA_SUBJECT_TITLE)!!
         val attendedClasses = data.getIntExtra(AttendanceEditDialogFragment.EXTRA_ATTENDED_CLASSES, 0)
         val totalClasses = data.getIntExtra(AttendanceEditDialogFragment.EXTRA_TOTAL_CLASSES, 0)
-        subjectListViewModel.onUpdateAttendance(subjectTitle, attendedClasses, totalClasses)
+        subjectViewModel.onUpdateAttendance(subjectTitle, attendedClasses, totalClasses)
     }
 
     private fun openAddSubjectDialog() {
@@ -154,7 +162,7 @@ class SubjectListFragment : Fragment(), SubjectOptionBottomSheetDialog.OptionCli
     }
 
     override fun onEditAttendance(subjectTitle: String) {
-        val subject = subjectListViewModel.getSubject(subjectTitle)
+        val subject = subjectViewModel.getSubject(subjectTitle)
         val dialogFragment = AttendanceEditDialogFragment.newInstance(
                 subjectTitle = subjectTitle,
                 attendedClasses = subject!!.attendedClasses,
@@ -211,6 +219,7 @@ class SubjectListFragment : Fragment(), SubjectOptionBottomSheetDialog.OptionCli
         private const val REQUEST_SUBJECT_DELETE = 2
         private const val REQUEST_RESET_ATTENDANCE = 3
         private const val REQUEST_EDIT_ATTENDANCE = 4
+
         fun newInstance(): SubjectListFragment {
             return SubjectListFragment()
         }
