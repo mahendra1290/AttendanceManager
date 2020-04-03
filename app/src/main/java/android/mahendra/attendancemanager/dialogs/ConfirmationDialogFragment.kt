@@ -1,6 +1,7 @@
 package android.mahendra.attendancemanager.dialogs
 
 import android.app.Dialog
+import android.mahendra.attendancemanager.R
 import android.os.Bundle
 import androidx.annotation.StringRes
 
@@ -10,28 +11,25 @@ abstract class ConfirmationDialogFragment(
         private val confirmationDialogListener: ConfirmationDialogListener
 ): DialogFragment() {
 
-    @get:StringRes
-    abstract val dialogTitleRedId: Int
+    abstract val dialogTitle: String
 
-    @get:StringRes
-    abstract val dialogMessageResId: Int
+    abstract val dialogMessage: String
 
-    @get:StringRes
-    abstract val dialogPositiveButtonTextResId: Int
+    abstract val dialogPositiveButtonText: String
 
-    @get:StringRes
-    abstract val dialogNegativeButtonTextResId: Int
+    open val dialogNegativeButtonText: String
+        get() = getString(R.string.cancel)
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = androidx.appcompat.app.AlertDialog.Builder(requireContext())
-        builder.setTitle(dialogTitleRedId)
-        builder.setMessage(dialogMessageResId)
-        builder.setPositiveButton(dialogPositiveButtonTextResId) { _, _ ->
+        builder.setTitle(dialogTitle)
+        builder.setMessage(dialogMessage)
+        builder.setPositiveButton(dialogPositiveButtonText) { _, _ ->
             confirmationDialogListener.onPositive()
             dismiss()
         }
 
-        builder.setNegativeButton(dialogNegativeButtonTextResId) { _, _ ->
+        builder.setNegativeButton(dialogNegativeButtonText) { _, _ ->
             confirmationDialogListener.onNegative()
             dismiss()
         }

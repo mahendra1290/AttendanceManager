@@ -8,17 +8,17 @@ class DeleteSubjectConfirmationDialog(
         confirmationDialogListener: ConfirmationDialogListener
 ): ConfirmationDialogFragment(confirmationDialogListener){
 
-    override val dialogTitleRedId: Int
-        get() = R.string.delete_subject
+    override val dialogTitle: String
+        get() {
+            val subjectTitle = requireArguments().getString(ARG_SUBJECT_TITLE)
+            return getString(R.string.delete_subject, subjectTitle)
+        }
 
-    override val dialogMessageResId: Int
-        get() = R.string.warning_subject_delete
+    override val dialogMessage: String
+        get() = getString(R.string.warning_subject_delete)
 
-    override val dialogPositiveButtonTextResId: Int
-        get() = R.string.delete
-
-    override val dialogNegativeButtonTextResId: Int
-        get() = R.string.cancel
+    override val dialogPositiveButtonText: String
+        get() = getString(R.string.delete)
 
     companion object {
         private const val ARG_SUBJECT_TITLE = "subjectTitle"

@@ -1,6 +1,5 @@
 package android.mahendra.attendancemanager.dialogs
 
-import android.content.DialogInterface
 import android.mahendra.attendancemanager.R
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
@@ -8,17 +7,17 @@ import androidx.fragment.app.DialogFragment
 class ResetAttendanceConfirmationDialog(
         confirmationDialogListener: ConfirmationDialogListener
 ): ConfirmationDialogFragment(confirmationDialogListener) {
-    override val dialogTitleRedId: Int
-        get() = R.string.reset_attendance
+    override val dialogTitle: String
+        get() = getString(R.string.reset_attendance)
 
-    override val dialogMessageResId: Int
-        get() = R.string.warning_reset_attendance
+    override val dialogMessage: String
+        get() {
+            val subjectTitle = requireArguments().getString(ARG_SUBJECT_TITLE)
+            return getString(R.string.warning_reset_attendance, subjectTitle)
+        }
 
-    override val dialogPositiveButtonTextResId: Int
-        get() = R.string.reset
-
-    override val dialogNegativeButtonTextResId: Int
-        get() = R.string.cancel
+    override val dialogPositiveButtonText: String
+        get() = getString(R.string.reset)
 
     companion object {
         private const val ARG_SUBJECT_TITLE = "subjectTitle"
