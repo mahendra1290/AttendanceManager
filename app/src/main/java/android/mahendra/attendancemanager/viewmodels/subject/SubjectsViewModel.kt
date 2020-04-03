@@ -10,13 +10,20 @@ import kotlinx.coroutines.launch
 import kotlin.collections.List
 import kotlin.collections.ArrayList
 
-class SubjectViewModel internal constructor(
+class SubjectsViewModel internal constructor(
     private val subjectRepository: SubjectRepository
 ) : ViewModel() {
+    private val _optionSelectEvent = MutableLiveData<Event<String>>()
+    val optionSelectEvent: LiveData<Event<String>>
+         get() = _optionSelectEvent
 
-    private val _openOptionDialog = MutableLiveData<Event<String>>()
-    val openOptionDialog: LiveData<Event<String>>
-         get() = _openOptionDialog
+    private val _subjectDeleteEvent = MutableLiveData<Event<String>>()
+    val subjectDeleteEvent: LiveData<Event<String>>
+        get() = _subjectDeleteEvent
+
+    private val _resetAttendanceEvent = MutableLiveData<Event<String>>()
+    val resetAttendanceEvent: LiveData<Event<String>>
+        get() = _resetAttendanceEvent
 
     val allSubjects: LiveData<List<Subject>> = subjectRepository.allSubjects
 
@@ -32,7 +39,7 @@ class SubjectViewModel internal constructor(
         subjectRepository.delete(subjectTitle)
     }
 
-    fun onResetAttendance(subjectTitle: String) = viewModelScope.launch {
+    fun resetAttendance(subjectTitle: String) = viewModelScope.launch {
         subjectRepository.resetAttendance(subjectTitle)
     }
 
@@ -48,17 +55,19 @@ class SubjectViewModel internal constructor(
         subjectRepository.updateTitle(oldTitle, newTitle)
     }
 
-    fun getSubjectTitles(): LiveData<List<String>> {
-        return Transformations.map(allSubjects, this::extractTitles)
-    }
-
-    fun onDeleteSubjectWith(subjectTitle: String) = viewModelScope.launch {
-        val subject = subjectRepository.getSubject(subjectTitle)
-        subjectRepository.delete(subject)
-    }
+    val subjectTitles: LiveData<List<String>>
+        get() = Transformations.map(allSubjects, this::extractTitles)
 
     fun onOptionSelected(subjectTitle: String) {
-        _openOptionDialog.value = Event(subjectTitle)
+        _optionSelectEvent.value = Event(subjectTitle)
+    }
+
+    fun onDeleteSubject(subjectTitle: String) {
+        _subjectDeleteEvent.value = Event(subjectTitle)
+    }
+
+    fun onResetAttendance(subjectTitle: String) {
+        _resetAttendanceEvent.value = Event(subjectTitle)
     }
 
     fun getSubject(subjectTitle: String): Subject? {

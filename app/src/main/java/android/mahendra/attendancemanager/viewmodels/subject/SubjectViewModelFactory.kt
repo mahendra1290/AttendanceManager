@@ -11,8 +11,8 @@ class SubjectViewModelFactory(
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(SubjectViewModel::class.java)) {
-            return SubjectViewModel(repository) as T
+        if (modelClass.isAssignableFrom(SubjectsViewModel::class.java)) {
+            return SubjectsViewModel(repository) as T
         }
         throw IllegalArgumentException("unknown view model class")
     }
