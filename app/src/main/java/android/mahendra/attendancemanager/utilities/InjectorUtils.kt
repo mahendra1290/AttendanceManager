@@ -1,13 +1,14 @@
 package android.mahendra.attendancemanager.utilities
 
 import android.content.Context
-import android.mahendra.attendancemanager.database.MainDatabase
-import android.mahendra.attendancemanager.repositories.PeriodRepository
-import android.mahendra.attendancemanager.repositories.SubjectRepository
-import android.mahendra.attendancemanager.viewmodels.period.PeriodListViewModelFactory
-import android.mahendra.attendancemanager.viewmodels.subject.SubjectDetailViewModel
-import android.mahendra.attendancemanager.viewmodels.subject.SubjectViewModelFactory
+import android.mahendra.attendancemanager.data.database.MainDatabase
+import android.mahendra.attendancemanager.activities.main.viewmodels.SubjectDetailViewModelFactory
+import android.mahendra.attendancemanager.data.source.repositories.PeriodRepository
+import android.mahendra.attendancemanager.data.source.repositories.SubjectRepository
+import android.mahendra.attendancemanager.activities.timetable.viewmodels.PeriodListViewModelFactory
+import android.mahendra.attendancemanager.activities.main.viewmodels.SubjectViewModelFactory
 import androidx.fragment.app.FragmentActivity
+
 object InjectorUtils {
     private fun getSubjectRepository(context: Context): SubjectRepository {
         return SubjectRepository.getInstance(
@@ -27,8 +28,9 @@ object InjectorUtils {
         return SubjectViewModelFactory(repository)
     }
 
-    fun provideSubjectDetailViewModel(context: Context): SubjectDetailViewModel {
-        return SubjectDetailViewModel(getSubjectRepository(context))
+    fun provideSubjectDetailViewModelFactory(subjectTitle: String, activity: FragmentActivity): SubjectDetailViewModelFactory {
+        val repository = getSubjectRepository(activity)
+        return SubjectDetailViewModelFactory(subjectTitle, repository)
     }
 
     fun providePeriodListViewModelFactory(activity: FragmentActivity): PeriodListViewModelFactory {
