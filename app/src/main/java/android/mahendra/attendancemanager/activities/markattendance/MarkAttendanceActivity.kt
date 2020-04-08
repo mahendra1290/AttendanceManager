@@ -7,7 +7,6 @@ import android.mahendra.attendancemanager.databinding.ActivityMarkAttendanceBind
 import android.mahendra.attendancemanager.activities.timetable.fragments.PeriodFragment.Companion.newInstance
 import android.mahendra.attendancemanager.data.models.Period
 import android.mahendra.attendancemanager.data.models.Subject
-import android.mahendra.attendancemanager.utilities.InjectorUtils
 import android.mahendra.attendancemanager.activities.timetable.viewmodels.PeriodListViewModel
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -39,7 +38,7 @@ class MarkAttendanceActivity : AppCompatActivity() {
         pagerAdapter = PeriodPagerAdapter(this)
         periodViewPager.adapter = pagerAdapter
 
-        val viewModelFactory = InjectorUtlis.provideSubjectListViewModelFactory(this)
+        val viewModelFactory = InjectorUtils.provideSubjectListViewModelFactory(this)
         periodListViewModel = ViewModelProvider(this, viewModelFactory).get(PeriodListViewModel::class.java)
         periodListViewModel.getAllSubjectsOn(weekDay).observe(this, Observer { subjects: List<Subject> ->
             for ((title) in subjects) {
