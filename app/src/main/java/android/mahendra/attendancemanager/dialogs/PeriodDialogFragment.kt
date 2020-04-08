@@ -3,7 +3,7 @@ package android.mahendra.attendancemanager.dialogs
 import android.app.TimePickerDialog
 import android.content.Context
 import android.mahendra.attendancemanager.R
-import android.mahendra.attendancemanager.viewmodels.period.PeriodDetailViewModel
+import android.mahendra.attendancemanager.activities.timetable.viewmodels.PeriodDetailViewModel
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View

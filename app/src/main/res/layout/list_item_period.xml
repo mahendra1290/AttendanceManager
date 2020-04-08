@@ -7,7 +7,7 @@
     <data>
         <variable
             name="periodViewModel"
-            type="android.mahendra.attendancemanager.viewmodels.period.PeriodViewModel" />
+            type="android.mahendra.attendancemanager.activities.timetable.viewmodels.PeriodViewModel" />
     </data>
 
     <androidx.cardview.widget.CardView

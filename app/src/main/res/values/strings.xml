@@ -2,12 +2,15 @@
     <string name="app_name">Attendance Manager</string>
     <string name="timetable_activity">Time Table</string>
     <string name="mark_attendance_activity">Mark Attendance</string>
+
     <string name="subject_name">Subject</string>
     <string name="class_attended">Attended</string>
     <string name="class_missed">Missed</string>
     <string name="class_cancelled">Cancelled</string>
-    <string name="attendance_status">4 / 6</string>
-    <string name="attendance_percentage">76.00%</string>
+
+    <string name="attendance_status">%d / %d</string>
+
+    <string name="attendance_percentage">%.1f%%</string>
     <string name="timetable">Time-Table</string>
     <string name="select_subject">Select Subject</string>
     <string name="update_period">Update Period</string>
@@ -23,7 +26,7 @@
     <string name="delete">Delete</string>
     <string name="edit_subject_title">Edit Title</string>
     <string name="edit_attendance">Edit Attendance</string>
-    <string name="reset">Reset Attendance</string>
+    <string name="reset">Reset</string>
     <string name="remove">Remove</string>
     <string name="delete_subject">Delete Subject %s</string>
     <string name="warning_subject_delete">Are you sure you want to delete this subject ?</string>
